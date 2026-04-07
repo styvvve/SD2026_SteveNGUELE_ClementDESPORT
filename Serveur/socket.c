@@ -6,6 +6,9 @@
     Serveur(port) == Administrateur(port).
     Configuration avec (int argc, char* argv[]).
     Connexion Unicast.
+
+    Paramètres : numéro de port (0 = n'importe quel port)
+    Sortie : socket 
     ***
 */
 int creerSocketUDP_Administrateur (int port){
@@ -31,6 +34,8 @@ int creerSocketUDP_Administrateur (int port){
      
     ***
 */
-int creerSocketTCP (int port){
 
-}
+
+/*int creerSocketTCP (int port){
+
+}*/
