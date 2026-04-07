@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <string.h>
 #include "socket.c"
-#define TAILLEBUF 20
+#define TAILLEBUF 100
 
 
 int main(int argc, char* argv[]) {
@@ -43,6 +43,7 @@ int main(int argc, char* argv[]) {
     /*ToDo : Relier avec admin et configurer partie par rapport aux "messages" reçu par l'admin*/
     /*ToDo : Réfléchir à la façon dont l'admin configure la partie (exemple :  1- choisir mode, 2- choisir temps, 3-...)*/
     /*ToDo : Envoie en temps réelle l'évolution de la partie (score,connexion/deconnexion...)*/
+    
     close(socket_admin);
 
 
