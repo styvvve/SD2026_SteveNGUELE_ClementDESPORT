@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
+#include <arpa/inet.h>
 #include "socket.c"
 #include "gererJoueur.c"
 
@@ -23,6 +24,41 @@ int main(int argc, char* argv[]) {
     struct hostent *host_admin;
     // descripteur de la socket locale pour l'UDP admin
     int socket_admin;
+
+
+    //Creation socket.. Multicast UDP
+    struct in_addr ip;
+    static struct sockaddr_in ad_multicast, adresse;
+    struct ip_mreq gr_multicast;
+    int socket_multicast_joueur;
+
+    // création de la socket UDP
+    socket_multicast_joueur = socket(AF_INET, SOCK_DGRAM, 0);
+    // récupération adresse ip du groupe
+    inet_aton("226.1.2.3",&ip);
+
+    // création identificateur du groupe
+    gr_multicast.imr_multiaddr.s_addr = ip.s_addr;
+    gr_multicast.imr_interface.s_addr = htonl(INADDR_ANY);
+
+
+
+    // abonnement de la socket au groupe multicast
+    setsockopt(socket_multicast_joueur, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+    &gr_multicast, sizeof(struct ip_mreq));
+
+    // autorise de lier plusieurs sockets sur le port utilisé par cette socket, c'est-à-dire sur le port du groupe multicast
+    int reuse = 1;
+
+
+    // liaison de la socket au port du groupe multicast
+    bzero((char *) &adresse, sizeof(adresse));
+    ad_multicast.sin_family = AF_INET;
+    ad_multicast.sin_addr.s_addr = htonl(INADDR_ANY);
+    ad_multicast.sin_port = htons(1234);
+    bind(socket_multicast_joueur, (struct sockaddr *)&adresse, sizeof(struct sockaddr_in));
+
+
     // buffer de réception
     char buffer[TAILLEBUF];
     // chaine reçue
@@ -37,9 +73,8 @@ int main(int argc, char* argv[]) {
     static struct sockaddr_in addr_joueur;
 
     int lg;
-    // liaison du port pour TCP client
 
-    // port == 2000
+    // port == 2001
     socket_ecoute = socket(AF_INET, SOCK_STREAM, 0);
 
     bzero((char *) &addr_serveur_TCP_joueur,sizeof(addr_serveur_TCP_joueur));
@@ -48,8 +83,7 @@ int main(int argc, char* argv[]) {
     addr_serveur_TCP_joueur.sin_family = AF_INET;
     addr_serveur_TCP_joueur.sin_port = htons(2001);
 
-    if( bind(socket_ecoute,
-        (struct sockaddr*)&addr_serveur_TCP_joueur,sizeof(addr_serveur_TCP_joueur))== -1 ) {
+    if( bind(socket_ecoute,(struct sockaddr*)&addr_serveur_TCP_joueur,sizeof(addr_serveur_TCP_joueur))== -1 ) {
         perror("erreur bind socket écoute");
         exit(1);
     }
@@ -69,10 +103,19 @@ int main(int argc, char* argv[]) {
 
 
     int id_joueur=0;
+
+    char messages[100];
+    snprintf(messages, sizeof(messages)/sizeof(char),"Test multicast");
+    bzero((char *) &adresse, sizeof(adresse));
+    adresse.sin_family = AF_INET;
+    adresse.sin_addr.s_addr = ip.s_addr;
+    adresse.sin_port = htons(1234);
+    int longueur_adresse = sizeof(struct sockaddr_in);
     while(1){
         lg = sizeof(struct sockaddr_in);
         socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
         ++id_joueur;
+        sendto(socket_multicast_joueur,messages, 100 , 0, (struct sockaddr*)&adresse, longueur_adresse);
         if (fork()==0){
             close (socket_ecoute);
             gererJoueur(socket_service,id_joueur);

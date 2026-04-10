@@ -16,7 +16,7 @@ void gererJoueur(int socket,int id_joueur) {
     // affichage du message reçu
     chaine_recue = (char *)malloc(nb_octets * sizeof(char));
     memcpy(chaine_recue, messages, nb_octets);
-    printf("ID:%d Message recu:%s\n", id_joueur,chaine_recue);
+    printf("ID[%d] Message recu:%s\n", id_joueur,chaine_recue);
 
     while(strcmp(chaine_recue,"q")!=0){
         nb_octets = read(socket, messages, TAILLEBUF);
@@ -25,5 +25,5 @@ void gererJoueur(int socket,int id_joueur) {
         printf("ID[%d] : %s\n",id_joueur,chaine_recue);
     }
 
-    printf("ID:%d C'est déconnecté.", id_joueur);
+    printf("ID:%d C'est déconnecté.\n", id_joueur);
 }
