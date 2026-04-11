@@ -25,5 +25,5 @@ void gererJoueur(int socket,int id_joueur) {
         printf("ID[%d] : %s\n",id_joueur,chaine_recue);
     }
 
-    printf("ID:%d C'est déconnecté.\n", id_joueur);
+    printf("ID[%d] C'est déconnecté.\n", id_joueur);
 }
