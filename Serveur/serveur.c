@@ -73,12 +73,12 @@ int main(int argc, char* argv[]) {
 
 
     if (fork() == 0) {
-        //Envoie de messages à l'"infini"
+        //Envoie de messages à jusqu'a que le message == 'q'
         char message_multicast[100];
-        while (1) {
+        while (strcmp(message_multicast, "q") != 0) {
             scanf("%s",message_multicast);
             sendto(socket_multicast_joueur, message_multicast, strlen(message_multicast), 0,(struct sockaddr*)&adresse, sizeof(adresse));
-
+            if (strcmp(message_multicast, "q") == 0) printf("ARRET DU MULTICAST (SERVEUR)\n"); 
         }
         exit(0);
     }
