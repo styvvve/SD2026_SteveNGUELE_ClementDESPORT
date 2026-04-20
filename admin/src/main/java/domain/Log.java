@@ -1,31 +1,32 @@
 package main.java.domain;
 
+import main.java.domain.interfaces.GameObserver;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Log {
+public class Log implements GameObserver {
 
     private int number;
-    private List<Player> players = new ArrayList<>();
-    private List<Mole> moles =  new ArrayList<>();
 
     public Log(int number) {
         this.number = number;
     }
 
-    public int getNumber() {
-        return number;
-    }
-    public void setNumber(int number) { this.number = number; }
-    public List<Player> getPlayers() { return players; }
-    public void addPlayer(Player player) { this.players.add(player); }
-    public void addMole(Mole mole) { this.moles.add(mole); }
-
-    public int removePlayer(Player player) {
-        if (this.players.contains(player)) {
-            players.remove(player);
-            return 1;
-        }
-        return 0;
+    //Observer pattern matching
+    @Override
+    public void saveEachGameLog(Game game) {
+        //writing each log to save the game progress
+        StringBuilder playersList = new StringBuilder();
+        game.getPlayers().forEach(p -> {
+            playersList.append(p.getId()).append("\n");
+        });
+        String myLog = String.format("LOG N°%d. [GAME ID] : %d | [GAME MODE] : %s | [LEVEL] : %s | [ROUND N°] : %d | [PLAYERS] : { %s }",
+                game.getId(),
+                game.getMode().toString(),
+                game.getLevel().toString(),
+                game.getRounds().getLast(),
+                playersList
+                );
     }
 }
