@@ -55,11 +55,14 @@ int main(int argc, char *argv[]) {
     if (fork() == 0) {
         // creation d'une boucle "infini" pour recevoir messages du serveur (multicast)
         char message[100];
-        while (1) {
+        while (strcmp(message_multicast, "q") != 0) {
             int n = recvfrom(sock_udp, message, sizeof(message), 0, NULL, 0);
             if (n > 0) {
                 message[n] = '\0';
                 printf("%s\n", message);
+                if (strcmp(message_multicast, "q") = 0){
+                    printf("ARRET DU MULTICAST PAR LE SERVEUR");
+                }
             }
         }
         exit(0);
