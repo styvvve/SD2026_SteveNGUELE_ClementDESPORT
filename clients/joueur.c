@@ -9,16 +9,10 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 
 #define TAILLEBUF 1024
-
-//Fonction pour fermer la socket multicast (pour pas recevoir les message multicast si on c'est déco)
-/*
-void fermeture_socket_multicast(){
-
-}
-*/
 
 /**
  * codes clients 
@@ -66,10 +60,12 @@ int main(int argc, char *argv[]) {
 
     //TODO : FAIRE LE LIEN AVEC TCP (parce que pour l'instant si on quitte le tcp, le multicast fonctionne encore)
     if (pid_multicast == 0) {
+
+
         //Reception des messages MULTICAST du serveur
         char message_multicast[100];
         
-        while (strcmp(message_multicast, "q") != 0) {
+        while (1) {
             int n = recvfrom(sock_udp, message_multicast, sizeof(message_multicast), 0, NULL, 0);
             if (n > 0) {
                 message_multicast[n] = '\0';
@@ -141,6 +137,10 @@ int main(int argc, char *argv[]) {
         if (strcmp(test, "q") == 0){
             printf("message de fin envoye\n");
             kill(pid_multicast, SIGTERM);
+
+            //attend la fin du processus fils 'pid_multicast'
+            int status_multicast;
+            wait(&status_multicast);
         }
     }
 
