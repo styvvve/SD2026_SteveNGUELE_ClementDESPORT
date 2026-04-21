@@ -8,16 +8,29 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <signal.h>
 
+/* VARIABLES GLOBALS */
+//EXPLICATION SUR : http://shtroumbiniouf.free.fr/CoursInfo/Systeme2/TP/CoursSignaux/Volatile.html
+volatile sig_atomic_t multicast_en_cours = 1;
 
 #define TAILLEBUF 1024
 
+//Fonction pour fermer la socket multicast (pour pas recevoir les message multicast si on c'est déco)
+/*
+void fermeture_socket_multicast(){
+
+}
+*/
 
 /**
  * codes clients 
  * Faire passer nom machine serveur et port distant
  */
+
 int main(int argc, char *argv[]) {
+
+    int TEST_multi=0;
 
     /*MULTICAST*/
 
@@ -52,20 +65,29 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    if (fork() == 0) {
-        // creation d'une boucle "infini" pour recevoir messages du serveur (multicast)
-        char message[100];
+    pid_t pid_multicast = fork();
+
+    //TODO : FAIRE LE LIEN AVEC TCP (parce que pour l'instant si on quitte le tcp, le multicast fonctionne encore)
+    if (pid_multicast == 0) {
+        //Reception des messages MULTICAST du serveur
+        char message_multicast[100];
+        
         while (strcmp(message_multicast, "q") != 0) {
-            int n = recvfrom(sock_udp, message, sizeof(message), 0, NULL, 0);
+            int n = recvfrom(sock_udp, message_multicast, sizeof(message_multicast), 0, NULL, 0);
             if (n > 0) {
-                message[n] = '\0';
-                printf("%s\n", message);
-                if (strcmp(message_multicast, "q") = 0){
+                message_multicast[n] = '\0';
+                printf("%s\n", message_multicast);
+                if (strcmp(message_multicast, "q") == 0){
                     printf("ARRET DU MULTICAST PAR LE SERVEUR");
+                    break;
                 }
             }
         }
-        exit(0);
+        //quitte le groupe multicast
+        printf("Fin du multicast.");
+        setsockopt(sock_udp, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+        close(sock_udp);
+        exit(0); 
     }
 
     static struct sockaddr_in server_addr; 
@@ -87,7 +109,7 @@ int main(int argc, char *argv[]) {
         exit(1); 
     } 
 
-    server_host = gethostbyname("10.0.2.15"); 
+    server_host = gethostbyname("STPDUBINF2623"); 
     if (server_host == NULL) {
         perror("Error : server adress recovering\n"); 
         exit(1); 
@@ -97,9 +119,7 @@ int main(int argc, char *argv[]) {
     server_addr.sin_family = AF_INET; 
     server_addr.sin_port = htons(2001); 
 
-    memcpy(&server_addr.sin_addr.s_addr,
-            server_host->h_addr, 
-            server_host->h_length); 
+    memcpy(&server_addr.sin_addr.s_addr,server_host->h_addr, server_host->h_length); 
 
     
     //connexion 
@@ -116,14 +136,16 @@ int main(int argc, char *argv[]) {
 
     char test[100]; 
     while (strcmp(test, "q") != 0) {
-        printf("communiction tjrs en cours\n"); 
+        printf("communication tjrs en cours\n"); 
         scanf("%s", test);
         
         write(sock, test, strlen(test)+1); 
         
-        if (strcmp(test, "q") != 0) printf("message envoye\n"); 
+        if (strcmp(test, "q") == 0){
+            printf("message de fin envoye\n");
+            kill(pid_multicast, SIGTERM);
+        }
     }
 
     close(sock);
-
 }
