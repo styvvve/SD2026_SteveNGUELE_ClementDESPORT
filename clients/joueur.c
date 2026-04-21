@@ -10,9 +10,6 @@
 #include <string.h>
 #include <signal.h>
 
-/* VARIABLES GLOBALS */
-//EXPLICATION SUR : http://shtroumbiniouf.free.fr/CoursInfo/Systeme2/TP/CoursSignaux/Volatile.html
-volatile sig_atomic_t multicast_en_cours = 1;
 
 #define TAILLEBUF 1024
 
