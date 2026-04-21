@@ -2,6 +2,10 @@ package main.java.domain;
 
 import java.io.Serializable;
 
+/**
+ * Player class represents a computer in the distributed system
+ */
+
 public class Player implements Serializable {
 
     private int id;

@@ -1,9 +1,8 @@
 package main.java.infra;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.*;
 
 /**
  * Class that will manage the connection between the java administrator and the server
@@ -12,17 +11,25 @@ import java.net.SocketException;
 
 public class connexionUDP extends Thread {
 
-    InetAddress adr;
-    DatagramSocket socket;
-    DatagramPacket packet;
+    private InetAddress adr;
+    private DatagramSocket socket;
+    private DatagramPacket packet;
 
-    //constructor for any port and a port choiced
-    //
-    public connexionUDP() {
+
+    //2 constructors
+
+    /**
+     * Constructor for any port
+     *
+     */
+    public connexionUDP(String server) {
         try {
             this.socket = new DatagramSocket(4000);
+            adr = InetAddress.getByName(server);
         } catch (SocketException s) {
             System.out.println("Error during socket creation " + s);
+        } catch (UnknownHostException u) {
+            System.out.println("Unknow host " + u);
         }
     }
 

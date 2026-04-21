@@ -12,4 +12,9 @@ public class Round implements Serializable {
     public Round(int roundNumber) {
         this.roundNumber = roundNumber;
     }
+
+    public int getRoundNumber() {
+        return roundNumber;
+    }
+    public void setRoundNumber(int roundNumber) {}
 }
