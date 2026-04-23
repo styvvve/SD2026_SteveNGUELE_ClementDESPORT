@@ -21,8 +21,6 @@
 
 int main(int argc, char *argv[]) {
 
-    int TEST_multi=0;
-
     /*MULTICAST*/
 
     // creation socket UDP pour le multicast
@@ -137,10 +135,6 @@ int main(int argc, char *argv[]) {
         if (strcmp(test, "q") == 0){
             printf("message de fin envoye\n");
             kill(pid_multicast, SIGTERM);
-
-            //attend la fin du processus fils 'pid_multicast'
-            int status_multicast;
-            wait(&status_multicast);
         }
     }
 
