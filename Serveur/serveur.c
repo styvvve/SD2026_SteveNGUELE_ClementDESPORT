@@ -126,7 +126,9 @@ int main(int argc, char* argv[]) {
     signal(SIGCHLD, SIG_IGN);
 
     int id_joueur=0;
-    if (fork==0){
+
+    pid_t pid_TCP_joueur = fork();
+    if (pid_TCP_joueur==0){
         while(1){
             lg = sizeof(struct sockaddr_in);
             socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
@@ -144,17 +146,9 @@ int main(int argc, char* argv[]) {
 
     // UDP Unicast ADMINISTRATEUR
 
-    // adresse de la socket coté serveur (réponse admin)
-    static struct sockaddr_in addr_admin;
-    // identifiant de l'admin
-    struct hostent *host_admin;
     // descripteur de la socket locale pour l'UDP admin
     int socket_admin;
 
-    int nb_octets_admin;
-
-    struct hostent *host_admin;
-    
     socket_admin = creerSocketUDP_Administrateur(2002); //Port a changer 
 
     // Vérifie si la socket à une erreur
@@ -167,23 +161,11 @@ int main(int argc, char* argv[]) {
 
     if (pid_unicast_admin == 0) {
 
-        nb_octets_admin = recvfrom(sock, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
-        if (nb_octets_admin == -1) {
-            perror("erreur réception paquet");
-            exit(1);
-        }
-        // récupère nom de la machine émettrice des données
-        host_admin = gethostbyaddr(&(addr_admin.sin_addr), sizeof(long), AF_INET);
-        if (host_admin == NULL) {
-            perror("erreur gethostbyaddr");
-            exit(1);
-        }
-
         //Dans fichier : "gererAdmin.c"
         gererAdmin(socket_admin);
 
         // fermeture la socket
-        close(sock_admin);
+        close(socket_admin);
     }
 
     /*
