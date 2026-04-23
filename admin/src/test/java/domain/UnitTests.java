@@ -6,6 +6,7 @@ import main.java.domain.Log;
 import main.java.domain.Player;
 import main.java.enu.GameMode;
 import main.java.enu.Level;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -15,9 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UnitTests {
 
+    Game newGame;
+
+    @BeforeEach
+    public void setup() {
+        newGame = new Game(GameMode.BATTLE_ROYAL, Level.EASY, Path.of("test.log"));
+    }
+
     @Test
     public void testGameClass() {
-        Game newGame = new Game(GameMode.BATTLE_ROYAL, Level.EASY, Path.of("rien"));
 
         assertEquals(GameMode.BATTLE_ROYAL, newGame.getMode());
         assertEquals(Level.EASY, newGame.getLevel());
@@ -33,8 +40,6 @@ public class UnitTests {
 
     @Test
     public void shouldCreateAValidLogGame() {
-
-        Game newGame = new Game(GameMode.BATTLE_ROYAL, Level.EASY, Path.of("test.log"));
 
         GameObserver obs = new Log();
         newGame.addObserver(obs);
