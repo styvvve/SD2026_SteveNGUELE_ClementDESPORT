@@ -10,4 +10,4 @@
 #include <limits.h>
 
 
-void gererJoueur(int socket,int id_joueur); 
+void gererAdmin(int socket); 

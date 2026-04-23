@@ -9,6 +9,8 @@
 #include <string.h>
 #include <signal.h>
 #include <arpa/inet.h>
+
+#include "gererAdmin.c"
 #include "socket.c"
 #include "gererJoueur.c"
 
@@ -17,7 +19,7 @@
 
 int main(int argc, char* argv[]) {
 
-    /*MULTICAST Joueur - Serveur*/
+    /*MULTICAST Joueur <-> Serveur*/
     
     // création de la socket UDP Multicast
     struct in_addr ip;
@@ -57,12 +59,7 @@ int main(int argc, char* argv[]) {
 
     // adresse de la socket locale
     static struct sockaddr_in addr_serveur_TCP_joueur;
-    // adresse de la socket coté serveur (réponse admin)
-    static struct sockaddr_in addr_admin;
-    // identifiant de l'admin
-    struct hostent *host_admin;
-    // descripteur de la socket locale pour l'UDP admin
-    int socket_admin;
+
 
     // configuration pour l'envoie de messages : serveur --> clients (multicast)
     bzero((char *) &adresse, sizeof(adresse));
@@ -82,6 +79,8 @@ int main(int argc, char* argv[]) {
         }
         exit(0);
     }
+
+    /*TCP Joueur <-> Serveur*/
 
     // buffer de réception
     char buffer[TAILLEBUF];
@@ -127,27 +126,36 @@ int main(int argc, char* argv[]) {
     signal(SIGCHLD, SIG_IGN);
 
     int id_joueur=0;
-
-    while(1){
-        lg = sizeof(struct sockaddr_in);
-        socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
-        ++id_joueur;
-        if (fork()==0){
-            close (socket_ecoute);
-            gererJoueur(socket_service,id_joueur);
-            close(socket_service);
-            exit(0);
+    if (fork==0){
+        while(1){
+            lg = sizeof(struct sockaddr_in);
+            socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
+            ++id_joueur;
+            if (fork()==0){
+                close (socket_ecoute);
+                gererJoueur(socket_service,id_joueur);
+                close(socket_service);
+                exit(0);
+            }
+            close (socket_service);
         }
-        close (socket_service);
     }
 
 
+    // UDP Unicast ADMINISTRATEUR
 
-    // Crée la socket pour relié l'administrateur et le serveur en UDP pour configuration partie via le port mis en paramètres dans l'execution du prog. (argv[1])
+    // adresse de la socket coté serveur (réponse admin)
+    static struct sockaddr_in addr_admin;
+    // identifiant de l'admin
+    struct hostent *host_admin;
+    // descripteur de la socket locale pour l'UDP admin
+    int socket_admin;
+
+    int nb_octets_admin;
+
+    struct hostent *host_admin;
     
-    
-/*    
-    socket_admin = creerSocketUDP_Administrateur(atoi(argv[1]));
+    socket_admin = creerSocketUDP_Administrateur(2002); //Port a changer 
 
     // Vérifie si la socket à une erreur
     if (socket_admin == -1) {
@@ -155,17 +163,38 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
+    pid_t pid_unicast_admin = fork();
+
+    if (pid_unicast_admin == 0) {
+
+        nb_octets_admin = recvfrom(sock, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
+        if (nb_octets_admin == -1) {
+            perror("erreur réception paquet");
+            exit(1);
+        }
+        // récupère nom de la machine émettrice des données
+        host_admin = gethostbyaddr(&(addr_admin.sin_addr), sizeof(long), AF_INET);
+        if (host_admin == NULL) {
+            perror("erreur gethostbyaddr");
+            exit(1);
+        }
+
+        //Dans fichier : "gererAdmin.c"
+        gererAdmin(socket_admin);
+
+        // fermeture la socket
+        close(sock_admin);
+    }
+
+    /*
     ToDo : Relier avec admin et configurer partie par rapport aux "messages" reçu par l'admin
     ToDo : Réfléchir à la façon dont l'admin configure la partie (exemple :  1- choisir mode, 2- choisir temps, 3-...)
     ToDo : Envoie en temps réelle l'évolution de la partie (ier ore,connexion/deconnexion...)
 
 
 
-    
-    close(socket_admin);
+*/
 
-
-    */
 
 
 }
