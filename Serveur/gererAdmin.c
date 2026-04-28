@@ -41,4 +41,6 @@ void gererAdmin(int socket) {
     chaine = (char *)malloc(nb_octets_admin * sizeof(char));
     memcpy(chaine, buffer, nb_octets_admin);
     printf("recu message %s sur le port %d\n", chaine, ntohs(addr_admin.sin_port));
+
+    free(chaine); 
 }

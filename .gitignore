@@ -19,7 +19,6 @@ out/
 CMakeFiles/
 CMakeCache.txt
 cmake-build-*/
-Makefile
 
 *.class
 *.jar
