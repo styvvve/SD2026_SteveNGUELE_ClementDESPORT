@@ -14,11 +14,11 @@ import java.nio.charset.StandardCharsets;
  * @author Steve
  */
 
-public class connexionUDP extends Thread {
+public class connexionUDP {
 
     private InetAddress adr;
     private DatagramSocket socket;
-    private DatagramPacket packet;
+    private final int serverPort;
 
 
     //2 constructors
@@ -27,24 +27,13 @@ public class connexionUDP extends Thread {
      * Constructor for any port
      *
      */
-    public connexionUDP(String server) {
-        try {
-            this.socket = new DatagramSocket(4000);
-            adr = InetAddress.getByName(server);
-        } catch (SocketException s) {
-            System.out.println("Error during socket creation " + s);
-        } catch (UnknownHostException u) {
-            System.out.println("Unknow host " + u);
-        }
+    public connexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
+         this.socket = new DatagramSocket();
+         adr = InetAddress.getByName(server);
+         this.serverPort = serverPort;
+         System.out.println("connexion UDP OK" + adr);
     }
 
-    public connexionUDP(int port) {
-        try {
-            this.socket = new DatagramSocket(port);
-        } catch (SocketException s) {
-            System.out.println("Error during socket creation " + s);
-        }
-    }
 
     //create a packet of Game
 
@@ -54,26 +43,25 @@ public class connexionUDP extends Thread {
     /**
      * Function to wait a packet from the server
      * @return the string received from the server
-     * @throws IOException
+     * @throws IOException if receiving fails
      */
     public String receiveFromServer() throws IOException {
         byte[] data = new byte[1024];
-        packet = new DatagramPacket(data, data.length);
-
+        DatagramPacket packet = new DatagramPacket(data, data.length);
 
         socket.receive(packet);
+
         return new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
     }
 
     /**
      * Function to send data to the server
-     * @param chaine
+     * @param text the string to send
      * @throws IOException
      */
-    public void sendToServer(String chaine) throws IOException {
-        byte[] data = chaine.getBytes();
-        packet.setData(data);
-        packet.setLength(data.length);
+    public void sendToServer(String text) throws IOException {
+        byte[] data = text.getBytes(StandardCharsets.UTF_8);
+        DatagramPacket packet = new DatagramPacket(data, data.length, adr, serverPort);
 
         socket.send(packet);
     }
