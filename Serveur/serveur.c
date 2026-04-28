@@ -10,19 +10,22 @@
 #include <signal.h>
 #include <arpa/inet.h>
 
-#include "gererAdmin.c"
-#include "socket.c"
-#include "gererJoueur.c"
+#include "gererAdmin.h"
+#include "socket.h"
+#include "gererJoueur.h"
 
 #define TAILLEBUF 100
 
 
 int main(int argc, char* argv[]) {
 
+    /*signaux pour fermer les sockets lors de l'arret d'un programme pr qu'ils restent pas ouverts et occupent un processus*/
+    //signal -> func qui ferme toutes les sockets ouvertes
+
     /*MULTICAST Joueur <-> Serveur*/
     
     // création de la socket UDP Multicast
-    struct in_addr ip;
+    /*struct in_addr ip;
     static struct sockaddr_in ad_multicast, adresse;
     struct ip_mreq gr_multicast;
     int socket_multicast_joueur;
@@ -80,7 +83,7 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
-    /*TCP Joueur <-> Serveur*/
+    /*TCP Joueur <-> Serveur
 
     // buffer de réception
     char buffer[TAILLEBUF];
@@ -141,7 +144,7 @@ int main(int argc, char* argv[]) {
             }
             close (socket_service);
         }
-    }
+    }*/
 
 
     // UDP Unicast ADMINISTRATEUR
@@ -149,7 +152,7 @@ int main(int argc, char* argv[]) {
     // descripteur de la socket locale pour l'UDP admin
     int socket_admin;
 
-    socket_admin = creerSocketUDP_Administrateur(2002); //Port a changer 
+    socket_admin = creerSocketUDP_Administrateur(3000); //Port a changer 
 
     // Vérifie si la socket à une erreur
     if (socket_admin == -1) {
@@ -166,7 +169,12 @@ int main(int argc, char* argv[]) {
 
         // fermeture la socket
         close(socket_admin);
+        exit(0); 
     }
+
+    waitpid(pid_unicast_admin, NULL, 0); 
+
+    close(socket_admin); 
 
     /*
     ToDo : Relier avec admin et configurer partie par rapport aux "messages" reçu par l'admin

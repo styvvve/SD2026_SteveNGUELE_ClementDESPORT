@@ -1,3 +1,6 @@
+#ifndef SOCKET_H
+#define SOCKET_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,3 +14,5 @@
 #define TAILLEBUF 100
 
 int creerSocketUDP_Administrateur(int port);
+
+#endif

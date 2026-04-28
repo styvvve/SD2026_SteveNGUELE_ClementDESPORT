@@ -1,3 +1,6 @@
+#ifndef GERER_ADMIN_H
+#define GERER_ADMIN_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> 
@@ -11,3 +14,5 @@
 
 
 void gererAdmin(int socket); 
+
+#endif

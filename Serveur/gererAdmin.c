@@ -3,17 +3,22 @@
 #define TAILLEBUF 100
 
 void gererAdmin(int socket) {
+
     int nb_octets_admin;
     char *chaine;
     char *message = "Bjr";
     socklen_t lg;
+    char buffer[TAILLEBUF]; 
 
-    // adresse de la socket coté serveur (réponse admin)
+
+    // adresse de la socket coté admin
     static struct sockaddr_in addr_admin;
     struct hostent *host_admin;
     // descripteur de la socket locale pour l'UDP admin
 
-    nb_octets_admin = recvfrom(socket, setbuffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
+    lg = sizeof(struct sockaddr_in); 
+
+    nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
     if (nb_octets_admin == -1) {
         perror("erreur réception paquet");
         exit(1);
@@ -34,6 +39,6 @@ void gererAdmin(int socket) {
 
     // affichage message reçu et coordonnées émetteur
     chaine = (char *)malloc(nb_octets_admin * sizeof(char));
-    memcpy(chaine, setbuffer, nb_octets_admin);
+    memcpy(chaine, buffer, nb_octets_admin);
     printf("recu message %s sur le port %d\n", chaine, ntohs(addr_admin.sin_port));
 }

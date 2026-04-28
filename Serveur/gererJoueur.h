@@ -1,3 +1,6 @@
+#ifndef GERER_JOUEUR_H
+#define GERER_JOUEUR_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> 
@@ -11,3 +14,5 @@
 
 
 void gererJoueur(int socket,int id_joueur); 
+
+#endif
