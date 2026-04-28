@@ -9,18 +9,23 @@
 #include <string.h>
 #include <signal.h>
 #include <arpa/inet.h>
-#include "socket.c"
-#include "gererJoueur.c"
+
+#include "gererAdmin.h"
+#include "socket.h"
+#include "gererJoueur.h"
 
 #define TAILLEBUF 100
 
 
 int main(int argc, char* argv[]) {
 
-    /*MULTICAST Joueur - Serveur*/
+    /*signaux pour fermer les sockets lors de l'arret d'un programme pr qu'ils restent pas ouverts et occupent un processus*/
+    //signal -> func qui ferme toutes les sockets ouvertes
+
+    /*MULTICAST Joueur <-> Serveur*/
     
     // création de la socket UDP Multicast
-    struct in_addr ip;
+    /*struct in_addr ip;
     static struct sockaddr_in ad_multicast, adresse;
     struct ip_mreq gr_multicast;
     int socket_multicast_joueur;
@@ -57,12 +62,7 @@ int main(int argc, char* argv[]) {
 
     // adresse de la socket locale
     static struct sockaddr_in addr_serveur_TCP_joueur;
-    // adresse de la socket coté serveur (réponse admin)
-    static struct sockaddr_in addr_admin;
-    // identifiant de l'admin
-    struct hostent *host_admin;
-    // descripteur de la socket locale pour l'UDP admin
-    int socket_admin;
+
 
     // configuration pour l'envoie de messages : serveur --> clients (multicast)
     bzero((char *) &adresse, sizeof(adresse));
@@ -82,6 +82,8 @@ int main(int argc, char* argv[]) {
         }
         exit(0);
     }
+
+    /*TCP Joueur <-> Serveur
 
     // buffer de réception
     char buffer[TAILLEBUF];
@@ -128,26 +130,29 @@ int main(int argc, char* argv[]) {
 
     int id_joueur=0;
 
-    while(1){
-        lg = sizeof(struct sockaddr_in);
-        socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
-        ++id_joueur;
-        if (fork()==0){
-            close (socket_ecoute);
-            gererJoueur(socket_service,id_joueur);
-            close(socket_service);
-            exit(0);
+    pid_t pid_TCP_joueur = fork();
+    if (pid_TCP_joueur==0){
+        while(1){
+            lg = sizeof(struct sockaddr_in);
+            socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
+            ++id_joueur;
+            if (fork()==0){
+                close (socket_ecoute);
+                gererJoueur(socket_service,id_joueur);
+                close(socket_service);
+                exit(0);
+            }
+            close (socket_service);
         }
-        close (socket_service);
-    }
+    }*/
 
 
+    // UDP Unicast ADMINISTRATEUR
 
-    // Crée la socket pour relié l'administrateur et le serveur en UDP pour configuration partie via le port mis en paramètres dans l'execution du prog. (argv[1])
-    
-    
-/*    
-    socket_admin = creerSocketUDP_Administrateur(atoi(argv[1]));
+    // descripteur de la socket locale pour l'UDP admin
+    int socket_admin;
+
+    socket_admin = creerSocketUDP_Administrateur(3000); //Port a changer 
 
     // Vérifie si la socket à une erreur
     if (socket_admin == -1) {
@@ -155,17 +160,31 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
+    pid_t pid_unicast_admin = fork();
+
+    if (pid_unicast_admin == 0) {
+
+        //Dans fichier : "gererAdmin.c"
+        gererAdmin(socket_admin);
+
+        // fermeture la socket
+        close(socket_admin);
+        exit(0); 
+    }
+
+    waitpid(pid_unicast_admin, NULL, 0); 
+
+    close(socket_admin); 
+
+    /*
     ToDo : Relier avec admin et configurer partie par rapport aux "messages" reçu par l'admin
     ToDo : Réfléchir à la façon dont l'admin configure la partie (exemple :  1- choisir mode, 2- choisir temps, 3-...)
     ToDo : Envoie en temps réelle l'évolution de la partie (ier ore,connexion/deconnexion...)
 
 
 
-    
-    close(socket_admin);
+*/
 
-
-    */
 
 
 }
