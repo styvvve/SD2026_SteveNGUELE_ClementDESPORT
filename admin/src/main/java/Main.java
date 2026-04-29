@@ -19,7 +19,7 @@ public class Main {
         connexionUDP connexion = null; 
         while (true) {
             try {
-                connexion = new connexionUDP("localhost", 3000);
+                connexion = new connexionUDP("scinfe182", 3000);
             } catch (SocketException | UnknownHostException e) {
                 System.out.println("Error during connexion " + e);
             }
@@ -28,7 +28,7 @@ public class Main {
             Game newGame = GameFactory.createGame(new ArrayList<>());
             svr.addGame(newGame);
             try {
-                connexion.sendToServer("test");
+                connexion.sendToServer("TEST");
             } catch (IOException e) {
                 System.out.println("Error during sendToServer " + e);
             }
@@ -38,7 +38,10 @@ public class Main {
                 System.out.println(chaineRecu);
                 String[] commande = chaineRecu.split("\\|");
                 if (commande[0].equals("addPlayer")) {
-                    newGame.addPlayer(new Player(Integer.parseInt(commande[1]), Integer.parseInt(commande[1])));
+                    for (String txt : commande) {
+                        System.out.println(txt);
+                    }
+                    newGame.addPlayer(new Player(Integer.parseInt(commande[1])));
                 }
                 System.out.println(newGame);
             } catch (IOException e) {
