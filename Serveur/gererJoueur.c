@@ -5,6 +5,7 @@
 void gererJoueur(int socket,int id_joueur) {
     int nb_octets;
     char *chaine_recue;
+    printf("test gererjoueur");
 
 
     char messages[100]; 
