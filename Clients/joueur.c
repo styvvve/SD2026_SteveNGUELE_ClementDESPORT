@@ -69,7 +69,6 @@ int main(int argc, char *argv[]) {
                 message_multicast[n] = '\0';
                 printf("%s\n", message_multicast);
                 if (strcmp(message_multicast, "q") == 0){
-                    printf("ARRET DU MULTICAST PAR LE SERVEUR");
                     break;
                 }
             }
@@ -100,7 +99,7 @@ int main(int argc, char *argv[]) {
         exit(1); 
     } 
 
-    server_host = gethostbyname("STPDUBINF2623"); 
+    server_host = gethostbyname("scinfe182"); 
     if (server_host == NULL) {
         perror("Error : server adress recovering\n"); 
         exit(1); 
