@@ -31,19 +31,27 @@ void fermeture_processus(){
 
 int main() {
 
+    /*Creation Pipe*/
+    int pipe_tcp_admin[2];
+
+    if (pipe(pipe_tcp_admin) == -1){
+        perror("Erreur durant la création de pipe");
+        exit(1);
+    }
+
     /*signaux pour fermer les sockets lors de l'arret d'un programme pr qu'ils restent pas ouverts et occupent un processus*/
     //signal -> func qui ferme toutes les sockets ouvertes
 
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
-        proc_Admin_UDP();
+        proc_Admin_UDP(pipe_tcp_admin);
         exit(0);
     }
 
 
     pid_t pid_proc_TCP = fork();
     if (pid_proc_TCP==0){
-        proc_TCP();
+        proc_TCP(pipe_tcp_admin);
         exit(0);
     }
 

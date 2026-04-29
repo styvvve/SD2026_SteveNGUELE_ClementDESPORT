@@ -20,10 +20,16 @@
 
 
 
-void proc_TCP(){
+void proc_TCP(int *pipe_tcp_admin){
+    //gestion pipe
+    close(pipe_tcp_admin[0]);
+
+    char message_test_pipe[] = "TESTTESTTEST";
+
+    write(pipe_tcp_admin[1],message_test_pipe,strlen(message_test_pipe));
+
     //TCP Joueur <-> Serveur
-
-
+    
     // descripteur de la socket locale pour TCP joueur
     int socket_ecoute, socket_service;
 

@@ -1,14 +1,18 @@
 #include "gererAdmin.h"
+#include <sys/wait.h>
 
 #define TAILLEBUF 100
 
-void gererAdmin(int socket) {
+void gererAdmin(int socket,int *pipe_tcp_admin) {
 
     int nb_octets_admin;
     char *chaine;
     char *message = "Bjr";
     socklen_t lg;
     char buffer[TAILLEBUF]; 
+
+    char message_recu_pipe[100];
+    
 
 
     // adresse de la socket coté admin
@@ -30,8 +34,10 @@ void gererAdmin(int socket) {
         exit(1);
     }
 
+    read(pipe_tcp_admin[0],message_recu_pipe,100);
+
     // envoi de la réponse à l'émetteur
-    nb_octets_admin = sendto(socket, message, strlen(message)+1, 0,(struct sockaddr*)&addr_admin, lg);
+    nb_octets_admin = sendto(socket, message_recu_pipe, strlen(message_recu_pipe)+1, 0,(struct sockaddr*)&addr_admin, lg);
     if (nb_octets_admin == -1) {
         perror("erreur envoi réponse");
         exit(1);

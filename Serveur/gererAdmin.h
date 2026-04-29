@@ -13,6 +13,6 @@
 #include <limits.h>
 
 
-void gererAdmin(int socket); 
+void gererAdmin(int socket,int *pipe_tcp_admin); 
 
 #endif

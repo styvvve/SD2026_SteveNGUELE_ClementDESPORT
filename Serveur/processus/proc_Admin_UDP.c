@@ -19,7 +19,7 @@
 #include "proc_Admin_UDP.h"
 
 
-void proc_Admin_UDP(){
+void proc_Admin_UDP(int *pipe_tcp_admin){
     // UDP Unicast ADMINISTRATEUR
 
     // descripteur de la socket locale pour l'UDP admin
@@ -35,7 +35,7 @@ void proc_Admin_UDP(){
 
 
     //Dans fichier : "gererAdmin.c"
-    gererAdmin(socket_admin);
+    gererAdmin(socket_admin,pipe_tcp_admin);
 
     // fermeture la socket
     close(socket_admin);
