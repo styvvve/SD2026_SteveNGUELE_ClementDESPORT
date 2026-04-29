@@ -21,12 +21,6 @@
 
 
 void proc_TCP(int *pipe_tcp_admin){
-    //gestion pipe
-    close(pipe_tcp_admin[0]);
-
-    char message_test_pipe[] = "TESTTESTTEST";
-
-    write(pipe_tcp_admin[1],message_test_pipe,strlen(message_test_pipe));
 
     //TCP Joueur <-> Serveur
     
@@ -73,11 +67,9 @@ void proc_TCP(int *pipe_tcp_admin){
         lg = sizeof(struct sockaddr_in);
         socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
         ++id_joueur;
-        printf("test tcp");
         if (fork()==0){
-        printf("test connexion");
             close (socket_ecoute);
-            gererJoueur(socket_service,id_joueur);
+            gererJoueur(socket_service,id_joueur,pipe_tcp_admin);
             close(socket_service);
             exit(0);
         }

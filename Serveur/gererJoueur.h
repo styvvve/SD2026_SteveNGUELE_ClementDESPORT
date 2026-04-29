@@ -13,6 +13,6 @@
 #include <limits.h>
 
 
-void gererJoueur(int socket,int id_joueur); 
+void gererJoueur(int socket,int id_joueur,int *pipe_tcp_admin); 
 
 #endif

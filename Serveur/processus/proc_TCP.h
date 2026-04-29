@@ -15,7 +15,7 @@
 #include <sys/wait.h>
 
 
-void proc_TCP();
+void proc_TCP(int *pipe_tcp_admin);
 void fermeture_proc_tcp();
 
 #endif

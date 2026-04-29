@@ -11,7 +11,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
     socklen_t lg;
     char buffer[TAILLEBUF]; 
 
-    char message_recu_pipe[100];
+    char message_recu_pipe[11];
     
 
 
@@ -34,7 +34,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
         exit(1);
     }
 
-    read(pipe_tcp_admin[0],message_recu_pipe,100);
+    read(pipe_tcp_admin[0],message_recu_pipe,11);
 
     // envoi de la réponse à l'émetteur
     nb_octets_admin = sendto(socket, message_recu_pipe, strlen(message_recu_pipe)+1, 0,(struct sockaddr*)&addr_admin, lg);
@@ -43,10 +43,6 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
         exit(1);
     }
 
-    // affichage message reçu et coordonnées émetteur
-    chaine = (char *)malloc(nb_octets_admin * sizeof(char));
-    memcpy(chaine, buffer, nb_octets_admin);
-    printf("recu message %s sur le port %d\n", chaine, ntohs(addr_admin.sin_port));
 
     free(chaine); 
 }
