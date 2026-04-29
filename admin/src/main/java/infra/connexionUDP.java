@@ -39,7 +39,7 @@ public class connexionUDP {
      * @throws IOException if receiving fails
      */
     public String receiveFromServer() throws IOException {
-        byte[] data = new byte[1024];
+        byte[] data = new byte[11];
         DatagramPacket packet = new DatagramPacket(data, data.length);
 
         socket.receive(packet);
