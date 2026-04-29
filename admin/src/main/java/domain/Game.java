@@ -25,14 +25,29 @@ public class Game implements Serializable {
 
     private Path filePath;
 
-    //exclusively for the gameService method
-    int nextRoundNumber = 0;
-
-    public Game(GameMode mode, Level level,  Path filePath) {
+    /**
+     * Standard constructor
+     * @param mode
+     * @param level
+     * @param filePath
+     */
+    public Game(GameMode mode, Level level, Path filePath) {
         this.id = UUID.randomUUID().toString();
         this.mode = mode;
         this.level = level;
         this.filePath = filePath;
+    }
+
+    /**
+     * Constructor with players
+     * @param mode
+     * @param level
+     * @param filePath
+     * @param players
+     */
+    public Game(GameMode mode, Level level, Path filePath, List<Player> players) {
+        this(mode, level, filePath);
+        this.players = players;
     }
 
     public String getId() {
@@ -59,18 +74,4 @@ public class Game implements Serializable {
         this.loggers.add(obs);
     }
 
-    /**
-     * this method is a "service" engine that manage the game process
-     *
-     * @throws
-     */
-    public void gameService() {
-        nextRoundNumber++;
-        int logs = 1;
-
-        Round newRound = new Round(nextRoundNumber);
-        this.addRounds(newRound);
-
-        loggers.forEach(l -> l.saveEachGameLog(this, logs, filePath));
-    }
 }
