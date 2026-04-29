@@ -24,21 +24,14 @@ public class connexionUDP {
     //2 constructors
 
     /**
-     * Constructor for any port
-     *
+     * Constructor with the name of the server and the server port
      */
     public connexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
          this.socket = new DatagramSocket();
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
-         System.out.println("connexion UDP OK" + adr);
+         System.out.println("connexion UDP OK " + adr + "\n");
     }
-
-
-    //create a packet of Game
-
-    //conversion to byte
-
 
     /**
      * Function to wait a packet from the server
