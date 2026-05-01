@@ -1,14 +1,13 @@
-package main.java.domain;
-
-import main.java.domain.interfaces.GameObserver;
-import main.java.enu.GameMode;
-import main.java.enu.Level;
+package domain;
 
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import domain.enu.*;
+import domain.interfaces.*;
 
 /**
  * This is the main class for the whole game

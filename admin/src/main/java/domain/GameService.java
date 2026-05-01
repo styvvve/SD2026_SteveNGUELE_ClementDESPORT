@@ -1,8 +1,7 @@
-package main.java.domain;
+package domain;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Centralized service for the game, it's the king instance
  * @author Steve
