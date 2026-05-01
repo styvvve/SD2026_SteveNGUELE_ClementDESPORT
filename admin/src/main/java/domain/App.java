@@ -1,23 +1,24 @@
-package main.java;
-
-import main.java.domain.Game;
-import main.java.domain.GameService;
-import main.java.domain.Player;
-import main.java.domain.factory.GameFactory;
-import main.java.infra.connexionUDP;
+package domain;
 
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class Main {
+import infra.connexionUDP;
+import domain.factory.GameFactory;
+
+public class App {
+
+    //Boolean that knows when the party is over
+    private static boolean partyOver = false;
 
     public static void main(String[] args) {
 
         //initialize the connection
-        connexionUDP connexion = null; 
-        while (true) {
+        connexionUDP connexion = null;
+        System.out.println("test");
+        while (!partyOver) {
             try {
                 connexion = new connexionUDP("localhost", 3000);
             } catch (SocketException | UnknownHostException e) {
