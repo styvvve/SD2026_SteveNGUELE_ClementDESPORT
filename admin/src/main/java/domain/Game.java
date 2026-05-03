@@ -10,7 +10,7 @@ import domain.enu.*;
 import domain.interfaces.*;
 
 /**
- * This is the main class for the whole game
+ * This is the main class for the whole game. The class implements Serializable interface for the communication with the persistence server in RMI
  * @author Steve
  */
 public class Game implements Serializable {
@@ -74,8 +74,5 @@ public class Game implements Serializable {
 
     public void addObserver(GameObserver obs) {
         this.loggers.add(obs);
-    }
-
-    public void gameService() {
     }
 }
