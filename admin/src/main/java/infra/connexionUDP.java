@@ -48,15 +48,29 @@ public class connexionUDP {
     }
 
     /**
-     * Function to send data to the server
+     * Function to send a text to the server -> we ll use it to send some text to test the connection with the server at any time
      * @param text the string to send
      * @throws IOException
+     *
      */
     public void sendToServer(String text) throws IOException {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         DatagramPacket packet = new DatagramPacket(data, data.length, adr, serverPort);
 
         socket.send(packet);
+    }
+
+    /**
+     * Method to test if the connection is ok at any time
+     */
+    public boolean testConnection() {
+        try {
+            this.sendToServer("test");
+            String response = this.receiveFromServer();
+            return response.equals("OK");
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /*public int sendRound(Round round) {

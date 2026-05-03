@@ -5,8 +5,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import domain.cli.CliParser;
 import infra.connexionUDP;
 import domain.factory.GameFactory;
+import org.apache.commons.cli.CommandLine;
 
 public class App {
 
@@ -16,7 +18,7 @@ public class App {
     public static void main(String[] args) {
 
         //initialize the connection
-        connexionUDP connexion = null;
+        /*connexionUDP connexion = null;
         System.out.println("test");
         while (!partyOver) {
             try {
@@ -45,6 +47,22 @@ public class App {
             } catch (IOException e) {
                 System.out.println("Error during receiveFromServer " + e);
             }
+        }*/
+
+        //test of the CLI
+        CliParser cli = new CliParser();
+        CommandLine cmd = cli.parse(args);
+
+        if (cmd.hasOption("h")) {
+            cli.printHelp();
+            System.exit(0);
+        }
+
+        switch (cli.getSelected()) {
+            case "c" -> System.out.println("configure");
+            case "s" -> System.out.println("start");
+            case "l" -> System.out.println("liste des joueurs");
+            case "hi" -> System.out.println("historique des parties");
         }
     }
 }
