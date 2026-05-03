@@ -2,10 +2,7 @@ package infra;
 
 
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
@@ -14,7 +11,7 @@ import java.nio.charset.StandardCharsets;
  * @author Steve
  */
 
-public class connexionUDP {
+public class ConnexionUDP {
 
     private InetAddress adr;
     private DatagramSocket socket;
@@ -26,7 +23,7 @@ public class connexionUDP {
     /**
      * Constructor with the name of the server and the server port
      */
-    public connexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
+    public ConnexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
          this.socket = new DatagramSocket();
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;

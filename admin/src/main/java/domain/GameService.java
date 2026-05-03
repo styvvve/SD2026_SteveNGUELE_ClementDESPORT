@@ -7,7 +7,7 @@ import java.util.List;
  * @author Steve
  * @version 1.0
  */
-public class GameService {
+public class GameService extends Thread {
 
     private final List<Game> games = new ArrayList<>();
 

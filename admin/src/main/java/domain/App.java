@@ -1,13 +1,6 @@
 package domain;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-
 import domain.cli.CliParser;
-import infra.connexionUDP;
-import domain.factory.GameFactory;
 import org.apache.commons.cli.CommandLine;
 
 public class App {
