@@ -21,6 +21,7 @@ public class Game implements Serializable {
     private Level level;
     private List<Round> rounds = new ArrayList<>();
     private List<GameObserver> loggers = new ArrayList<>();
+    private boolean isFinished = false;
 
     private Path filePath;
 
@@ -35,6 +36,7 @@ public class Game implements Serializable {
         this.mode = mode;
         this.level = level;
         this.filePath = filePath;
+        this.isFinished = false;
     }
 
     /**
@@ -47,6 +49,7 @@ public class Game implements Serializable {
     public Game(GameMode mode, Level level, Path filePath, List<Player> players) {
         this(mode, level, filePath);
         this.players = players;
+        this.isFinished = false;
     }
 
     public String getId() {
@@ -62,7 +65,7 @@ public class Game implements Serializable {
     public List<Round> getRounds() { return this.rounds; }
 
     public void addPlayer(Player player) {
-        this.players.add(player);
+
     }
 
     public void addRounds(Round round) {
@@ -73,4 +76,6 @@ public class Game implements Serializable {
         this.loggers.add(obs);
     }
 
+    public void gameService() {
+    }
 }
