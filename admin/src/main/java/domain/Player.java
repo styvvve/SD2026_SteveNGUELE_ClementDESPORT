@@ -1,4 +1,4 @@
-package main.java.domain;
+package domain;
 
 import java.io.Serializable;
 
@@ -11,9 +11,22 @@ public class Player implements Serializable {
     private int id;
     private int health;
 
+    /**
+     * Complete constructor
+     * @param id
+     * @param health
+     */
     public Player(int id, int health) {
         this.id = id;
         this.health = health;
+    }
+
+    /**
+     * Constructor with default health
+     * @param id
+     */
+    public Player(int id) {
+        this(id, 100);
     }
 
     public int getId() { return this.id; }
