@@ -1,10 +1,7 @@
-package main.java;
+package domain;
 
-import main.java.domain.Game;
-import main.java.domain.GameService;
-import main.java.domain.Player;
-import main.java.domain.factory.GameFactory;
-import main.java.infra.connexionUDP;
+import domain.factory.GameFactory;
+import infra.connexionUDP;
 
 import java.io.IOException;
 import java.net.SocketException;

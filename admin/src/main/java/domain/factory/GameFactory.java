@@ -1,17 +1,18 @@
-package main.java.domain.factory;
+package domain.factory;
 
-import main.java.domain.Game;
-import main.java.domain.Player;
-import main.java.enu.GameMode;
-import main.java.enu.Level;
+import domain.Game;
+import domain.Player;
+import domain.GameService;
+import domain.enu.GameMode;
+import domain.enu.Level;
 
 import java.nio.file.Path;
 import java.util.List;
 
 /**
  * Set the factory design pattern for the Game class
- * @see main.java.domain.Game
- * @see main.java.domain.GameService
+ * @see Game
+ * @see GameService
  */
 public class GameFactory {
     /**

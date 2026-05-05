@@ -1,6 +1,5 @@
-package main.java.infra;
+package infra;
 
-import main.java.domain.Round;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

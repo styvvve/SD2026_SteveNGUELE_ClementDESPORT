@@ -1,8 +1,8 @@
-package main.java.domain;
+package domain;
 
-import main.java.domain.interfaces.GameObserver;
-import main.java.enu.GameMode;
-import main.java.enu.Level;
+import domain.interfaces.GameObserver;
+import domain.enu.GameMode;
+import domain.enu.Level;
 
 import java.io.Serializable;
 import java.nio.file.Path;

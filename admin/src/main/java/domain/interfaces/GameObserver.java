@@ -1,6 +1,6 @@
-package main.java.domain.interfaces;
+package domain.interfaces;
 
-import main.java.domain.Game;
+import domain.Game;
 
 import java.nio.file.Path;
 

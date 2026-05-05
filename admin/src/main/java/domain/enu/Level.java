@@ -1,4 +1,4 @@
-package main.java.enu;
+package domain.enu;
 
 public enum Level {
     EASY,

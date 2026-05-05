@@ -1,6 +1,6 @@
-package main.java.domain;
+package domain;
 
-import main.java.domain.interfaces.GameObserver;
+import domain.interfaces.GameObserver;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
