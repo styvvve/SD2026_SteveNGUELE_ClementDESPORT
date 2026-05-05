@@ -4,10 +4,15 @@ LDFLAGS =
 LIBS = 
 
 
-SRC = gererJoueur.c \
-	  gererAdmin.c \
+
+SRC = Joueur/gererJoueur.c \
+	  Admin/gererAdmin.c \
 	  serveur.c \
-	  socket.c
+	  Socket/socket.c \
+	  Processus/proc_Admin_UDP.c \
+	  Processus/proc_TCP.c \
+	  Processus/proc_Multicast_UDP.c 
+
 
 OBJ = $(SRC:.c=.o)
 

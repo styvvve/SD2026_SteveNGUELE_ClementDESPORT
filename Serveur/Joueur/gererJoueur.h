@@ -1,5 +1,5 @@
-#ifndef GERER_ADMIN_H
-#define GERER_ADMIN_H
+#ifndef GERER_JOUEUR_H
+#define GERER_JOUEUR_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +13,6 @@
 #include <limits.h>
 
 
-void gererAdmin(int socket); 
+void gererJoueur(int socket,int id_joueur,int *pipe_tcp_admin); 
 
 #endif

@@ -9,182 +9,77 @@
 #include <string.h>
 #include <signal.h>
 #include <arpa/inet.h>
+#include <sys/wait.h>
 
-#include "gererAdmin.h"
-#include "socket.h"
-#include "gererJoueur.h"
+
+//Pipe
+#include <fcntl.h>
+
+#include "Admin/gererAdmin.h"
+#include "Socket/socket.h"
+#include "Joueur/gererJoueur.h"
+
+#include "Processus/proc_Multicast_UDP.h"
+#include "Processus/proc_Admin_UDP.h"
+#include "Processus/proc_TCP.h"
+
 
 #define TAILLEBUF 100
 
 
-int main(int argc, char* argv[]) {
+void fermeture_processus(){
+    fermeture_proc_admin();
+    fermeture_proc_multi();
+    fermeture_proc_tcp();
+}
+
+int main() {
+
+    /* Creation Pipe */
+    int pipe_tcp_admin[2];
+
+
+    if (pipe(pipe_tcp_admin) == -1){
+        perror("Erreur dans la création de pipe");
+        exit(1);
+    }
+
+    /*  Permet de crée une pipe non bloquant (read : non bloquant)
+        Pour que le processus (gererAdmin) lis encontinue pour voir
+        Si il y a des nouveaux clients */
+
+    //https://www.geeksforgeeks.org/c/non-blocking-io-with-pipes-in-c/
+
+
+    if (fcntl(pipe_tcp_admin[0], F_SETFL, O_NONBLOCK) < 0){
+        perror("Erreur dans la création de la pipe non bloquant.");
+        exit(2);
+    }
+
 
     /*signaux pour fermer les sockets lors de l'arret d'un programme pr qu'ils restent pas ouverts et occupent un processus*/
     //signal -> func qui ferme toutes les sockets ouvertes
 
-    /*MULTICAST Joueur <-> Serveur*/
-    
-    // création de la socket UDP Multicast
-    /*struct in_addr ip;
-    static struct sockaddr_in ad_multicast, adresse;
-    struct ip_mreq gr_multicast;
-    int socket_multicast_joueur;
-
-    // création de la socket UDP
-    socket_multicast_joueur = socket(AF_INET, SOCK_DGRAM, 0);
-    // récupération adresse ip du groupe
-    inet_aton("226.1.2.3",&ip);
-
-
-    // création identificateur du groupe
-    gr_multicast.imr_multiaddr.s_addr = ip.s_addr;
-    gr_multicast.imr_interface.s_addr = htonl(INADDR_ANY);
-
-    // autorisation de réutiliser le port (pour le fonctionnement multicast)
-    int reuse = 1;
-    setsockopt(socket_multicast_joueur, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-
-    // adresse locale du multicast
-    bzero((char *) &ad_multicast, sizeof(ad_multicast));
-    ad_multicast.sin_family = AF_INET;
-    ad_multicast.sin_addr.s_addr = htonl(INADDR_ANY);
-    ad_multicast.sin_port = htons(1234);
-
-        
-    if (bind(socket_multicast_joueur, (struct sockaddr *)&ad_multicast,sizeof(struct sockaddr_in)) < 0) {
-        perror("bind multicast serveur");
-        exit(1);
-    }
-
-    // abonnement de la socket au groupe multicast
-    setsockopt(socket_multicast_joueur, IPPROTO_IP, IP_ADD_MEMBERSHIP,&gr_multicast, sizeof(struct ip_mreq));
-
-
-    // adresse de la socket locale
-    static struct sockaddr_in addr_serveur_TCP_joueur;
-
-
-    // configuration pour l'envoie de messages : serveur --> clients (multicast)
-    bzero((char *) &adresse, sizeof(adresse));
-    adresse.sin_family = AF_INET;
-    adresse.sin_addr.s_addr = ip.s_addr;
-    adresse.sin_port = htons(1234);
-    int longueur_adresse = sizeof(struct sockaddr_in);
-
-
-    if (fork() == 0) {
-        //Envoie de messages à jusqu'a que le message == 'q'
-        char message_multicast[100];
-        while (strcmp(message_multicast, "q") != 0) {
-            scanf("%s",message_multicast);
-            sendto(socket_multicast_joueur, message_multicast, strlen(message_multicast), 0,(struct sockaddr*)&adresse, sizeof(adresse));
-            if (strcmp(message_multicast, "q") == 0) printf("ARRET DU MULTICAST (SERVEUR)\n"); 
-        }
+    pid_t pid_proc_Admin_UDP = fork();
+    if (pid_proc_Admin_UDP==0){
+        proc_Admin_UDP(pipe_tcp_admin);
         exit(0);
     }
 
-    /*TCP Joueur <-> Serveur
 
-    // buffer de réception
-    char buffer[TAILLEBUF];
-    // chaine reçue
-    char *chaine;
-    // nombre d'octets lus ou envoyés
-    int nb_octets;
-
-    // descripteur de la socket locale pour TCP joueur
-    int socket_ecoute, socket_service;
-
-    // adresse de la socket coté serveur (réponse joueurs)
-    static struct sockaddr_in addr_joueur;
-
-    int lg;
-
-    // port == 2001
-    socket_ecoute = socket(AF_INET, SOCK_STREAM, 0);
-
-    bzero((char *) &addr_serveur_TCP_joueur,sizeof(addr_serveur_TCP_joueur));
-
-
-    addr_serveur_TCP_joueur.sin_family = AF_INET;
-    addr_serveur_TCP_joueur.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr_serveur_TCP_joueur.sin_port = htons(2001);
-
-
-    if (socket_ecoute == -1){
-        perror("Création de la socket service");
-        exit (1);
+    pid_t pid_proc_TCP = fork();
+    if (pid_proc_TCP==0){
+        proc_TCP(pipe_tcp_admin);
+        exit(0);
     }
 
-    if( bind(socket_ecoute,(struct sockaddr*)&addr_serveur_TCP_joueur,sizeof(addr_serveur_TCP_joueur))== -1 ) {
-        perror("erreur bind socket écoute");
-        exit(1);
+    pid_t pid_proc_Multicast_UDP = fork();
+    if (pid_proc_Multicast_UDP==0){
+        proc_Multicast_UDP();
+        exit(0);
     }
 
-    if (listen(socket_ecoute,5)==-1){
-        perror("Erreur Listen");
-        exit (1);
-    }
 
-    signal(SIGCHLD, SIG_IGN);
-
-    int id_joueur=0;
-
-    pid_t pid_TCP_joueur = fork();
-    if (pid_TCP_joueur==0){
-        while(1){
-            lg = sizeof(struct sockaddr_in);
-            socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
-            ++id_joueur;
-            if (fork()==0){
-                close (socket_ecoute);
-                gererJoueur(socket_service,id_joueur);
-                close(socket_service);
-                exit(0);
-            }
-            close (socket_service);
-        }
-    }*/
-
-
-    // UDP Unicast ADMINISTRATEUR
-
-    // descripteur de la socket locale pour l'UDP admin
-    int socket_admin;
-
-    socket_admin = creerSocketUDP_Administrateur(3000); //Port a changer 
-
-    // Vérifie si la socket à une erreur
-    if (socket_admin == -1) {
-        perror("erreur création socket");
-        exit(1);
-    }
-
-    pid_t pid_unicast_admin = fork();
-
-    if (pid_unicast_admin == 0) {
-
-        //Dans fichier : "gererAdmin.c"
-        gererAdmin(socket_admin);
-
-        // fermeture la socket
-        close(socket_admin);
-        exit(0); 
-    }
-
-    waitpid(pid_unicast_admin, NULL, 0); 
-
-    close(socket_admin); 
-
-    /*
-    ToDo : Relier avec admin et configurer partie par rapport aux "messages" reçu par l'admin
-    ToDo : Réfléchir à la façon dont l'admin configure la partie (exemple :  1- choisir mode, 2- choisir temps, 3-...)
-    ToDo : Envoie en temps réelle l'évolution de la partie (ier ore,connexion/deconnexion...)
-
-
-
-*/
-
-
+    while(1){}
 
 }

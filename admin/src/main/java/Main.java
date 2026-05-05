@@ -14,7 +14,7 @@ public class Main {
         connexionUDP connexion = null; 
         
         try {
-            connexion = new connexionUDP("scinfe180", 3000);
+            connexion = new connexionUDP("scinfe182", 3000);
         } catch (SocketException | UnknownHostException e) {
             System.out.println("Error during connexion " + e);
         }
