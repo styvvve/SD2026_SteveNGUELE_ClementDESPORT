@@ -21,7 +21,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
 
     lg = sizeof(struct sockaddr_in); 
 
-    nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
+    /*nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
     if (nb_octets_admin == -1) {
         perror("erreur réception paquet");
         exit(1);
@@ -32,8 +32,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
     if (host_admin == NULL) {
         perror("erreur gethostbyaddr");
         exit(1);
-    }
-
+    }*/
 
     while (1){
 
@@ -44,7 +43,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
                 if (errno == EAGAIN){
                     printf("VIDE\n");
                     sleep(1);
-                    break;
+                    continue;
                 }
                 else{
                     perror("Erreur dans la lecture de la pipe vide");
@@ -56,11 +55,12 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
                 exit(0);
             default:
                 // Envoie du message pour l'admin
-                nb_octets_admin = sendto(socket, message_recu_pipe, strlen(message_recu_pipe)+1, 0,(struct sockaddr*)&addr_admin, lg);
+                /*nb_octets_admin = sendto(socket, message_recu_pipe, strlen(message_recu_pipe)+1, 0,(struct sockaddr*)&addr_admin, lg);
                 if (nb_octets_admin == -1) {
                     perror("erreur envoi réponse");
                     exit(1);
-                }
+                }*/
+                printf("%s\n",message_recu_pipe);
         }
     }
 

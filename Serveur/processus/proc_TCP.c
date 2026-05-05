@@ -41,7 +41,7 @@ void proc_TCP(int *pipe_tcp_admin){
 
     addr_serveur_TCP_joueur.sin_family = AF_INET;
     addr_serveur_TCP_joueur.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr_serveur_TCP_joueur.sin_port = htons(2001);
+    addr_serveur_TCP_joueur.sin_port = htons(2000);
 
 
     if (socket_ecoute == -1){

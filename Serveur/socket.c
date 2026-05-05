@@ -45,7 +45,3 @@ int creerSocketUDP_Administrateur (int port) {
     ***
 */
 
-
-/*int creerSocketTCP (int port){
-
-}*/
