@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         exit(1); 
     } 
 
-    server_host = gethostbyname("scinfe182"); 
+    server_host = gethostbyname("scinfe173"); 
     if (server_host == NULL) {
         perror("Error : server adress recovering\n"); 
         exit(1); 

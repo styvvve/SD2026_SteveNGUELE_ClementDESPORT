@@ -4,6 +4,7 @@ LDFLAGS =
 LIBS = 
 
 
+
 SRC = gererJoueur.c \
 	  gererAdmin.c \
 	  serveur.c \

@@ -11,6 +11,10 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 
+
+//Pipe
+#include <fcntl.h>
+
 #include "gererAdmin.h"
 #include "socket.h"
 #include "gererJoueur.h"
@@ -31,13 +35,27 @@ void fermeture_processus(){
 
 int main() {
 
-    /*Creation Pipe*/
+    /* Creation Pipe */
     int pipe_tcp_admin[2];
 
+
     if (pipe(pipe_tcp_admin) == -1){
-        perror("Erreur durant la création de pipe");
+        perror("Erreur dans la création de pipe");
         exit(1);
     }
+
+    /*  Permet de crée une pipe non bloquant (read : non bloquant)
+        Pour que le processus (gererAdmin) lis encontinue pour voir
+        Si il y a des nouveaux clients */
+
+    //https://www.geeksforgeeks.org/c/non-blocking-io-with-pipes-in-c/
+
+
+    if (fcntl(pipe_tcp_admin[0], F_SETFL, O_NONBLOCK) < 0){
+        perror("Erreur dans la création de la pipe non bloquant.");
+        exit(2);
+    }
+
 
     /*signaux pour fermer les sockets lors de l'arret d'un programme pr qu'ils restent pas ouverts et occupent un processus*/
     //signal -> func qui ferme toutes les sockets ouvertes

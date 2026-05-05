@@ -46,6 +46,4 @@ void proc_Admin_UDP(int *pipe_tcp_admin){
 
 }
 
-
-void fermeture_proc_admin(){
-}
+void fermeture_proc_admin(){}
