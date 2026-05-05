@@ -12,9 +12,9 @@
 #include <sys/wait.h>
 
 
-#include "../socket.h"
+#include "../Socket/socket.h"
 
-#include "../gererAdmin.h"
+#include "../Admin/gererAdmin.h"
 
 #include "proc_Admin_UDP.h"
 

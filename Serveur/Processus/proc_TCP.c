@@ -12,7 +12,7 @@
 #include <sys/wait.h>
 
 
-#include "../gererJoueur.h"
+#include "../Joueur/gererJoueur.h"
 
 #include "proc_TCP.h"
     

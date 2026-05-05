@@ -15,13 +15,13 @@
 //Pipe
 #include <fcntl.h>
 
-#include "gererAdmin.h"
-#include "socket.h"
-#include "gererJoueur.h"
+#include "Admin/gererAdmin.h"
+#include "Socket/socket.h"
+#include "Joueur/gererJoueur.h"
 
-#include "processus/proc_Multicast_UDP.h"
-#include "processus/proc_Admin_UDP.h"
-#include "processus/proc_TCP.h"
+#include "Processus/proc_Multicast_UDP.h"
+#include "Processus/proc_Admin_UDP.h"
+#include "Processus/proc_TCP.h"
 
 
 #define TAILLEBUF 100

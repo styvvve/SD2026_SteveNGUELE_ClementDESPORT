@@ -41,7 +41,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin) {
         switch (nread){
             case -1: 
                 if (errno == EAGAIN){
-                    printf("VIDE\n");
+                    printf("PIPE VIDE\n");
                     sleep(1);
                     continue;
                 }

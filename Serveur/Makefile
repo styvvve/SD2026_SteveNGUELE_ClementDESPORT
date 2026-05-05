@@ -5,13 +5,13 @@ LIBS =
 
 
 
-SRC = gererJoueur.c \
-	  gererAdmin.c \
+SRC = Joueur/gererJoueur.c \
+	  Admin/gererAdmin.c \
 	  serveur.c \
-	  socket.c \
-	  processus/proc_Admin_UDP.c \
-	  processus/proc_TCP.c \
-	  processus/proc_Multicast_UDP.c 
+	  Socket/socket.c \
+	  Processus/proc_Admin_UDP.c \
+	  Processus/proc_TCP.c \
+	  Processus/proc_Multicast_UDP.c 
 
 
 OBJ = $(SRC:.c=.o)
