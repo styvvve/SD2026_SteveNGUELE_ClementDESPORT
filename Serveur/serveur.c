@@ -10,6 +10,9 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdbool.h>
 
 
 //Pipe
@@ -45,7 +48,7 @@ int main() {
     }
 
     /*  Permet de crée une pipe non bloquant (read : non bloquant)
-        Pour que le processus (gererAdmin) lis encontinue pour voir
+        Pour que le processus (gererAdmin) lis en continue pour voir
         Si il y a des nouveaux clients */
 
     //https://www.geeksforgeeks.org/c/non-blocking-io-with-pipes-in-c/
@@ -57,19 +60,43 @@ int main() {
     }
 
 
-    /*signaux pour fermer les sockets lors de l'arret d'un programme pr qu'ils restent pas ouverts et occupent un processus*/
-    //signal -> func qui ferme toutes les sockets ouvertes
+    // Mémoire partagé
+    /** 
+    IPC_PRIVATE : Pas besoin d'ID pour les fils
+    IPC_CREAT : Pour créer le segment de partage
+    0666 : Lecture et Ecriture pour chaque processus
+    **/
+    int shm_id = shmget(IPC_PRIVATE, sizeof(bool) * 100, IPC_CREAT | 0666);
+
+    if (shm_id == -1) {
+        perror("Erreur dans la mémoire partagée");
+        exit(EXIT_FAILURE);
+    }
+
+    /** 
+    shmat : Pour mettre le tableau dans la mémoire partagé
+    shm_id : ID
+    NULL et 0 : Pour choisir automatiquement l'adresse de stockage et pas de restriction
+    **/
+    bool *joueurConnecte = (bool *)shmat(shm_id, NULL, 0);
+
+    // Initialisation du tableau des joueurs connecte
+
+    for (int i=0;i<100;i++){
+        joueurConnecte[i]=false;
+    }
+
 
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
-        proc_Admin_UDP(pipe_tcp_admin);
+        proc_Admin_UDP(pipe_tcp_admin,joueurConnecte);
         exit(0);
     }
 
 
     pid_t pid_proc_TCP = fork();
     if (pid_proc_TCP==0){
-        proc_TCP(pipe_tcp_admin);
+        proc_TCP(pipe_tcp_admin,joueurConnecte);
         exit(0);
     }
 

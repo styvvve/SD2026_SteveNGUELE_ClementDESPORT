@@ -1,11 +1,18 @@
 #include "gererAdmin.h"
 #include <sys/wait.h>
+#include <stdbool.h>
 
 #include "../Jeu/jeu.h"
 
 #define TAILLEBUF 100
 
-void gererAdmin(int socket,int *pipe_tcp_admin) {
+void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
+    int nbrConnecte;
+    while(1){
+        nbrConnecte=nombreDeJoueurConnecter(joueurconnecte);
+        printf("Joueur connecte à l'instant : %d \n",nbrConnecte);
+        usleep(700000);
+    }
 
     int nb_octets_admin;
     socklen_t lg;

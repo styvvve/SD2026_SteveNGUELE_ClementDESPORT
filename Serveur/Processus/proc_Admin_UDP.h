@@ -13,9 +13,10 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 
-void proc_Admin_UDP();
+void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte);
 void fermeture_proc_admin();
 
 #endif

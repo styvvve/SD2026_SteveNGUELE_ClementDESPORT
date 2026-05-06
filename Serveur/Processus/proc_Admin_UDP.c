@@ -10,6 +10,7 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 
 #include "../Socket/socket.h"
@@ -19,7 +20,7 @@
 #include "proc_Admin_UDP.h"
 
 
-void proc_Admin_UDP(int *pipe_tcp_admin){
+void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte){
     // UDP Unicast ADMINISTRATEUR
 
     // descripteur de la socket locale pour l'UDP admin
@@ -35,7 +36,7 @@ void proc_Admin_UDP(int *pipe_tcp_admin){
 
 
     //Dans fichier : "gererAdmin.c"
-    gererAdmin(socket_admin,pipe_tcp_admin);
+    gererAdmin(socket_admin,pipe_tcp_admin,joueurconnecte);
 
     // fermeture la socket
     close(socket_admin);

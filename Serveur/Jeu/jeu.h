@@ -15,4 +15,6 @@
 
 void configure_partie(char config_partie[1024]);
 
+int nombreDeJoueurConnecter(bool *joueurconnecte);
+
 #endif

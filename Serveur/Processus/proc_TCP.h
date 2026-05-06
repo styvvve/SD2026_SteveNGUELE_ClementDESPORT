@@ -13,9 +13,10 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 
-void proc_TCP(int *pipe_tcp_admin);
+void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte);
 void fermeture_proc_tcp();
 
 #endif

@@ -11,8 +11,9 @@
 #include <errno.h> 
 #include <string.h> 
 #include <limits.h>
+#include <stdbool.h>
 
 
-void gererAdmin(int socket,int *pipe_tcp_admin); 
+void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte); 
 
 #endif

@@ -10,8 +10,10 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
-
+#include <stdbool.h>
 #include "structure_jeu.h"
+
+#define NOMBRE_MAX_JOUEUR 100
 
 
 
@@ -70,4 +72,14 @@ void configurePartie(char config_partie[1024]){
         num++;
         p = strtok(NULL, "|");
     }
+}
+
+int nombreDeJoueurConnecter(bool *joueurconnecte){
+    int nbrConnecte=0;
+    for (int i=0;i<NOMBRE_MAX_JOUEUR;i++){
+        if (joueurconnecte[i]==true){
+            nbrConnecte++;
+        }
+    }
+    return nbrConnecte;
 }
