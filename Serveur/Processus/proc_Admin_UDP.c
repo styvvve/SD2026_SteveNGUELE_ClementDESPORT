@@ -20,13 +20,13 @@
 #include "proc_Admin_UDP.h"
 
 
-void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte){
+void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte,char *argv[]){
     // UDP Unicast ADMINISTRATEUR
 
     // descripteur de la socket locale pour l'UDP admin
     int socket_admin;
 
-    socket_admin = creerSocketUDP_Administrateur(3000); //Port a changer 
+    socket_admin = creerSocketUDP_Administrateur(atoi(argv[2])); //Port a changer 
 
     // Vérifie si la socket à une erreur
     if (socket_admin == -1) {

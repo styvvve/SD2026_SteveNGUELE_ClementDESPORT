@@ -36,7 +36,7 @@ void fermeture_processus(){
     fermeture_proc_tcp();
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 
     /* Creation Pipe */
     int pipe_tcp_admin[2];
@@ -89,14 +89,14 @@ int main() {
 
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
-        proc_Admin_UDP(pipe_tcp_admin,joueurConnecte);
+        proc_Admin_UDP(pipe_tcp_admin,joueurConnecte,argv);
         exit(0);
     }
 
 
     pid_t pid_proc_TCP = fork();
     if (pid_proc_TCP==0){
-        proc_TCP(pipe_tcp_admin,joueurConnecte);
+        proc_TCP(pipe_tcp_admin,joueurConnecte,argv);
         exit(0);
     }
 

@@ -16,7 +16,7 @@
 #include <stdbool.h>
 
 
-void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte);
+void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte, char *argv[]);
 void fermeture_proc_tcp();
 
 #endif

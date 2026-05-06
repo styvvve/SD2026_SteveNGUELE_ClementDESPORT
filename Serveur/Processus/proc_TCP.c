@@ -21,7 +21,7 @@
 
 
 
-void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte){
+void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte, char *argv[]){
 
     //TCP Joueur <-> Serveur
     
@@ -42,7 +42,7 @@ void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte){
 
     addr_serveur_TCP_joueur.sin_family = AF_INET;
     addr_serveur_TCP_joueur.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr_serveur_TCP_joueur.sin_port = htons(2001);
+    addr_serveur_TCP_joueur.sin_port = htons(atoi(argv[1]));
 
 
     if (socket_ecoute == -1){

@@ -17,7 +17,7 @@
 
 
 
-void configurePartie(char config_partie[1024]){
+void configurePartie(char config_partie[1024],bool *joueurConnecte){
     int num=0;
     struct_jeu jeu;
     
@@ -35,9 +35,23 @@ void configurePartie(char config_partie[1024]){
     */
 
 
-    // https://waytolearnx.com/2019/09/decouper-une-chaine-de-caractere-en-c.html
+    
+    /** 
+     * @see https://waytolearnx.com/2019/09/decouper-une-chaine-de-caractere-en-c.html
+    */
     // Pour séparer les caractères (pour la configuration)
+
     char *p = strtok(config_partie,"|");
+
+
+    // Exemple de chaine à recevoir : 1|2|3|5|18
+    
+    for (int i=0;i<100;i++){
+        if (joueurConnecte[i]==true){
+            jeu.player[i]=true;
+        }
+    }
+
     while (p != NULL){
         switch (num){
             case 0:
@@ -49,18 +63,18 @@ void configurePartie(char config_partie[1024]){
                 break;
 
             case 2:
-                // ToDo player[100]
+                for (int i;i<100;i++){
+                    if (jeu.player[i]==true){
+                        jeu.vie[i]=atoi(p);
+                    }
+                }
                 break;
 
             case 3:
-                // ToDo vie[100]
-                break;
-
-            case 4:
                 jeu.temps_impartie=atoi(p);
                 break;
 
-            case 5:
+            case 4:
                 jeu.nbr_taupe=atoi(p);
                 break;
 
