@@ -41,7 +41,7 @@ public class CliParser {
         group.addOption(Option.builder("c")
                 .longOpt("config")
                 .hasArgs()
-                .argName("options de la partie dans cet ordre (espace entre chaque mot : mode niveau vies nombre-de-taupes fichier-mot temps-imparti")
+                .argName("options de la partie dans cet ordre (espace entre chaque mot : mode niveau vies nombre-de-taupes")
                 .desc("Initialize a game and wait for players to join")
                 .build());
 
