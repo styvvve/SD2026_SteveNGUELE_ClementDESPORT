@@ -2,6 +2,13 @@ package domain;
 
 import java.io.Serializable;
 
+/**
+ * Mole class represents a mole in the game
+ * @see Player
+ * @see Round
+ * @see Game
+ */
+
 public class Mole implements Serializable {
     private int number;
     private Player location;

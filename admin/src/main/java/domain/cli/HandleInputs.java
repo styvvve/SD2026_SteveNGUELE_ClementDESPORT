@@ -1,6 +1,7 @@
 package domain.cli;
 
 import domain.Game;
+import domain.factory.GameFactory;
 import infra.ConnexionUDP;
 
 import java.net.SocketException;
@@ -55,6 +56,8 @@ public class HandleInputs {
         String level = args[1];
         int health = Integer.parseInt(args[2]);
         int molesNumber = Integer.parseInt(args[3]);
+
+
 
         return Response.fail("Error to configure the game");
     }
