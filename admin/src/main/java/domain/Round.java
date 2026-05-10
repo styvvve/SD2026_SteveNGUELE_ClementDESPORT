@@ -27,7 +27,7 @@ public class Round implements Serializable {
     public int getRoundNumber() {
         return roundNumber;
     }
+    public List<Mole> getMoles() { return this.moles; }
     public void setRoundNumber(int roundNumber) {}
     public void addMole(Mole mole) { this.moles.add(mole); }
-
 }

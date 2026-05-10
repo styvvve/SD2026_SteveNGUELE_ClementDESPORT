@@ -5,8 +5,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Random;
 
 import domain.enu.*;
+import domain.exception.NotEnoughPlayersException;
 import domain.interfaces.*;
 
 /**
@@ -23,6 +25,7 @@ public class Game implements Serializable {
     private List<GameObserver> loggers = new ArrayList<>();
     private boolean isFinished = false;
     private int health;
+    private int molesNumber;
 
     private Path filePath;
 
@@ -59,21 +62,20 @@ public class Game implements Serializable {
     }
 
     /**
-     * constructor with health and rounds number
+     * constructor with health and moles number
      * @param
      */
-    public Game(GameMode mode, Level level, Path filePath, int health) {
+    public Game(GameMode mode, Level level, Path filePath, int health, int molesNumber) {
         this(mode, level, filePath);
         this.health = health;
+        this.molesNumber = molesNumber;
     }
 
-    public String getId() {
-        return this.id;
-    }
 
     /**
      * Getters
      */
+    public String getId() { return this.id; }
     public GameMode getMode() { return this.mode; }
     public Level getLevel() { return this.level; }
     public List<Player> getPlayers() { return this.players; }
@@ -101,10 +103,20 @@ public class Game implements Serializable {
 
     /**
      * Define a mole and randomly choose the location
+     * @param number the number of the mole
+     * @param words the list of words -> if it's level 3 and the list is empty, we use a predefined list
      * @return Mole
+     * @throws NotEnoughPlayersException if the number of players is not enough to define a mole (at least 2 players)
      */
-    public Mole defineMole() {
+    public Mole defineMole(int number, List<String> words) throws NotEnoughPlayersException {
+        Random random = new Random();
+        if (players.size() < 2) {
+            throw new NotEnoughPlayersException("Not enough players to define a mole");
+        }
 
-        return null;
+        Player player = players.get(random.nextInt(players.size()));
+        String word = words.isEmpty() ? "" : words.get(random.nextInt(words.size()));
+
+        return new Mole(number, player, word);
     }
 }

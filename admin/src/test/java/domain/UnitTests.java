@@ -1,13 +1,10 @@
 package domain;
 
-import domain.*;
 import domain.enu.GameMode;
 import domain.enu.Level;
-import domain.interfaces.GameObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;

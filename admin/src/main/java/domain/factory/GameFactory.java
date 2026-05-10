@@ -9,6 +9,7 @@ import domain.enu.GameMode;
 import domain.enu.Level;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,10 @@ import java.util.List;
  * @see GameService
  */
 public class GameFactory {
+
+    private GameFactory() {
+        throw new IllegalStateException("Utility class");
+    }
     /**
      * Factory method to create a new game with the given players but with default parameters
      * @return Game
@@ -30,12 +35,6 @@ public class GameFactory {
      * @return Game
      */
     public static Game createGame(GameMode mode, Level level, int health, int molesNumber) {
-        Game newGame =  new Game(mode, level, Path.of("game.log"), health);
-        newGame.getRounds().forEach(r -> {
-            for (int i = 0; i < molesNumber; i++) {
-                //add x moles
-                r.addMole(new Mole());
-            }
-        });
+        return new Game(mode, level, Path.of("game.log"), health, molesNumber);
     }
 }
