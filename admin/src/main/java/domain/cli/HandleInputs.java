@@ -1,6 +1,8 @@
 package domain.cli;
 
 import domain.Game;
+import domain.enu.GameMode;
+import domain.enu.Level;
 import domain.factory.GameFactory;
 import infra.ConnexionUDP;
 
@@ -51,15 +53,15 @@ public class HandleInputs {
      */
     public static Response<Game> configureGame(String[] args) {
         //first: check if the args are good
-        //getOptionValues passed in parameter we have a one-world tab
-        String mode = args[0];
-        String level = args[1];
+        //getOptionValues passed in parameter, we have a one-world tab
+        GameMode mode = GameMode.valueOf(args[0]);
+        Level level = Level.valueOf(args[1]);
         int health = Integer.parseInt(args[2]);
         int molesNumber = Integer.parseInt(args[3]);
 
+        Game newG = GameFactory.createGame(mode, level, health, molesNumber);
 
-
-        return Response.fail("Error to configure the game");
+        return Response.ok(newG);
     }
 
     public static Response<Game> startGame(Game game) {
