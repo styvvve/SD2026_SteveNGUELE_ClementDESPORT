@@ -11,15 +11,10 @@
 #include <errno.h> 
 #include <string.h> 
 #include <limits.h>
+
+
 #include "structure_jeu.h"
 
 
-bool verifeConfiguration(struct_jeu jeu);
 
-void configure_partie(char config_partie[1024]);
-
-int nombreDeJoueurConnecter(bool *joueurconnecte);
-
-bool verifeJoueurSup2(bool *joueurconnecte);
-
-#endif
+void creation_manche_equipe(int equipe, char *taupe, struct_jeu jeu);

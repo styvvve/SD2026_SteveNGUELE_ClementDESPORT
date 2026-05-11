@@ -17,6 +17,28 @@
 
 
 
+
+//Verifie si la configuration est correcte ou pas
+bool verifeConfiguration(struct_jeu jeu){
+    if (jeu.level<=0 && jeu.level>3){
+        return true;
+    }
+    if (jeu.mode<=0 && jeu.mode>2){
+        return false;
+    }
+    if (jeu.nbr_taupe<0){
+        return false;
+    }
+    if(jeu.temps_impartie<=0){
+        return false;
+    }
+    if(jeu.mode==2 && jeu.nbr_taupe%2!=0){
+        return false;
+    }
+    return true;
+}
+
+//Configure la partie en modifiant/créant une structure Jeu
 void configurePartie(char config_partie[1024],bool *joueurConnecte){
     int num=0;
     struct_jeu jeu;
@@ -46,6 +68,7 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
 
     // Exemple de chaine à recevoir : 1|2|3|5|18
     
+    // Ajouter tout les joueurs connecté
     for (int i=0;i<100;i++){
         if (joueurConnecte[i]==true){
             jeu.player[i]=true;
@@ -86,8 +109,18 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
         num++;
         p = strtok(NULL, "|");
     }
+    if (verifeConfiguration(jeu)){
+        printf("test");
+        //ToDo la suite
+    }
 }
 
+
+
+
+
+
+//Compte le nombre exacte de joueur connecte (Joueur + Spectateur)
 int nombreDeJoueurConnecter(bool *joueurconnecte){
     int nbrConnecte=0;
     for (int i=0;i<NOMBRE_MAX_JOUEUR;i++){
@@ -96,4 +129,14 @@ int nombreDeJoueurConnecter(bool *joueurconnecte){
         }
     }
     return nbrConnecte;
+}
+
+//Verifie si il y a au moins 2 joueurs connecte
+bool verifeJoueurSup2(bool *joueurconnecte){
+    if (nombreDeJoueurConnecter(joueurconnecte)>=2){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
