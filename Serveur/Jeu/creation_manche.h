@@ -1,5 +1,5 @@
-#ifndef JEU_H
-#define JEU_H
+#ifndef CREATION_MANCHE_H
+#define CREATION_MANCHE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,4 +17,6 @@
 
 
 
-void creation_manche_equipe(int equipe, char *taupe, struct_jeu jeu);
+char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu);
+
+#endif

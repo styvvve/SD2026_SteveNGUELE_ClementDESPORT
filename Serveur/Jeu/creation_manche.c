@@ -13,10 +13,10 @@
 #include <stdbool.h>
 #include "structure_jeu.h"
 
-//Cree une seule manche pour le mode equipe
-void creation_manche_equipe(int equipe, char *taupe, struct_jeu jeu){
-    char manche[100];
-    snprintf(manche,sizeof(manche)/sizeof(char),"%s||%s||%d",equipe,taupe,jeu.temps_impartie);
+//Crée une seule manche pour les deux modes (ID si c'est en battle royal. ID_Equipe si c'est en équipe)
+char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu){
+    char *manche = malloc(100);
+    snprintf(manche,100,"%d||%s||%d",equipe,taupe,jeu.temps_impartie);
     /* Exemple : 1||              _____
             \"_   _"/
             |(*)-(*)|
@@ -24,5 +24,6 @@ void creation_manche_equipe(int equipe, char *taupe, struct_jeu jeu){
      ---"(((---------)))"---||4*/
 
      // 1 == Equipe ; 4 == Seconde impartie
+     return manche;
 }
 
