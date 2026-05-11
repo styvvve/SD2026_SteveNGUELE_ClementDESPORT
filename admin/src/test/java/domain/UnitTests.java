@@ -24,7 +24,7 @@ public class UnitTests {
         assertEquals(GameMode.BATTLE_ROYAL, newGame.getMode());
         assertEquals(Level.EASY, newGame.getLevel());
 
-        assertEquals(0, newGame.getRounds().size());
+        assertEquals(6, newGame.getRounds().size());
         assertEquals(0, newGame.getPlayers().size());
 
         newGame.addPlayer(new Player(1, 5));
