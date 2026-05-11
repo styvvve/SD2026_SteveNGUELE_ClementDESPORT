@@ -1,7 +1,13 @@
 package domain;
 
 import domain.cli.CliParser;
+import infra.ConnexionUDP;
 import org.apache.commons.cli.CommandLine;
+
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class App {
 
@@ -41,9 +47,24 @@ public class App {
                 System.out.println("Error during receiveFromServer " + e);
             }
         }*/
+        ConnexionUDP connexion = null;
 
+        try {
+            connexion = new ConnexionUDP("scinfe173", 4000);
+        } catch (SocketException | UnknownHostException e) {
+            System.out.println("Error during connexion " + e);
+        }
+
+        while (true) {
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                public void run() {
+
+                }
+            };
+        }
         //test of the CLI
-        CliParser cli = new CliParser();
+        /*CliParser cli = new CliParser();
         CommandLine cmd = cli.parse(args);
 
         if (cmd.hasOption("h")) {
@@ -56,6 +77,6 @@ public class App {
             case "s" -> System.out.println("start");
             case "l" -> System.out.println("liste des joueurs");
             case "hi" -> System.out.println("historique des parties");
-        }
+        }*/
     }
 }
