@@ -7,6 +7,31 @@
 
 #define TAILLEBUF 100
 
+
+/*bool testConnectionAdmin(int socket, int lg,struct sockaddr_in *addr_admin){
+    char message[100];
+    char message_recue[100];
+    int nb_octets_admin;
+    char buffer[TAILLEBUF]; 
+    int a;
+
+    snprintf(message,sizeof(message)/sizeof(char),"test");
+    a=sendto(socket, message, strlen(message)+1, 0,(struct sockaddr*)addr_admin, lg);
+    if (a==-1){
+        perror("Test t ");
+    }
+    usleep(50000);
+    nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)addr_admin, &lg);
+    if (nb_octets_admin > 0){
+        memcpy(message_recue, buffer, nb_octets_admin);
+        printf("Test : %s\n", message_recue);
+        return true;
+    }
+    else {
+        return false;
+    }
+}*/
+
 void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
     /*
     int nbrConnecte;
@@ -21,8 +46,8 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
     struct timeval temps_select;
 
 
-    temps_select.tv_sec=0;
-    temps_select.tv_usec=100000;
+    temps_select.tv_sec=2;
+    temps_select.tv_usec=0;
 
 
     fd_set rfds;
@@ -59,17 +84,40 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
         exit(1);
     }
 
+
+
     while (1){
-
-        /*SELECT Pour avoir un recvfrom non bloquant*/
-        //https://learn.microsoft.com/fr-fr/windows/win32/api/winsock2/nf-winsock2-select
-        //https://www.developpez.net/forums/d1197400/c-cpp/c/fonction-select-c/
-        //http://manpagesfr.free.fr/man/man2/select.2.html
-
         //Met à zero l'ensemble de "recherche" du select
         FD_ZERO(&rfds);
         //Ajoute la socket à surveiller 
         FD_SET(socket, &rfds);
+
+        char message[100];
+        char message_recue[100];
+        int nb_octets_admin;
+        char buffer[TAILLEBUF]; 
+        int a;
+
+        snprintf(message,sizeof(message)/sizeof(char),"test");
+        a=sendto(socket, message, strlen(message)+1, 0,(struct sockaddr*)&addr_admin, lg);
+        if (a==-1){
+            perror("Test t ");
+        }
+        usleep(500000);
+        if (select(socket + 1, &rfds,NULL,NULL,&temps_select)>0){
+            printf("TRUE");
+        }
+        else {
+            printf("false");
+        }
+
+        /*SELECT Pour avoir un recvfrom non bloquant*/
+        //https://learn.microsoft.com/fr-fr/windows/win32/api/winsock2/nf-winsock2-select
+        //https://stackoverflow.com/questions/15941005/making-recvfrom-function-non-blocking
+        //https://www.developpez.net/forums/d1197400/c-cpp/c/fonction-select-c/
+        //http://manpagesfr.free.fr/man/man2/select.2.html
+
+
 
 
         // Si au bout de 100ms (ou à modifier) si aucune socket alors 

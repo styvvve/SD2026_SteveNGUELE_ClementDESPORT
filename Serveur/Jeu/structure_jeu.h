@@ -6,6 +6,7 @@ typedef struct struct_jeu {
     int mode;
     int player[100];
     int vie[100];
+    int manche;
     int temps_impartie;
     int nbr_taupe;  
 }struct_jeu;

@@ -21,7 +21,7 @@
 //Verifie si la configuration est correcte ou pas
 bool verifeConfiguration(struct_jeu jeu){
     if (jeu.level<=0 && jeu.level>3){
-        return true;
+        return false;
     }
     if (jeu.mode<=0 && jeu.mode>2){
         return false;
@@ -32,7 +32,7 @@ bool verifeConfiguration(struct_jeu jeu){
     if(jeu.temps_impartie<=0){
         return false;
     }
-    if(jeu.mode==2 && jeu.nbr_taupe%2!=0){
+    if(jeu.mode==2 && jeu.manche%2!=0){
         return false;
     }
     return true;
@@ -48,6 +48,7 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
     typedef struct struct_jeu {
         int level;
         int mode;
+        int manche;
         int player[100];
         int vie[100];
         int temps_impartie;
@@ -66,7 +67,7 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
     char *p = strtok(config_partie,"|");
 
 
-    // Exemple de chaine à recevoir : 1|2|3|5|18
+    // Exemple de chaine à recevoir : 1|2|3|5|18|6
     
     // Ajouter tout les joueurs connecté
     for (int i=0;i<100;i++){
@@ -101,6 +102,8 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
                 jeu.nbr_taupe=atoi(p);
                 break;
 
+            case 5:
+                jeu.manche=atoi(p);
             default :
                 perror("Erreur dans le switch. Trop d'argument");
                 break;

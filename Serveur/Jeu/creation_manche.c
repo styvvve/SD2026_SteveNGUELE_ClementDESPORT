@@ -27,3 +27,9 @@ char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu){
      return manche;
 }
 
+
+void creations_manches_equipe(struct_jeu jeu){
+     for (int i=0; i<jeu.manche;i++){
+          
+     }
+}
