@@ -21,7 +21,6 @@ CMakeCache.txt
 cmake-build-*/
 
 *.class
-*.jar
 *.war
 *.ear
 

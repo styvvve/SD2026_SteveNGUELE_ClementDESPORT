@@ -23,7 +23,7 @@ public class Log implements GameObserver {
                 game.getId(),
                 game.getMode().toString(),
                 game.getLevel().toString(),
-                game.getRounds().getLast().getRoundNumber(),
+                game.getRounds().get(game.getRounds().size()-1).getRoundNumber(),
                 playersList
                 );
 
