@@ -1,5 +1,5 @@
-#ifndef GERER_ADMIN_H
-#define GERER_ADMIN_H
+#ifndef CREATION_MANCHE_H
+#define CREATION_MANCHE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,10 +11,14 @@
 #include <errno.h> 
 #include <string.h> 
 #include <limits.h>
-#include <stdbool.h>
 
-#include "../structure_partage.h"
 
-void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage); 
+#include "structure_jeu.h"
+
+
+
+char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu);
+
+void creations_manches_equipe(struct_jeu jeu);
 
 #endif
