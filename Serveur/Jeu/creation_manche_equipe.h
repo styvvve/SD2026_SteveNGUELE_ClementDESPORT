@@ -19,4 +19,6 @@
 
 char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu);
 
+void creations_manches_equipe(struct_jeu jeu);
+
 #endif

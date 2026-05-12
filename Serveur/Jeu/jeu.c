@@ -12,27 +12,45 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 #include "structure_jeu.h"
+#include "../structure_partage.h"
 
 #define NOMBRE_MAX_JOUEUR 100
 
 
 
 
-//Verifie si la configuration est correcte ou pas
-bool verifeConfiguration(struct_jeu jeu){
-    if (jeu.level<=0 && jeu.level>3){
+//Verifie si la configuration est correcte pour le mode équipe
+bool verifeConfiguration_equipe(struct_jeu *jeu){
+    if (jeu->level<=0 && jeu->level>3){
         return false;
     }
-    if (jeu.mode<=0 && jeu.mode>2){
+    if (jeu->mode==2){
         return false;
     }
-    if (jeu.nbr_taupe<0){
+    if (jeu->nbr_taupe<0){
         return false;
     }
-    if(jeu.temps_impartie<=0){
+    if(jeu->temps_imparti<=0){
         return false;
     }
-    if(jeu.mode==2 && jeu.manche%2!=0){
+    if(jeu->manche%2!=0){
+        return false;
+    }
+    return true;
+}
+
+//Verifie si la configuration est correcte pour le mode battle royal
+bool verifeConfiguration_battle_royal(struct_jeu *jeu){
+    if (jeu->level<=0 && jeu->level>3){
+        return false;
+    }
+    if (jeu->mode==1){
+        return false;
+    }
+    if(jeu->temps_imparti<=0){
+        return false;
+    }
+    if(jeu->manche<=0){
         return false;
     }
     return true;
@@ -67,7 +85,8 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
     char *p = strtok(config_partie,"|");
 
 
-    // Exemple de chaine à recevoir : 1|2|3|5|18|6
+    // Exemple de chaine à recevoir : config|  1  | 2  | 3 |      5      |   18    |    6     (sans espace bien sûr)
+    //                                config|level|mode|vie|temps_imparti|nbr_taupe|nbr_manche
     
     // Ajouter tout les joueurs connecté
     for (int i=0;i<100;i++){
@@ -79,14 +98,16 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
     while (p != NULL){
         switch (num){
             case 0:
+                break;
+            case 1:
                 jeu.level=atoi(p);
                 break;
             
-            case 1:
+            case 2:
                 jeu.mode=atoi(p);
                 break;
 
-            case 2:
+            case 3:
                 for (int i=0;i<100;i++){
                     if (jeu.player[i]==true){
                         jeu.vie[i]=atoi(p);
@@ -94,15 +115,15 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
                 }
                 break;
 
-            case 3:
-                jeu.temps_impartie=atoi(p);
-                break;
-
             case 4:
-                jeu.nbr_taupe=atoi(p);
+                jeu.temps_imparti=atoi(p);
                 break;
 
             case 5:
+                jeu.nbr_taupe=atoi(p);
+                break;
+
+            case 6:
                 jeu.manche=atoi(p);
                 break;
             default :
@@ -113,22 +134,24 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
         num++;
         p = strtok(NULL, "|");
     }
-    if (verifeConfiguration(jeu)){
-        printf("test");
-        //ToDo la suite
+    if (verifeConfiguration_equipe(&jeu)){
+        printf("Configuration mode équipe \n");
+        //ToDo : faire la suite pour equipe
+    }
+    else if(verifeConfiguration_battle_royal(&jeu)){
+        printf("Configuration mode battle royal \n");
+        //ToDo : faire la suite pour battle royal
     }
 }
 
 
 
 
-
-
 //Compte le nombre exacte de joueur connecte (Joueur + Spectateur)
-int nombreDeJoueurConnecter(bool *joueurconnecte){
+int nombreDeJoueurConnecter(struct_partage *variablePartage){
     int nbrConnecte=0;
     for (int i=0;i<NOMBRE_MAX_JOUEUR;i++){
-        if (joueurconnecte[i]==true){
+        if (variablePartage->joueurConnecte[i]==true){
             nbrConnecte++;
         }
     }
@@ -136,8 +159,8 @@ int nombreDeJoueurConnecter(bool *joueurconnecte){
 }
 
 //Verifie si il y a au moins 2 joueurs connecte
-bool verifeJoueurSup2(bool *joueurconnecte){
-    if (nombreDeJoueurConnecter(joueurconnecte)>=2){
+bool verifeJoueurSup2(struct_partage *variablePartage){
+    if (nombreDeJoueurConnecter(variablePartage)>=2){
         return true;
     }
     else{

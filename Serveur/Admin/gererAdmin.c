@@ -80,12 +80,21 @@ void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage)
         if (a==-1){
             perror("Test t ");
         }
-        usleep(500000);
+        usleep(100000);
         if (select(socket + 1, &rfds,NULL,NULL,&temps_select)>0){
             printf("Connecté");
         }
         else {
             printf("Déconnecté");
+            if(variablePartage->jeu == true){
+                /*
+                    ToDo : Ne rien faire, la partie continue et informer à la fin de la partie à tout les clients que l'admin est partie et donc attendre..
+                */
+            }else{
+                /*
+                    ToDo: Informer les clients que l'admin est partie et donc attendre..
+                */
+            }
         }
 
         /*SELECT Pour avoir un recvfrom non bloquant*/
@@ -126,7 +135,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage)
             case -1: 
                 //Si la pipe est vide
                 if (errno == EAGAIN){
-                    usleep(50000);
+                    usleep(100000);
                     continue;
                 }
                 else{

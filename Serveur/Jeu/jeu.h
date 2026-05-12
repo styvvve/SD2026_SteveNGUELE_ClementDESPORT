@@ -12,14 +12,15 @@
 #include <string.h> 
 #include <limits.h>
 #include "structure_jeu.h"
+#include "../structure_partage.h"
 
 
 bool verifeConfiguration(struct_jeu jeu);
 
 void configure_partie(char config_partie[1024]);
 
-int nombreDeJoueurConnecter(bool *joueurconnecte);
+int nombreDeJoueurConnecter(struct_partage variablePartage);
 
-bool verifeJoueurSup2(bool *joueurconnecte);
+bool verifeJoueurSup2(struct_partage variablePartage);
 
 #endif

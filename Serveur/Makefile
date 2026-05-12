@@ -13,7 +13,7 @@ SRC = Joueur/gererJoueur.c \
 	  Processus/proc_TCP.c \
 	  Processus/proc_Multicast_UDP.c \
 	  Jeu/jeu.c \
-	  Jeu/creation_manche.c
+	  Jeu/creation_manche_equipe.c
 
 
 OBJ = $(SRC:.c=.o)
