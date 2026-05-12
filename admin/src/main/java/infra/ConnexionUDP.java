@@ -60,7 +60,7 @@ public class ConnexionUDP {
      */
     public boolean testConnection() {
         try {
-            this.sendToServer("test");
+            this.sendToServer("test|");
             String response = this.receiveFromServer();
             return response.equals("OK");
         } catch (IOException e) {
