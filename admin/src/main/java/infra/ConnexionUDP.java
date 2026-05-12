@@ -22,11 +22,11 @@ public class ConnexionUDP {
      * Constructor with the name of the server and the server port
      */
     public ConnexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
-         this.socket = new DatagramSocket();
+         this.socket = new DatagramSocket(5000);
          this.socket.setSoTimeout(1000);
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
-         System.out.println("connexion UDP OK " + adr + "\n");
+         System.out.println("connexion UDP OK " + adr + serverPort + "\n");
     }
 
     /**
@@ -59,7 +59,7 @@ public class ConnexionUDP {
     }
 
     /**
-     * Method to test if the connection is ok at any time. We test 3 times
+     * Method to test if the connection is ok at any time. We test it 3 times
      */
     public boolean testConnection() {
         for (int i = 0; i < 3; i++) {

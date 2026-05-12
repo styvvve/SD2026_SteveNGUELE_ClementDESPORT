@@ -33,6 +33,12 @@ public class UnitTests {
 
     }
 
+    @Test
+    public void shouldCreateAValidStringGameObject() {
+        String gameString = newGame.toString();
+        assertEquals("|1|1|3|10|6|6", gameString);
+    }
+
     /*@Test
     public void shouldCreateAValidLogGame() {
 

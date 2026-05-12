@@ -23,8 +23,9 @@ public class Game implements Serializable {
     private Level level;
     private List<Round> rounds = new ArrayList<>();
     private boolean isFinished = false;
-    private int health;
-    private int molesNumber;
+    private int health = 3;
+    private int molesNumber = 6;
+    private int time = 10; //in seconds
 
     private Path filePath;
 
@@ -39,8 +40,6 @@ public class Game implements Serializable {
         this.mode = mode;
         this.level = level;
         this.filePath = filePath;
-        this.isFinished = false;
-        this.health = 3;
         //the round number is 6 by default
         for (int i = 0; i < 6; i++) {
             Round round = new Round(i);
@@ -81,6 +80,8 @@ public class Game implements Serializable {
     public List<Round> getRounds() { return this.rounds; }
     public boolean isFinished() { return this.isFinished; }
     public int getHealth() { return this.health; }
+    public int getTime() { return this.time; }
+    public int getMolesNumber() { return this.molesNumber; }
 
     /**
      * Setters
@@ -95,6 +96,7 @@ public class Game implements Serializable {
     public void setFinished(boolean finished) { this.isFinished = finished; }
     public void setHealth(int health) { this.health = health; }
     public void addRound(Round round) { this.rounds.add(round); }
+    public void setTime(int time) { this.time = time; }
 
 
     /**
@@ -117,10 +119,18 @@ public class Game implements Serializable {
     }
 
     /**
-     * Convert a Game object into json to tranfer it to the server then
+     * Convert a Game object after configuration into a String with the format:
+     * -> |level|mode|health|time|numberOfMoles|numberOfRounds all in integer
      * @return String
      */
-    public String toJson() {
-        return null;
+    public String toString() {
+        int level = this.getLevel().getNumber();
+        int mode = this.getMode().getNumber();
+        int health = this.getHealth();
+        int time = this.getTime();
+        int numberOfMoles = this.getMolesNumber();
+        int numberOfRounds = this.getRounds().size();
+
+        return String.format("|%d|%d|%d|%d|%d|%d", level, mode, health, time, numberOfMoles, numberOfRounds);
     }
 }
