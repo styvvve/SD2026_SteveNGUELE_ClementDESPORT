@@ -13,6 +13,7 @@ import org.apache.commons.cli.CommandLine;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,11 +69,7 @@ public class App {
                 String[] values = cmd.getOptionValues("i");
 
                 Response<ConnexionUDP> resp = HandleInputs.initializeConnection(values[0], Integer.parseInt(values[1]));
-                try {
-                    resp.data().sendToServer("established");
-                } catch (IOException e) {
-                    System.out.println("Error during first sendToServer " + e);
-                }
+
                 TestConnectionUDP testConn = new TestConnectionUDP(resp.data());
                 ConnectionObserver svr = new GameService();
 
@@ -80,12 +77,8 @@ public class App {
 
                 testConn.start();
 
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+                System.out.println("Appuie sur Entrée pour quitter...");
+                new Scanner(System.in).nextLine();
                 testConn.stop();
             }
             case "c" -> System.out.println("configure");

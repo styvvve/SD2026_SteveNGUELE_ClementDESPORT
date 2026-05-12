@@ -23,6 +23,7 @@ public class ConnexionUDP {
      */
     public ConnexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
          this.socket = new DatagramSocket();
+         this.socket.setSoTimeout(1000);
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
          System.out.println("connexion UDP OK " + adr + "\n");
@@ -34,7 +35,7 @@ public class ConnexionUDP {
      * @throws IOException if receiving fails
      */
     public String receiveFromServer() throws IOException {
-        byte[] data = new byte[11];
+        byte[] data = new byte[100];
         DatagramPacket packet = new DatagramPacket(data, data.length);
 
         socket.receive(packet);
@@ -52,20 +53,33 @@ public class ConnexionUDP {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         DatagramPacket packet = new DatagramPacket(data, data.length, adr, serverPort);
 
+        System.out.println("Socket locale ouverte sur le port : " + this.socket.getLocalPort());
+
         socket.send(packet);
     }
 
     /**
-     * Method to test if the connection is ok at any time
+     * Method to test if the connection is ok at any time. We test 3 times
      */
     public boolean testConnection() {
-        try {
-            this.sendToServer("test|");
-            String response = this.receiveFromServer();
-            return response.equals("OK");
-        } catch (IOException e) {
-            return false;
+        for (int i = 0; i < 3; i++) {
+            try {
+                System.out.println("Tentative " + (i + 1));
+                this.sendToServer("test");
+                String response = this.receiveFromServer();
+                return response.equals("test");
+            } catch (SocketTimeoutException e) {
+                try {
+                    Thread.sleep(1000); //wait 1s before trying again
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            } catch (IOException e) {
+                return false;
+            }
         }
+
+        return false;
     }
 
     /*public int sendRound(Round round) {

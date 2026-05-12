@@ -17,7 +17,7 @@ public class TestConnectionUDP {
 
     private final ConnexionUDP connexion;
     private ScheduledExecutorService scheduler;
-    private final int delay = 2;
+    private final int delay = 6;
     private boolean lastState = true;
     private List<ConnectionObserver> observers = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class TestConnectionUDP {
             }
 
             lastState = isConnected;
-        }, 0, delay, TimeUnit.SECONDS);
+        }, 1, delay, TimeUnit.SECONDS);
     }
 
     public void stop() {
