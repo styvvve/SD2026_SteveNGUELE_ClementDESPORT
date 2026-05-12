@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 #include "structure_jeu.h"
+#include "structure_equipe.h"
 #include "../structure_partage.h"
 
 #include "creation_manche_equipe.h"
@@ -32,16 +33,26 @@ char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu){
 }
 
 
+/*
 void creations_manches_equipe(struct_jeu jeu){
      for (int i=0; i<jeu.manche;i++){
           
      }
+}*/
+
+void shuffle(int nbr, int joueur[100]){
+    int temp;
+    int j;
+    for (int i=nbr-1;i>1;i--){
+        j= rand() % i;
+        temp=joueur[i];
+        joueur[i]=joueur[j];
+        joueur[j]=temp;
+    }
 }
 
-
-/*
 //Fonction qui renvoie un tableau deux de tableau de 50 int. exemple : tab[[1,2,3][4,5,6]]
-void creation_equipe(struct_partage *variablePartage){
+struct_equipe creation_equipe(struct_partage *variablePartage){
      int joueur[100];
      int ind_tab=0;
      for (int i=0;i<100;i++){
@@ -50,11 +61,41 @@ void creation_equipe(struct_partage *variablePartage){
                ind_tab++;
           }
      }
-     //Cree 2 equipe
-     //Cree une variable 'EQUIPE_COURANTE' (pour connaitre dans quelle equipe mettre)
 
+     //shuffle les ID
+     shuffle(ind_tab,joueur);
+
+     /*Printf pour verifier*/
+
+     /*
+     for (int i=0;i<ind_tab;i++){
+          prinft("ID [%d] : %d",i,joueur[i]);
+     }
+     */
+
+     //Cree 2 equipe
+     struct_equipe equipes;
+     //Cree une variable 'EQUIPE_COURANTE' (pour connaitre dans quelle equipe mettre)
+     int equipe_courante=0;
+     int ind_equipe_1=0;
+     int ind_equipe_2=0;
+
+     //Met dans les deux equipe
+     for (int i=0;i<ind_tab;i++){
+          if (equipe_courante==0){
+               equipes.equipe_1[ind_equipe_1]=joueur[i];
+               ind_equipe_1++;
+               equipe_courante=1;
+          } else if (equipe_courante==1){
+               equipes.equipe_2[ind_equipe_2]=joueur[i];
+               ind_equipe_2++;
+               ind_equipe_2=0;
+          } else{
+               perror("Erreur dans creation_equipe, equipe_courant ");
+               exit(0);
+          }
+     }
 
      //Renvoyer les deux équipes
+     return equipes;
 }
-
-*/

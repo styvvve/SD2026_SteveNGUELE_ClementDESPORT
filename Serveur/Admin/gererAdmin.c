@@ -123,7 +123,6 @@ void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage)
                         ToDo : fonction pour lancer une partie
                     */
                 }
-
             }
         }
 
