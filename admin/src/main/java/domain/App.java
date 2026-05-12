@@ -10,6 +10,7 @@ import infra.ConnexionUDPFactory;
 import infra.TestConnectionUDP;
 import org.apache.commons.cli.CommandLine;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Timer;
@@ -67,6 +68,11 @@ public class App {
                 String[] values = cmd.getOptionValues("i");
 
                 Response<ConnexionUDP> resp = HandleInputs.initializeConnection(values[0], Integer.parseInt(values[1]));
+                try {
+                    resp.data().sendToServer("established");
+                } catch (IOException e) {
+                    System.out.println("Error during first sendToServer " + e);
+                }
                 TestConnectionUDP testConn = new TestConnectionUDP(resp.data());
                 ConnectionObserver svr = new GameService();
 
