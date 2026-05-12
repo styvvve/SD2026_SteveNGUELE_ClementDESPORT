@@ -1,7 +1,13 @@
 package domain;
 
 import domain.cli.CliParser;
+import domain.cli.HandleInputs;
+import domain.cli.Response;
+import domain.factory.GameFactory;
+import domain.interfaces.ConnectionObserver;
 import infra.ConnexionUDP;
+import infra.ConnexionUDPFactory;
+import infra.TestConnectionUDP;
 import org.apache.commons.cli.CommandLine;
 
 import java.net.SocketException;
@@ -47,25 +53,9 @@ public class App {
                 System.out.println("Error during receiveFromServer " + e);
             }
         }*/
-        ConnexionUDP connexion = null;
-
-        try {
-            connexion = new ConnexionUDP("scinfe173", 4000);
-        } catch (SocketException | UnknownHostException e) {
-            System.out.println("Error during connexion " + e);
-        }
-
-        while (true) {
-            Timer timer = new Timer();
-            TimerTask timerTask = new TimerTask() {
-                public void run() {
-
-                }
-            };
-        }
         //test of the CLI
-        /*CliParser cli = new CliParser();
-        CommandLine cmd = cli.parse(args);
+       CliParser cli = new CliParser();
+       CommandLine cmd = cli.parse(args);
 
         if (cmd.hasOption("h")) {
             cli.printHelp();
@@ -73,10 +63,29 @@ public class App {
         }
 
         switch (cli.getSelected()) {
+            case "i" -> {
+                String[] values = cmd.getOptionValues("i");
+
+                Response<ConnexionUDP> resp = HandleInputs.initializeConnection(values[0], Integer.parseInt(values[1]));
+                TestConnectionUDP testConn = new TestConnectionUDP(resp.data());
+                ConnectionObserver svr = new GameService();
+
+                testConn.addObserver(svr);
+
+                testConn.start();
+
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                testConn.stop();
+            }
             case "c" -> System.out.println("configure");
             case "s" -> System.out.println("start");
             case "l" -> System.out.println("liste des joueurs");
             case "hi" -> System.out.println("historique des parties");
-        }*/
+        }
     }
 }

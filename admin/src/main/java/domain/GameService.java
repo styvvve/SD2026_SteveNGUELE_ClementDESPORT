@@ -1,5 +1,7 @@
 package domain;
 
+import domain.interfaces.ConnectionObserver;
+
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -7,15 +9,25 @@ import java.util.List;
  * @author Steve
  * @version 1.0
  */
-public class GameService extends Thread {
+public class GameService implements ConnectionObserver {
 
-    private final List<Game> games = new ArrayList<>();
+    /*private final List<Game> games = new ArrayList<>();
 
     public List<Game> getGames() { return this.games; }
 
     public void addGame(Game game) {
         this.games.add(game);
+    }*/
+
+
+    @Override
+    public void connectionLost() {
+        System.out.println("Connection lost");
     }
 
+    @Override
+    public void connectionRestored() {
+        System.out.println("Connection restored");
+    }
 
 }

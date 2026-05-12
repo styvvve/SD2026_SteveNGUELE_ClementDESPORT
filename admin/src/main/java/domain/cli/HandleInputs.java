@@ -29,6 +29,25 @@ public class HandleInputs {
      * @param serverPort
      * @return Response
      */
+    public static Response<ConnexionUDP> initializeConnection(String server, int serverPort) {
+        try {
+            return Response.ok(new ConnexionUDP(server, serverPort)); //true
+        } catch (SocketException s) {
+            System.err.println("Unable to create a socket " + s);
+        } catch (UnknownHostException u) {
+            System.err.println("Unknown host " + u);
+        }
+
+        return Response.fail("Error");
+    }
+
+    /**
+     * Replication for the tests
+     * @param server
+     * @param serverPort
+     * @param factory
+     * @return
+     */
     public static Response<ConnexionUDP> initializeConnection(String server, int serverPort, ConnexionUDPFactory factory) {
         try {
             return Response.ok(factory.create(server, serverPort)); //true

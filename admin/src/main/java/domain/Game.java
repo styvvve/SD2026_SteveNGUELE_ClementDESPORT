@@ -22,7 +22,6 @@ public class Game implements Serializable {
     private List<Player> players = new ArrayList<>();
     private Level level;
     private List<Round> rounds = new ArrayList<>();
-    private List<GameObserver> loggers = new ArrayList<>();
     private boolean isFinished = false;
     private int health;
     private int molesNumber;
@@ -80,7 +79,6 @@ public class Game implements Serializable {
     public Level getLevel() { return this.level; }
     public List<Player> getPlayers() { return this.players; }
     public List<Round> getRounds() { return this.rounds; }
-    public List<GameObserver> getLoggers() { return this.loggers; }
     public boolean isFinished() { return this.isFinished; }
     public int getHealth() { return this.health; }
 
@@ -93,9 +91,7 @@ public class Game implements Serializable {
     public void addRounds(Round round) {
         this.rounds.add(round);
     }
-    public void addObserver(GameObserver obs) {
-        this.loggers.add(obs);
-    }
+
     public void setFinished(boolean finished) { this.isFinished = finished; }
     public void setHealth(int health) { this.health = health; }
     public void addRound(Round round) { this.rounds.add(round); }
@@ -125,6 +121,6 @@ public class Game implements Serializable {
      * @return String
      */
     public String toJson() {
-
+        return null;
     }
 }

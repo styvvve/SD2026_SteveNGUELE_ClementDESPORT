@@ -33,7 +33,7 @@ public class CliParser {
 
         group.addOption(Option.builder("i")
                 .longOpt("init")
-                .hasArgs()
+                .numberOfArgs(2)
                 .argName("nom-du-serveur port-du-serveur")
                 .desc("Initialize a connection between the administrator and the server")
                 .build());
