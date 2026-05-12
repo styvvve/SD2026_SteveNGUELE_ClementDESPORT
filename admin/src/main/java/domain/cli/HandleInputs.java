@@ -3,8 +3,10 @@ package domain.cli;
 import domain.Game;
 import domain.enu.GameMode;
 import domain.enu.Level;
+import domain.exception.NotEnoughPlayersException;
 import domain.factory.GameFactory;
 import infra.ConnexionUDP;
+import infra.ConnexionUDPFactory;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -27,9 +29,9 @@ public class HandleInputs {
      * @param serverPort
      * @return Response
      */
-    public static Response<ConnexionUDP> initializeConnection(String server, int serverPort) {
+    public static Response<ConnexionUDP> initializeConnection(String server, int serverPort, ConnexionUDPFactory factory) {
         try {
-            return Response.ok(new ConnexionUDP(server, serverPort)); //true
+            return Response.ok(factory.create(server, serverPort)); //true
         } catch (SocketException s) {
             System.err.println("Unable to create a socket " + s);
         } catch (UnknownHostException u) {
@@ -64,11 +66,18 @@ public class HandleInputs {
         return Response.ok(newG);
     }
 
+    /**
+     * Start the game
+     * @param game
+     * @return Response<Game>
+     */
     public static Response<Game> startGame(Game game) {
         //verification of the game
         if (game.getPlayers().size() < 2) {
             return Response.fail("Not enough players");
         }
+
+
 
         //send the game to the server
         return Response.ok(game);

@@ -16,4 +16,8 @@ public record Response<T>(boolean success, T data) {
     public static <T> Response<T> fail(String message) {
         return new Response<>(false, null);
     }
+
+    public boolean isOk() {
+        return this.success;
+    }
 }

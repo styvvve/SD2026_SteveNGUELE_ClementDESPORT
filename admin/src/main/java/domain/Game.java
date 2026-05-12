@@ -119,4 +119,12 @@ public class Game implements Serializable {
 
         return new Mole(number, player, word);
     }
+
+    /**
+     * Convert a Game object into json to tranfer it to the server then
+     * @return String
+     */
+    public String toJson() {
+
+    }
 }

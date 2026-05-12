@@ -27,6 +27,21 @@
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
+
+        <!--mock pour pouvoir créer des faux objets sur les fonctions-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--GSON pour convertir objet en JSON-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
+        </dependency>
     </dependencies>
 
     <!--Ajout du plugin mvn assembly-->

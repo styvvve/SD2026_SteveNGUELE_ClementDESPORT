@@ -31,11 +31,11 @@ public class GameFactoryTests {
     public void shouldCreateGameWithDefaultParametersAndGivenPlayers() {
 
         Game newG = GameFactory.createGame(players);
-
+        int lastPlayer = newG.getPlayers().size() - 1;
         assertEquals(GameMode.BATTLE_ROYAL, newG.getMode());
         assertEquals(Level.MEDIUM, newG.getLevel());
-        assertEquals(newG.getPlayers().getFirst(), players.getFirst());
-        assertEquals(newG.getPlayers().getLast(), players.getLast());
+        assertEquals(newG.getPlayers().get(0), players.get(0));
+        assertEquals(newG.getPlayers().get(lastPlayer), players.get(players.size() - 1));
     }
 
     /*@Test
