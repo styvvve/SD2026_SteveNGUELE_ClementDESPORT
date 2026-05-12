@@ -10,17 +10,20 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 
 #include "../Joueur/gererJoueur.h"
 
 #include "proc_TCP.h"
+
+#include "../structure_partage.h"
     
 
 
 
 
-void proc_TCP(int *pipe_tcp_admin){
+void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]){
 
     //TCP Joueur <-> Serveur
     
@@ -41,7 +44,7 @@ void proc_TCP(int *pipe_tcp_admin){
 
     addr_serveur_TCP_joueur.sin_family = AF_INET;
     addr_serveur_TCP_joueur.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr_serveur_TCP_joueur.sin_port = htons(2000);
+    addr_serveur_TCP_joueur.sin_port = htons(atoi(argv[1]));
 
 
     if (socket_ecoute == -1){
@@ -66,11 +69,19 @@ void proc_TCP(int *pipe_tcp_admin){
     while(1){
         lg = sizeof(struct sockaddr_in);
         socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
-        ++id_joueur;
+        while(variablePartage->joueurConnecte[id_joueur]==true && id_joueur<100){
+            id_joueur++;
+        }
+        if (id_joueur>99){
+            perror("Erreur dans l'atribution de l'ID");
+        } else {
+            variablePartage->joueurConnecte[id_joueur]=true;
+        }
         if (fork()==0){
             close (socket_ecoute);
             gererJoueur(socket_service,id_joueur,pipe_tcp_admin);
             close(socket_service);
+            variablePartage->joueurConnecte[id_joueur]=false;
             exit(0);
         }
         close (socket_service);
