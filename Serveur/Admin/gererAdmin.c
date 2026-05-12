@@ -4,35 +4,12 @@
 #include <stdbool.h>
 
 #include "../Jeu/jeu.h"
+#include "../structure_partage.h"
 
 #define TAILLEBUF 100
 
 
-/*bool testConnectionAdmin(int socket, int lg,struct sockaddr_in *addr_admin){
-    char message[100];
-    char message_recue[100];
-    int nb_octets_admin;
-    char buffer[TAILLEBUF]; 
-    int a;
-
-    snprintf(message,sizeof(message)/sizeof(char),"test");
-    a=sendto(socket, message, strlen(message)+1, 0,(struct sockaddr*)addr_admin, lg);
-    if (a==-1){
-        perror("Test t ");
-    }
-    usleep(50000);
-    nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)addr_admin, &lg);
-    if (nb_octets_admin > 0){
-        memcpy(message_recue, buffer, nb_octets_admin);
-        printf("Test : %s\n", message_recue);
-        return true;
-    }
-    else {
-        return false;
-    }
-}*/
-
-void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
+void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage) {
     /*
     int nbrConnecte;
 
@@ -59,7 +36,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
     int nread;
     char message_recu_pipe[100];
 
-    char message_recu_configuration_partie[1024];
+    char message_recu_admin[1024];
     
 
 
@@ -93,7 +70,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
         FD_SET(socket, &rfds);
 
         char message[100];
-        char message_recue[100];
+        char message_test[100];
         int nb_octets_admin;
         char buffer[TAILLEBUF]; 
         int a;
@@ -105,10 +82,10 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
         }
         usleep(500000);
         if (select(socket + 1, &rfds,NULL,NULL,&temps_select)>0){
-            printf("TRUE");
+            printf("Connecté");
         }
         else {
-            printf("false");
+            printf("Déconnecté");
         }
 
         /*SELECT Pour avoir un recvfrom non bloquant*/
@@ -124,11 +101,20 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
         if (select(socket + 1, &rfds,NULL,NULL,&temps_select)>0){
             nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
             if (nb_octets_admin > 0){
-                memcpy(message_recu_configuration_partie, buffer, nb_octets_admin);
-                printf("Configuration : %s\n", message_recu_configuration_partie);
-                /*
-                configure_partie(message_recu_configuration_partie);
-                */
+                memcpy(message_recu_admin, buffer, nb_octets_admin);
+                printf("Message reçu de l'admin :%s\n", message_recu_admin);
+                char *p = strtok(message_recu_admin,"|");
+                if (strcmp(message_recu_admin,"config")==0){
+                    /*
+                        configure_partie(message_recu_configuration_partie);
+                    */
+                }
+                if (strcmp(message_recu_admin,"lancer")==0){
+                    /*
+                        ToDo : fonction pour lancer une partie
+                    */
+                }
+
             }
         }
 
@@ -140,7 +126,6 @@ void gererAdmin(int socket,int *pipe_tcp_admin, bool *joueurconnecte) {
             case -1: 
                 //Si la pipe est vide
                 if (errno == EAGAIN){
-                    printf("PIPE VIDE\n");
                     usleep(50000);
                     continue;
                 }

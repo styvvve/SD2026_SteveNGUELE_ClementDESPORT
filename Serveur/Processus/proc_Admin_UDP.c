@@ -19,8 +19,10 @@
 
 #include "proc_Admin_UDP.h"
 
+#include "../structure_partage.h"
 
-void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte,char *argv[]){
+
+void proc_Admin_UDP(int *pipe_tcp_admin, struct_partage *variablePartage,char *argv[]){
     // UDP Unicast ADMINISTRATEUR
 
     // descripteur de la socket locale pour l'UDP admin
@@ -36,7 +38,7 @@ void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte,char *argv[]){
 
 
     //Dans fichier : "gererAdmin.c"
-    gererAdmin(socket_admin,pipe_tcp_admin,joueurconnecte);
+    gererAdmin(socket_admin,pipe_tcp_admin,variablePartage);
 
     // fermeture la socket
     close(socket_admin);

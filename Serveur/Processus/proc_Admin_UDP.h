@@ -14,9 +14,10 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <stdbool.h>
+#include "../structure_partage.h"
 
 
-void proc_Admin_UDP(int *pipe_tcp_admin, bool *joueurconnecte,char *argv[]);
+void proc_Admin_UDP(int *pipe_tcp_admin, struct_partage *variablePartage ,char *argv[]);
 void fermeture_proc_admin();
 
 #endif

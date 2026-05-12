@@ -26,6 +26,8 @@
 #include "Processus/proc_Admin_UDP.h"
 #include "Processus/proc_TCP.h"
 
+#include "structure_partage.h"
+
 
 #define TAILLEBUF 100
 
@@ -61,6 +63,8 @@ int main(int argc, char* argv[]) {
 
 
     // Mémoire partagé
+    //https://www.ibm.com/docs/fr/aix/7.3.0?topic=memory-creating-shared-segment-shmat-subroutine
+    //https://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/shm/shmget.html?utm_source=copilot.com
     /** 
     IPC_PRIVATE : Pas besoin d'ID pour les fils
     IPC_CREAT : Pour créer le segment de partage
@@ -78,25 +82,28 @@ int main(int argc, char* argv[]) {
     shm_id : ID
     NULL et 0 : Pour choisir automatiquement l'adresse de stockage et pas de restriction
     **/
-    bool *joueurConnecte = (bool *)shmat(shm_id, NULL, 0);
+    
+
+
+    struct_partage *variablePartage = (struct_partage *)shmat(shm_id, NULL, 0);
 
     // Initialisation du tableau des joueurs connecte
 
     for (int i=0;i<100;i++){
-        joueurConnecte[i]=false;
+        variablePartage->joueurConnecte[i]=false;
     }
 
 
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
-        proc_Admin_UDP(pipe_tcp_admin,joueurConnecte,argv);
+        proc_Admin_UDP(pipe_tcp_admin,variablePartage,argv);
         exit(0);
     }
 
 
     pid_t pid_proc_TCP = fork();
     if (pid_proc_TCP==0){
-        proc_TCP(pipe_tcp_admin,joueurConnecte,argv);
+        proc_TCP(pipe_tcp_admin,variablePartage,argv);
         exit(0);
     }
 

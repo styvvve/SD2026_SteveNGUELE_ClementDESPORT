@@ -87,7 +87,7 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
                 break;
 
             case 2:
-                for (int i;i<100;i++){
+                for (int i=0;i<100;i++){
                     if (jeu.player[i]==true){
                         jeu.vie[i]=atoi(p);
                     }
@@ -104,6 +104,7 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
 
             case 5:
                 jeu.manche=atoi(p);
+                break;
             default :
                 perror("Erreur dans le switch. Trop d'argument");
                 break;

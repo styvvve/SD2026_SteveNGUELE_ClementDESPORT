@@ -16,12 +16,14 @@
 #include "../Joueur/gererJoueur.h"
 
 #include "proc_TCP.h"
+
+#include "../structure_partage.h"
     
 
 
 
 
-void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte, char *argv[]){
+void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]){
 
     //TCP Joueur <-> Serveur
     
@@ -67,19 +69,19 @@ void proc_TCP(int *pipe_tcp_admin, bool *joueurconnecte, char *argv[]){
     while(1){
         lg = sizeof(struct sockaddr_in);
         socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
-        while(joueurconnecte[id_joueur]==true && id_joueur<100){
+        while(variablePartage->joueurConnecte[id_joueur]==true && id_joueur<100){
             id_joueur++;
         }
         if (id_joueur>99){
             perror("Erreur dans l'atribution de l'ID");
         } else {
-            joueurconnecte[id_joueur]=true;
+            variablePartage->joueurConnecte[id_joueur]=true;
         }
         if (fork()==0){
             close (socket_ecoute);
             gererJoueur(socket_service,id_joueur,pipe_tcp_admin);
             close(socket_service);
-            joueurconnecte[id_joueur]=false;
+            variablePartage->joueurConnecte[id_joueur]=false;
             exit(0);
         }
         close (socket_service);
