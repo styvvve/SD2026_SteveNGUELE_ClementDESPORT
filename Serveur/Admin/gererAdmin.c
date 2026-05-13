@@ -15,10 +15,6 @@
 
 void * reception(void *data){
     struct timeval temps_select;
-
-
-
-
     fd_set rfds;
 
     mutex_admin *mutex_ad = (mutex_admin*) data;

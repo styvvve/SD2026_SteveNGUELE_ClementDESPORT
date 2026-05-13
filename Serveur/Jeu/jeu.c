@@ -14,6 +14,7 @@
 #include "structure_jeu.h"
 #include "../structure_partage.h"
 
+
 #define NOMBRE_MAX_JOUEUR 100
 
 
@@ -57,7 +58,7 @@ bool verifeConfiguration_battle_royal(struct_jeu *jeu){
 }
 
 //Configure la partie en modifiant/créant une structure Jeu
-void configurePartie(char config_partie[1024],bool *joueurConnecte){
+void configurePartie(char config_partie[1024],struct_partage *variablePartage){
     int num=0;
     struct_jeu jeu;
     
@@ -89,7 +90,7 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
     
     // Ajouter tout les joueurs connecté
     for (int i=0;i<100;i++){
-        if (joueurConnecte[i]==true){
+        if (variablePartage->joueurConnecte[i]==true){
             jeu.player[i]=true;
         }
     }
