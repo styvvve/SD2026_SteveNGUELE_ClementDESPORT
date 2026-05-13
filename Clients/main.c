@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 
     int sock = socket_TCP(); 
     printf("Valeur de la socket : %d\n", sock); 
-    if (connexion_TCP(sock, argv[1], argv[2]) == 0){
+    if (connexion_TCP(sock, argv[1], atoi(argv[2])) == 0){
         printf("ok\n");
     }else{
         printf("non\n");

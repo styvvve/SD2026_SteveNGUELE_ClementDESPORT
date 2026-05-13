@@ -61,6 +61,7 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
             }
         }
         else {
+            printf("Joueur deconnecte\n");
             char message_pipe_deconnexion[100];
             snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
             write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
