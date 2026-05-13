@@ -72,7 +72,6 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
         int temps_impartie;
         int nbr_taupe;  
     }struct_jeu;
-
     */
 
 
