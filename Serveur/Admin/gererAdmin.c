@@ -16,8 +16,7 @@
 void * reception(void *data){
     struct timeval temps_select;
 
-    temps_select.tv_sec=5;
-    temps_select.tv_usec=0;
+
 
 
     fd_set rfds;
@@ -35,24 +34,29 @@ void * reception(void *data){
         FD_ZERO(&rfds);
         //Ajoute la socket à surveiller 
         FD_SET(mutex_ad->socket, &rfds);
+        //5 seconde
+        temps_select.tv_sec=5;
+        temps_select.tv_usec=0;
         if (select(mutex_ad->socket + 1, &rfds,NULL,NULL,&temps_select)>0){
-            mutex_ad->admin_connecte=true;
+            pthread_mutex_lock(&mutex_ad->mutex);
+            mutex_ad->admin_connecte = true;
+            pthread_mutex_unlock(&mutex_ad->mutex);
             nb_octets_admin = recvfrom(mutex_ad->socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&mutex_ad->addr_admin, &mutex_ad->lg);
             if (nb_octets_admin > 0){
                 memcpy(message_recu_admin, buffer, nb_octets_admin);
                 printf("Message reçu de l'admin :%s\n", message_recu_admin);
                 char *p = strtok(message_recu_admin,"|");
-                if (strcmp(p,"config")==0){
+                if (p && strcmp(p,"config")==0){
                     /*
                         configure_partie(message_recu_configuration_partie);
                     */
                 }
-                if (strcmp(p,"lancer")==0){
+                if (p && strcmp(p,"lancer")==0){
                     /*
                         ToDo : fonction pour lancer une partie
                     */
                 }
-                if (strcmp(p,"test")==0){
+                if (p && strcmp(p,"test")==0){
                     snprintf(message,sizeof(message)/sizeof(char),"OK");
                     a=sendto(mutex_ad->socket, message, strlen(message)+1, 0,(struct sockaddr*)&mutex_ad->addr_admin, mutex_ad->lg);
                     if (a==-1){
@@ -62,7 +66,11 @@ void * reception(void *data){
             }
         }
         else {
-            mutex_ad->admin_connecte=false;
+            //modifie variable admin_connecte
+            pthread_mutex_lock(&mutex_ad->mutex);
+            mutex_ad->admin_connecte = false;
+            pthread_mutex_unlock(&mutex_ad->mutex);
+
             if (mutex_ad->variablePartage->jeu){
                 /*
                     ToDo : Ne rien faire, la partie continue et informer à la fin de la partie à tout les clients que l'admin est partie et donc attendre..
@@ -85,8 +93,11 @@ void * envoie(void *data){
     int nb_octets_admin;
     char message_recu_pipe[100];
 
-    while (mutex_ad->admin_connecte){
-        if (mutex_ad->admin_connecte){
+    while (1){
+        pthread_mutex_lock(&mutex_ad->mutex);
+        bool admin_connecte = mutex_ad->admin_connecte;
+        pthread_mutex_unlock(&mutex_ad->mutex);
+        if (admin_connecte){
             nread = read(mutex_ad->pipe_tcp_admin[0],message_recu_pipe,100);
             switch (nread){
                 case -1: 

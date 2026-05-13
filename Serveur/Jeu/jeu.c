@@ -133,14 +133,6 @@ void configurePartie(char config_partie[1024],bool *joueurConnecte){
         num++;
         p = strtok(NULL, "|");
     }
-    if (verifeConfiguration_equipe(&jeu)){
-        printf("Configuration mode équipe \n");
-        //ToDo : faire la suite pour equipe
-    }
-    else if(verifeConfiguration_battle_royal(&jeu)){
-        printf("Configuration mode battle royal \n");
-        //ToDo : faire la suite pour battle royal
-    }
 }
 
 
