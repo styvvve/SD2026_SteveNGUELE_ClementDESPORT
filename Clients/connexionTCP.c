@@ -1,5 +1,6 @@
 #include "connexionTCP.h"
 
+
 int socket_TCP() {
     int sock = socket(AF_INET, SOCK_STREAM, 0); 
 
@@ -8,7 +9,6 @@ int socket_TCP() {
         printf("Error description : %s\n", strerror(errno)); 
         return sock; 
     }
-
     return sock; 
 }
 
@@ -36,20 +36,4 @@ int connexion_TCP(int socket, char* server_name, int server_port) {
     }
 
     return 0; 
-}
-
-int test_connection_TCP(int socket) {
-    //send a message
-    char *message = "test"; 
-    int octets = send(socket, message, strlen(message)+1, 0); 
-
-    //wait the server response
-    char response[TAILLEBUFF]; 
-    octets = recv(socket, response, TAILLEBUFF, 0);
-    if (strcmp(response, "testOK") == 0) {
-        return 0; 
-    }
-    //if error
-    perror("[FAIL] : test connection has failed\n"); 
-    return 1; 
 }

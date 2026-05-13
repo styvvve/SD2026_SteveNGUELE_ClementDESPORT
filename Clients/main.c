@@ -1,8 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <sys/time.h>
+#include <pthread.h>
+
+#define TAILLEBUF 100
 
 #include "connexionTCP.h"
 #include "connexionMulticastUDP.h"
+#include "mutex_test_connexion.h"
+
+void *test_connexion(void *data) {
+    
+    mutex_test *mutex_t = (mutex_test*) data;
+
+    int sock = mutex_t->socket;
+    struct timeval temps_select;
+    fd_set rfds;
+
+    char message_test_envoie[100];
+    char message_recu_serveur[100];
+    while(1){
+        snprintf(message_test_envoie,sizeof(message_test_envoie)/sizeof(char),"test|");
+        write(sock, message_test_envoie, strlen(message_test_envoie)+1);
+
+        //Met à zero l'ensemble de "recherche" du select
+        FD_ZERO(&rfds);
+        //Ajoute la socket à surveiller 
+        FD_SET(sock, &rfds);
+        //5 seconde
+        temps_select.tv_sec=5;
+        temps_select.tv_usec=0;
+
+        if (select(sock + 1, &rfds,NULL,NULL,&temps_select)>0){
+            read(sock,message_recu_serveur,sizeof(message_recu_serveur));
+        }else{
+            pthread_mutex_lock(&(*mutex_t).mutex);
+            (*mutex_t).serveur_connecte=false;
+            // Dévérouillage du mutex
+            pthread_mutex_unlock(&(*mutex_t).mutex);
+            printf("Le serveur n'est plus disponible.");
+            break;
+        }
+        sleep(1);
+    }
+    pthread_exit(NULL);
+}
 
 int main(int argc, char* argv[]) {
     pid_t proc_multicast = fork(); 
@@ -36,26 +79,42 @@ int main(int argc, char* argv[]) {
 
     int sock = socket_TCP(); 
     printf("Valeur de la socket : %d\n", sock); 
-    (connexion_TCP(sock, "scinfe131", 2001) == 0) ? printf("ok\n"): printf("non\n");
+    if (connexion_TCP(sock, argv[1], argv[2]) == 0){
+        printf("ok\n");
+    }else{
+        printf("non\n");
+    }
 
-    /*if (test_connection_TCP(sock) == 0) {
-        printf("OK"); 
-    } else {
-        printf("non"); 
-    }*/
-    char test[100]; 
-    while (strcmp(test, "q") != 0) {
+    mutex_test mutex_t;
+    pthread_mutex_init(&mutex_t.mutex, NULL);
+    mutex_t.serveur_connecte = true;
+    mutex_t.socket = sock;
+    
+
+
+    pthread_t thread;
+    pthread_create(&thread, NULL, test_connexion, &mutex_t);
+
+    char message[100]= ""; 
+    bool connecte=true;
+
+    while (strcmp(message, "q") != 0 && connecte) {
         printf("communication tjrs en cours\n"); 
-        scanf("%s", test);
+        scanf("%s", message);
+        //write(sock, message, srlen(message)+1); 
         
-        write(sock, test, strlen(test)+1); 
-        
-        if (strcmp(test, "q") == 0){
-            printf("message de fin envoye\n");
-            //kill(proc_multicast, SIGTERM);
+        pthread_mutex_lock(&mutex_t.mutex);
+        connecte = mutex_t.serveur_connecte;
+        pthread_mutex_unlock(&mutex_t.mutex);
+        if (strcmp(message, "q") == 0){
+            snprintf(message,sizeof(message)/sizeof(char),"quit|"); //pour fair comprendre que le client à quitter volontairement
+            write(sock, message, strlen(message)+1);
         }
     }
+    pthread_join(thread, NULL);
     close(sock); 
+    pthread_mutex_destroy(&mutex_t.mutex);
+    
 
     return 0; 
 }
