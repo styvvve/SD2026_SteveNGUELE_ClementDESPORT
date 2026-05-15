@@ -3,9 +3,7 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <pthread.h>
-
 #define TAILLEBUF 100
-
 #include "connexionTCP.h"
 #include "connexionMulticastUDP.h"
 #include "mutex_test_connexion.h"
@@ -13,17 +11,14 @@
 void *test_connexion(void *data) {
     
     mutex_test *mutex_t = (mutex_test*) data;
-
     int sock = mutex_t->socket;
     struct timeval temps_select;
     fd_set rfds;
-
     char message_test_envoie[100];
     char message_recu_serveur[100];
     while(1){
         snprintf(message_test_envoie,sizeof(message_test_envoie)/sizeof(char),"test|");
         write(sock, message_test_envoie, strlen(message_test_envoie)+1);
-
         //Met à zero l'ensemble de "recherche" du select
         FD_ZERO(&rfds);
         //Ajoute la socket à surveiller 
@@ -31,9 +26,10 @@ void *test_connexion(void *data) {
         //5 seconde
         temps_select.tv_sec=5;
         temps_select.tv_usec=0;
-
         if (select(sock + 1, &rfds,NULL,NULL,&temps_select)>0){
-            read(sock,message_recu_serveur,sizeof(message_recu_serveur));
+            if(read(sock,message_recu_serveur,sizeof(message_recu_serveur))==0){
+                printf("Le serveur c'est déconnecté. Veuillez relancer si le serveur est lancé. \n");
+            }
         }else{
             pthread_mutex_lock(&(*mutex_t).mutex);
             (*mutex_t).serveur_connecte=false;
@@ -46,15 +42,11 @@ void *test_connexion(void *data) {
     }
     pthread_exit(NULL);
 }
-
 int main(int argc, char* argv[]) {
     pid_t proc_multicast = fork(); 
-
     if (proc_multicast == 0) {
-
         struct ip_mreq multicast_group;
         struct sockaddr_in addr;
-
         int sock = sock_multicastUDP(); 
         if (join_muliticastGroup(sock, &addr, IP_MULTICAST, 1234, &multicast_group) == 0) { 
             char message_multicast[100]; 
@@ -68,6 +60,7 @@ int main(int argc, char* argv[]) {
                             break; 
                         }
                     }
+
                 }
             }
             printf("Fin du multicast."); 
@@ -75,8 +68,6 @@ int main(int argc, char* argv[]) {
             printf("non"); 
         }
     }
-
-
     int sock = socket_TCP(); 
     printf("Valeur de la socket : %d\n", sock); 
     if (connexion_TCP(sock, argv[1], atoi(argv[2])) == 0){
@@ -84,20 +75,15 @@ int main(int argc, char* argv[]) {
     }else{
         printf("non\n");
     }
-
     mutex_test mutex_t;
     pthread_mutex_init(&mutex_t.mutex, NULL);
     mutex_t.serveur_connecte = true;
     mutex_t.socket = sock;
     
-
-
     pthread_t thread;
     pthread_create(&thread, NULL, test_connexion, &mutex_t);
-
     char message[100]= ""; 
     bool connecte=true;
-
     while (strcmp(message, "q") != 0 && connecte) {
         printf("communication tjrs en cours\n"); 
         scanf("%s", message);
@@ -115,6 +101,5 @@ int main(int argc, char* argv[]) {
     close(sock); 
     pthread_mutex_destroy(&mutex_t.mutex);
     
-
     return 0; 
 }
