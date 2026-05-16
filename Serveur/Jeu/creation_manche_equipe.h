@@ -12,12 +12,13 @@
 #include <string.h> 
 #include <limits.h>
 
-
-#include "structure_jeu.h"
-
+#include "../structure_partage.h"
 
 
-char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu);
+
+
+
+char *creation_d_une_manche(int equipe, char *taupe, struct_partage *variablePartage);
 
 void creations_manches_equipe(struct_jeu jeu);
 

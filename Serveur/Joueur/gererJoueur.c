@@ -28,7 +28,6 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
     while(1){
         nb_octets = read(socket, message_recu_client, TAILLEBUF);
         if (nb_octets > 0){
-            printf("Message reçu du client :%s\n", message_recu_client);
             char *p = strtok(message_recu_client,"|");
             if (p && strcmp(p,"quit")==0){
                 printf("TEST DECO\n");

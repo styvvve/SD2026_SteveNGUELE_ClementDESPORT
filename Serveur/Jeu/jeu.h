@@ -11,13 +11,12 @@
 #include <errno.h> 
 #include <string.h> 
 #include <limits.h>
-#include "structure_jeu.h"
 #include "../structure_partage.h"
 
 
 bool verifeConfiguration(struct_jeu jeu);
 
-void configure_partie(char config_partie[1024]);
+void configurePartie(char config_partie[1024]);
 
 int nombreDeJoueurConnecter(struct_partage variablePartage);
 

@@ -11,7 +11,6 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-#include "structure_jeu.h"
 #include "../structure_partage.h"
 
 
@@ -21,37 +20,37 @@
 
 
 //Verifie si la configuration est correcte pour le mode équipe
-bool verifeConfiguration_equipe(struct_jeu *jeu){
-    if (jeu->level<=0 && jeu->level>3){
+bool verifeConfiguration_equipe(struct_partage *variablePartage){
+    if (variablePartage->jeu_config->level<=0 || variablePartage->jeu_config->level>3){
         return false;
     }
-    if (jeu->mode==2){
+    if (variablePartage->jeu_config->mode==2){
         return false;
     }
-    if (jeu->nbr_taupe<0){
+    if (variablePartage->jeu_config->nbr_taupe<0){
         return false;
     }
-    if(jeu->temps_imparti<=0){
+    if(variablePartage->jeu_config->temps_imparti<=0){
         return false;
     }
-    if(jeu->manche%2!=0){
+    if(variablePartage->jeu_config->manche%2!=0){
         return false;
     }
     return true;
 }
 
 //Verifie si la configuration est correcte pour le mode battle royal
-bool verifeConfiguration_battle_royal(struct_jeu *jeu){
-    if (jeu->level<=0 && jeu->level>3){
+bool verifeConfiguration_battle_royal(struct_partage *variablePartage){
+    if (variablePartage->jeu_config->level  <=0 || variablePartage->jeu_config->level>3){
         return false;
     }
-    if (jeu->mode==1){
+    if (variablePartage->jeu_config->mode==1){
         return false;
     }
-    if(jeu->temps_imparti<=0){
+    if(variablePartage->jeu_config->temps_imparti<=0){
         return false;
     }
-    if(jeu->manche<=0){
+    if(variablePartage->jeu_config->manche<=0){
         return false;
     }
     return true;
@@ -60,7 +59,6 @@ bool verifeConfiguration_battle_royal(struct_jeu *jeu){
 //Configure la partie en modifiant/créant une structure Jeu
 void configurePartie(char config_partie[1024],struct_partage *variablePartage){
     int num=0;
-    struct_jeu jeu;
     
     /*
 
@@ -74,6 +72,10 @@ void configurePartie(char config_partie[1024],struct_partage *variablePartage){
         int nbr_taupe;  
     }struct_jeu;
     */
+
+    if (variablePartage->jeu_config == NULL) {
+        variablePartage->jeu_config = malloc(sizeof(struct_jeu));
+    }
 
 
     
@@ -91,7 +93,7 @@ void configurePartie(char config_partie[1024],struct_partage *variablePartage){
     // Ajouter tout les joueurs connecté
     for (int i=0;i<100;i++){
         if (variablePartage->joueurConnecte[i]==true){
-            jeu.player[i]=true;
+            variablePartage->jeu_config->player[i]=true;
         }
     }
 
@@ -100,37 +102,36 @@ void configurePartie(char config_partie[1024],struct_partage *variablePartage){
             case 0:
                 break;
             case 1:
-                jeu.level=atoi(p);
+                variablePartage->jeu_config->level=atoi(p);
                 break;
             
             case 2:
-                jeu.mode=atoi(p);
+                variablePartage->jeu_config->mode=atoi(p);
                 break;
 
             case 3:
                 for (int i=0;i<100;i++){
-                    if (jeu.player[i]==true){
-                        jeu.vie[i]=atoi(p);
+                    if (variablePartage->jeu_config->player[i]==true){
+                        variablePartage->jeu_config->vie[i]=atoi(p);
                     }
                 }
                 break;
 
             case 4:
-                jeu.temps_imparti=atoi(p);
+                variablePartage->jeu_config->temps_imparti=atoi(p);
                 break;
 
             case 5:
-                jeu.nbr_taupe=atoi(p);
+                variablePartage->jeu_config->nbr_taupe=atoi(p);
                 break;
 
             case 6:
-                jeu.manche=atoi(p);
+                variablePartage->jeu_config->manche=atoi(p);
                 break;
             default :
                 perror("Erreur dans le switch. Trop d'argument");
                 break;
         }
-        
         num++;
         p = strtok(NULL, "|");
     }
@@ -158,4 +159,8 @@ bool verifeJoueurSup2(struct_partage *variablePartage){
     else{
         return false;
     }
+}
+
+void lancerPartie(struct_partage *variablePartage){
+
 }

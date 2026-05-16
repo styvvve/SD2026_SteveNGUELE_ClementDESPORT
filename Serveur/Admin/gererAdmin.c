@@ -43,9 +43,7 @@ void * reception(void *data){
                 printf("Message reçu de l'admin :%s\n", message_recu_admin);
                 char *p = strtok(message_recu_admin,"|");
                 if (p && strcmp(p,"config")==0){
-                    /*
-                        configure_partie(message_recu_configuration_partie);
-                    */
+                    configurePartie(p);
                 }
                 if (p && strcmp(p,"lancer")==0){
                     /*

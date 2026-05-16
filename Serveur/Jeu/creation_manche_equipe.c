@@ -11,7 +11,6 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-#include "structure_jeu.h"
 #include "structure_equipe.h"
 #include "../structure_partage.h"
 
@@ -19,9 +18,9 @@
 
 
 //Crée une seule manche pour les deux modes (ID si c'est en battle royal. ID_Equipe si c'est en équipe)
-char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu){
+char *creation_d_une_manche(int equipe, char *taupe, struct_partage *variablePartage){
     char *manche = malloc(100);
-    snprintf(manche,100,"%d||%s||%d",equipe,taupe,jeu.temps_imparti);
+    snprintf(manche,100,"%d||%s||%d",equipe,taupe,variablePartage->jeu_config->temps_imparti);
     /* Exemple : 1||              _____
             \"_   _"/
             |(*)-(*)|

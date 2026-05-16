@@ -38,7 +38,7 @@ void *test_connexion(void *data) {
             printf("Le serveur n'est plus disponible.");
             break;
         }
-        sleep(1);
+        usleep(100000);
     }
     pthread_exit(NULL);
 }
@@ -69,11 +69,8 @@ int main(int argc, char* argv[]) {
         }
     }
     int sock = socket_TCP(); 
-    printf("Valeur de la socket : %d\n", sock); 
-    if (connexion_TCP(sock, argv[1], atoi(argv[2])) == 0){
-        printf("ok\n");
-    }else{
-        printf("non\n");
+    if (connexion_TCP(sock, argv[1], atoi(argv[2])) != 0){
+        perror("Erreur dans la connexion avec le serveur");
     }
     mutex_test mutex_t;
     pthread_mutex_init(&mutex_t.mutex, NULL);
@@ -84,8 +81,8 @@ int main(int argc, char* argv[]) {
     pthread_create(&thread, NULL, test_connexion, &mutex_t);
     char message[100]= ""; 
     bool connecte=true;
+    printf("Bienvenu dans le jeu tape-taupe, veuillez attendre que l'administrateur lance la partie \n\n");
     while (strcmp(message, "q") != 0 && connecte) {
-        printf("communication tjrs en cours\n"); 
         scanf("%s", message);
         //write(sock, message, srlen(message)+1); 
         
