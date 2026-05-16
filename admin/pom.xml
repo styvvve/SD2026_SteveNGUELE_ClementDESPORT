@@ -35,13 +35,6 @@
             <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
-
-        <!--GSON pour convertir objet en JSON-->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.9</version>
-        </dependency>
     </dependencies>
 
     <!--Ajout du plugin mvn assembly-->

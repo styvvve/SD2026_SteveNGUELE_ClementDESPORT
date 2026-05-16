@@ -25,7 +25,7 @@ public class ConnexionUDP {
      * Constructor with the name of the server and the server port
      */
     public ConnexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
-         this.socket = new DatagramSocket(5000);
+         this.socket = new DatagramSocket();
          this.socket.setSoTimeout(1000);
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
@@ -64,13 +64,13 @@ public class ConnexionUDP {
     public boolean testConnection() {
         for (int i = 0; i < 3; i++) {
             try {
-                System.out.println("Tentative " + (i + 1));
+                //System.out.println("Tentative " + (i + 1));
                 this.sendToServer("test");
                 String response = this.receiveFromServer();
                 return response.equals("test");
             } catch (SocketTimeoutException e) {
                 try {
-                    Thread.sleep(1000); //wait 1s before trying again
+                    Thread.sleep(2000); //wait 2s before trying again
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }

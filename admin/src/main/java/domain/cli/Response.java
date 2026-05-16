@@ -17,7 +17,5 @@ public record Response<T>(boolean success, T data) {
         return new Response<>(false, null);
     }
 
-    public boolean isOk() {
-        return this.success;
-    }
+    public boolean isOk() { return this.success; }
 }

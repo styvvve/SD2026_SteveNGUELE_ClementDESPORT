@@ -16,10 +16,9 @@ import java.util.concurrent.TimeUnit;
 public class TestConnectionUDP {
 
     private final ConnexionUDP connexion;
-    private ScheduledExecutorService scheduler;
-    private final int delay = 6;
+    private final ScheduledExecutorService scheduler;
     private boolean lastState = true;
-    private List<ConnectionObserver> observers = new ArrayList<>();
+    private final List<ConnectionObserver> observers = new ArrayList<>();
 
     public TestConnectionUDP(ConnexionUDP connexion) {
         this.connexion = connexion;
@@ -34,6 +33,7 @@ public class TestConnectionUDP {
      * Method to start the test connection
      */
     public void start() {
+        int delay = 6;
         scheduler.scheduleAtFixedRate(() -> {
             boolean isConnected = connexion.testConnection();
 
