@@ -178,15 +178,20 @@ void lancerPartieEquipe(struct_partage *variablePartage){
 
     char manche[variablePartage->jeu_config->manche][30];    
 
-    int nbr_joueur_1=0;
-    int nbr_joueur_2=0;
-
 
     for (int i=0;i<variablePartage->jeu_config->manche;i++){
-        for (int j=0;j<variablePartage->jeu_config->nbr_taupe;i++){
-            shuffle()
+        //EQUIPE 1
+        if (tab_ordre[i]==1){
+            shuffle(variablePartage->jeu_config->nbr_joueur_1,equipes.equipe_1);
+            for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
+                snprintf(manche[i],30,"n° de manche :%d  ID: %d \n",tab_ordre[i],equipes.equipe_1[j]);
+            }
+        }else{
+            shuffle(variablePartage->jeu_config->nbr_joueur_2,equipes.equipe_2);
+            for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
+                snprintf(manche[i],30,"n° de manche :%d  ID: %d \n",tab_ordre[i],equipes.equipe_2[j]);
+            }
         }
-        snprintf(manche[i],30,"%d|TEST MANCHE",tab_ordre[i]);
     }
 
     for (int i=0;i<variablePartage->jeu_config->manche;i++){

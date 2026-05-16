@@ -103,6 +103,9 @@ int main(int argc, char* argv[]) {
 
     variablePartage->jeu_config = malloc(sizeof(struct_jeu));
     variablePartage->jeu_config->manche = 8;
+    variablePartage->jeu_config->nbr_taupe = 2;
+
+
     lancerPartieEquipe(variablePartage);
 
     

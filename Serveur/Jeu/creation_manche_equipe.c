@@ -103,6 +103,10 @@ struct_equipe creation_equipe(struct_partage *variablePartage){
           }
      }
 
+     variablePartage->jeu_config->nbr_joueur_1=ind_equipe_1;
+     variablePartage->jeu_config->nbr_joueur_2=ind_equipe_2;
+
+
      //Renvoyer les deux équipes
      return equipes;
 }
