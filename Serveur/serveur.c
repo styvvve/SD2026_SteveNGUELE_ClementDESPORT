@@ -21,6 +21,7 @@
 #include "Admin/gererAdmin.h"
 #include "Socket/socket.h"
 #include "Joueur/gererJoueur.h"
+#include "Jeu/jeu.h"
 
 #include "Processus/proc_Multicast_UDP.h"
 #include "Processus/proc_Admin_UDP.h"
@@ -93,7 +94,20 @@ int main(int argc, char* argv[]) {
         variablePartage->joueurConnecte[i]=false;
     }
 
+    variablePartage->joueurConnecte[0]=true;
+    variablePartage->joueurConnecte[8]=true;
+    variablePartage->joueurConnecte[15]=true;
+    variablePartage->joueurConnecte[4]=true;
+    variablePartage->joueurConnecte[3]=true;
+    variablePartage->joueurConnecte[59]=true;
 
+    variablePartage->jeu_config = malloc(sizeof(struct_jeu));
+    variablePartage->jeu_config->manche = 8;
+    lancerPartieEquipe(variablePartage);
+
+    
+
+/*
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
         proc_Admin_UDP(pipe_tcp_admin,variablePartage,argv);
@@ -112,7 +126,7 @@ int main(int argc, char* argv[]) {
         proc_Multicast_UDP();
         exit(0);
     }
-
+*/
 
     while(1){}
 

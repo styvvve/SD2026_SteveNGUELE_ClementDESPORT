@@ -26,6 +26,7 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
     char message[100];
     char message_recu_client[100];
     while(1){
+
         nb_octets = read(socket, message_recu_client, TAILLEBUF);
         if (nb_octets > 0){
             char *p = strtok(message_recu_client,"|");
@@ -37,6 +38,7 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
                 break;
             }
             if (p && strcmp(p,"test")==0){
+                printf("BJR \n");
                 snprintf(message,sizeof(message)/sizeof(char),"OK");
                 write(socket, message, sizeof(message)/sizeof(char));
             }else{
@@ -49,6 +51,10 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
             snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
             write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
             break;
+        }
+        if(nb_octets<0){
+            perror("Erreur connexion client");
+            exit(0);
         }
     }
 }

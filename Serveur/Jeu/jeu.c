@@ -11,7 +11,10 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <stdbool.h>
+
+#include "creation_manche_equipe.h"
 #include "../structure_partage.h"
+#include "structure_equipe.h"
 
 
 #define NOMBRE_MAX_JOUEUR 100
@@ -161,6 +164,32 @@ bool verifeJoueurSup2(struct_partage *variablePartage){
     }
 }
 
-void lancerPartie(struct_partage *variablePartage){
+void lancerPartieEquipe(struct_partage *variablePartage){
+    struct_equipe equipes = creation_equipe(variablePartage);
+    int tab_ordre[variablePartage->jeu_config->manche];
+    for (int i=0;i<variablePartage->jeu_config->manche/2;i++){
+        tab_ordre[i]=1;
+    }
+    for (int i=variablePartage->jeu_config->manche/2;i<variablePartage->jeu_config->manche;i++){
+        tab_ordre[i]=2;
+    }
+    
+    shuffle(variablePartage->jeu_config->manche,tab_ordre);
 
+    char manche[variablePartage->jeu_config->manche][30];    
+
+    int nbr_joueur_1=0;
+    int nbr_joueur_2=0;
+
+
+    for (int i=0;i<variablePartage->jeu_config->manche;i++){
+        for (int j=0;j<variablePartage->jeu_config->nbr_taupe;i++){
+            shuffle()
+        }
+        snprintf(manche[i],30,"%d|TEST MANCHE",tab_ordre[i]);
+    }
+
+    for (int i=0;i<variablePartage->jeu_config->manche;i++){
+        printf("[%d] = %s \n",i,manche[i]);
+    }
 }

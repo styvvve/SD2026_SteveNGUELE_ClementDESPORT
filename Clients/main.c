@@ -9,7 +9,7 @@
 #include "mutex_test_connexion.h"
 
 void *test_connexion(void *data) {
-    
+    printf("test \n");
     mutex_test *mutex_t = (mutex_test*) data;
     int sock = mutex_t->socket;
     struct timeval temps_select;
@@ -89,6 +89,8 @@ int main(int argc, char* argv[]) {
         pthread_mutex_lock(&mutex_t.mutex);
         connecte = mutex_t.serveur_connecte;
         pthread_mutex_unlock(&mutex_t.mutex);
+        snprintf(message,sizeof(message)/sizeof(char),message);
+        write(sock, message, strlen(message)+1);
         if (strcmp(message, "q") == 0){
             snprintf(message,sizeof(message)/sizeof(char),"quit|"); //pour fair comprendre que le client à quitter volontairement
             write(sock, message, strlen(message)+1);

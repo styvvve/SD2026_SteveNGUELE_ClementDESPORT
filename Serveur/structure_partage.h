@@ -10,6 +10,8 @@ typedef struct struct_jeu {
     int manche;
     int temps_imparti;
     int nbr_taupe;  
+    int nbr_joueur_1;
+    int nbr_joueur_2;
 }struct_jeu;
 
 typedef struct struct_partage{
