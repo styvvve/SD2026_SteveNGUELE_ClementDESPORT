@@ -1,5 +1,8 @@
 package infra;
 
+import domain.Game;
+import domain.cli.Response;
+
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -46,14 +49,11 @@ public class ConnexionUDP {
     /**
      * Function to send a text to the server -> we ll use it to send some text to test the connection with the server at any time
      * @param text the string to send
-     * @throws IOException
-     *
+     * @throws IOException if sending fails
      */
     public void sendToServer(String text) throws IOException {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         DatagramPacket packet = new DatagramPacket(data, data.length, adr, serverPort);
-
-        System.out.println("Socket locale ouverte sur le port : " + this.socket.getLocalPort());
 
         socket.send(packet);
     }
@@ -81,6 +81,49 @@ public class ConnexionUDP {
 
         return false;
     }
+
+    /**
+     * Send a message to the server with the communication protocol
+     * <ul>
+     *     <li>configure 'c' - to configure a game</li>
+     *     <li>start 's' - to start a game</li>
+     * </ul>
+     */
+    public String createMessage(char command, Game game) throws IOException {
+        return switch (command) {
+            case 'c' -> "configure" + game.serializeGame();
+            case 's' -> "start";
+            default -> throw new IllegalArgumentException("Invalid command");
+        };
+    }
+
+    /**
+     * The protocol of the communication with the server is :
+     */
+    public boolean sendMessage(char command, Game game) throws IOException {
+        String msg = this.createMessage(command, game);
+
+        final int MAX_RETRIES = 3;
+        final int MAX_DELAY_MS = 5000;
+        for (int i = 0; i < MAX_RETRIES; i++) {
+
+            try {
+                this.sendToServer(msg);
+                return true;
+            } catch (IOException e) {
+                try {
+                    Thread.sleep(MAX_DELAY_MS);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 
     /*public int sendRound(Round round) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();

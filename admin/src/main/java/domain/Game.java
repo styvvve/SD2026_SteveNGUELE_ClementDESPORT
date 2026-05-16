@@ -61,7 +61,6 @@ public class Game implements Serializable {
 
     /**
      * constructor with health and moles number
-     * @param
      */
     public Game(GameMode mode, Level level, Path filePath, int health, int molesNumber) {
         this(mode, level, filePath);
@@ -99,31 +98,13 @@ public class Game implements Serializable {
     public void setTime(int time) { this.time = time; }
 
 
-    /**
-     * Define a mole and randomly choose the location
-     * @param number the number of the mole
-     * @param words the list of words -> if it's level 3 and the list is empty, we use a predefined list
-     * @return Mole
-     * @throws NotEnoughPlayersException if the number of players is not enough to define a mole (at least 2 players)
-     */
-    public Mole defineMole(int number, List<String> words) throws NotEnoughPlayersException {
-        Random random = new Random();
-        if (players.size() < 2) {
-            throw new NotEnoughPlayersException("Not enough players to define a mole");
-        }
-
-        Player player = players.get(random.nextInt(players.size()));
-        String word = words.isEmpty() ? "" : words.get(random.nextInt(words.size()));
-
-        return new Mole(number, player, word);
-    }
 
     /**
      * Convert a Game object after configuration into a String with the format:
      * -> |level|mode|health|time|numberOfMoles|numberOfRounds all in integer
      * @return String
      */
-    public String toString() {
+    public String serializeGame() {
         int level = this.getLevel().getNumber();
         int mode = this.getMode().getNumber();
         int health = this.getHealth();

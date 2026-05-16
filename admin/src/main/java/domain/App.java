@@ -65,10 +65,10 @@ public class App {
         }
 
         switch (cli.getSelected()) {
-            case "i" -> {
+            case "i" -> { //initialize the connection with server
                 String[] values = cmd.getOptionValues("i");
 
-                Response<ConnexionUDP> resp = HandleInputs.initializeConnection(values[0], Integer.parseInt(values[1]));
+                Response<ConnexionUDP> resp = HandleInputs.initializeConnection(values[0], Integer.parseInt(values[1]), ConnexionUDP::new);
 
                 TestConnectionUDP testConn = new TestConnectionUDP(resp.data());
                 ConnectionObserver svr = new GameService();

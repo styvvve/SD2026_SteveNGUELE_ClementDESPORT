@@ -1,6 +1,7 @@
 package domain.cli;
 
 import domain.Game;
+import domain.Player;
 import domain.enu.GameMode;
 import domain.enu.Level;
 import domain.exception.NotEnoughPlayersException;
@@ -8,8 +9,10 @@ import domain.factory.GameFactory;
 import infra.ConnexionUDP;
 import infra.ConnexionUDPFactory;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 /**
  * Class for methods to handle inputs from the CLI
@@ -28,25 +31,6 @@ public class HandleInputs {
      * @param server
      * @param serverPort
      * @return Response
-     */
-    public static Response<ConnexionUDP> initializeConnection(String server, int serverPort) {
-        try {
-            return Response.ok(new ConnexionUDP(server, serverPort)); //true
-        } catch (SocketException s) {
-            System.err.println("Unable to create a socket " + s);
-        } catch (UnknownHostException u) {
-            System.err.println("Unknown host " + u);
-        }
-
-        return Response.fail("Error");
-    }
-
-    /**
-     * Replication for the tests
-     * @param server
-     * @param serverPort
-     * @param factory
-     * @return
      */
     public static Response<ConnexionUDP> initializeConnection(String server, int serverPort, ConnexionUDPFactory factory) {
         try {
@@ -69,11 +53,12 @@ public class HandleInputs {
      *     <li>health</li>
      *     <li>moles-number</li>
      * </ul>
-     * @param args
+     * @param args passed in arguments from the CLI
+     * @param connexionUDP the connection to the server
      * @return Response<Game>
      */
-    public static Response<Game> configureGame(String[] args) {
-        //first: check if the args are good
+    public static Response<Game> configureGame(String[] args, ConnexionUDP connexionUDP) {
+        //first: we check if the args are good
         //getOptionValues passed in parameter, we have a one-world tab
         GameMode mode = GameMode.valueOf(args[0]);
         Level level = Level.valueOf(args[1]);
@@ -82,24 +67,60 @@ public class HandleInputs {
 
         Game newG = GameFactory.createGame(mode, level, health, molesNumber);
 
+        //send the config to the server
+        try {
+            boolean isOK = connexionUDP.sendMessage('c', newG);
+            if (!isOK) {
+                return Response.fail("Unable to connect to the server");
+            }
+        } catch (IOException e) {
+            System.out.println("Error during sendToServer " + e);
+        }
+
         return Response.ok(newG);
     }
 
     /**
      * Start the game
-     * @param game
+     * @param game the game to start
+     * @param connexionUDP the connection to the server
      * @return Response<Game>
      */
-    public static Response<Game> startGame(Game game) {
+    public static Response<Game> startGame(Game game, ConnexionUDP connexionUDP) throws InterruptedException, NotEnoughPlayersException {
         //verification of the game
         if (game.getPlayers().size() < 2) {
             return Response.fail("Not enough players");
         }
 
+        try {
+            boolean isOK = connexionUDP.sendMessage('s', game);
+            if (!isOK) {
+                return Response.fail("Unable to connect to the server");
+            }
+        } catch (IOException e) {
+            System.out.println("Error during sendToServer " + e);
+        }
 
+        return Response.fail("ERROR");
+    }
 
-        //send the game to the server
-        return Response.ok(game);
+    /**
+     * List players of the game passed in parameter
+     * @param game the game to list
+     * @return Response<List<Player>>
+     */
+    public static Response<List<Player>> listPlayers(Game game) {
+        return game.getPlayers().isEmpty() ?
+                Response.fail("Any player.")
+                : Response.ok(game.getPlayers());
+    }
+
+    /**
+     * Give the history of games played connect to the RMI server
+     * @return Response<List<Game>>
+     */
+    public static Response<List<Game>> history() {
+        return Response.ok(null);
     }
 
 }
