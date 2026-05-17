@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include "creation_manche_equipe.h"
 #include "../structure_partage.h"
@@ -164,9 +165,24 @@ bool verifeJoueurSup2(struct_partage *variablePartage){
     }
 }
 
-void lancerPartieEquipe(struct_partage *variablePartage){
+void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast){
+    close(pipe_jeu_multicast[0]);
+
+    srand( time( NULL ) );
+    char *taupe =
+    "         ________\n"
+    "            \\_     _/\n"
+    "            |(*)-(*)|\n"
+    "          ./    O    \\.\n"
+    "      ---(((---------)))---";
+
+
+
+
+
     struct_equipe equipes = creation_equipe(variablePartage);
     int tab_ordre[variablePartage->jeu_config->manche];
+    int ind_tab_manche=0;
     for (int i=0;i<variablePartage->jeu_config->manche/2;i++){
         tab_ordre[i]=1;
     }
@@ -176,7 +192,7 @@ void lancerPartieEquipe(struct_partage *variablePartage){
     
     shuffle(variablePartage->jeu_config->manche,tab_ordre);
 
-    char manche[variablePartage->jeu_config->manche][30];    
+    char manche[variablePartage->jeu_config->manche*variablePartage->jeu_config->nbr_taupe][500];    
 
 
     for (int i=0;i<variablePartage->jeu_config->manche;i++){
@@ -184,17 +200,35 @@ void lancerPartieEquipe(struct_partage *variablePartage){
         if (tab_ordre[i]==1){
             shuffle(variablePartage->jeu_config->nbr_joueur_1,equipes.equipe_1);
             for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
-                snprintf(manche[i],30,"n° de manche :%d  ID: %d \n",tab_ordre[i],equipes.equipe_1[j]);
+                char *man=creation_d_une_manche(equipes.equipe_1[j],taupe,variablePartage);
+                snprintf(manche[ind_tab_manche],500,"%s",man);
+                ind_tab_manche++;
+                free(man);
             }
         }else{
             shuffle(variablePartage->jeu_config->nbr_joueur_2,equipes.equipe_2);
             for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
-                snprintf(manche[i],30,"n° de manche :%d  ID: %d \n",tab_ordre[i],equipes.equipe_2[j]);
+                char *man=creation_d_une_manche(equipes.equipe_2[j],taupe,variablePartage);
+                snprintf(manche[ind_tab_manche],500,"%s",man);
+                ind_tab_manche++;
+                free(man);
             }
         }
-    }
+    }   
 
-    for (int i=0;i<variablePartage->jeu_config->manche;i++){
+    /*
+    for (int i=0;i<variablePartage->jeu_config->manche*variablePartage->jeu_config->nbr_taupe;i++){
         printf("[%d] = %s \n",i,manche[i]);
+    }
+    */         
+
+    ind_tab_manche=0;
+    for (int i=0;i<variablePartage->jeu_config->manche;i++){
+        for (int i=0;i<variablePartage->jeu_config->nbr_taupe;i++){
+            write(pipe_jeu_multicast[1],manche[ind_tab_manche],500);
+            ind_tab_manche++;
+            usleep(5000);
+        }
+        sleep(3);
     }
 }

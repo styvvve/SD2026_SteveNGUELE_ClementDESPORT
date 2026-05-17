@@ -46,9 +46,8 @@ void * reception(void *data){
                     configurePartie(p);
                 }
                 if (p && strcmp(p,"lancer")==0){
-                    /*
-                        ToDo : fonction pour lancer une partie
-                    */
+                    //EQUIPE
+                    lancerPartieEquipe(mutex_ad->variablePartage,mutex_ad->pipe_jeu_multicast);
                 }
                 if (p && strcmp(p,"test")==0){
                     snprintf(message,sizeof(message)/sizeof(char),"OK");
@@ -142,7 +141,7 @@ void * envoie(void *data){
 }
 
 
-void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage) {
+void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage *variablePartage) {
 
     int nb_octets_admin;
     socklen_t lg;

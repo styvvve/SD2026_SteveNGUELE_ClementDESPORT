@@ -13,5 +13,6 @@ typedef struct mutex_admin {
     socklen_t lg;
 	pthread_mutex_t mutex;
     int *pipe_tcp_admin;
+    int *pipe_jeu_multicast;
     struct_partage *variablePartage;
 } mutex_admin;

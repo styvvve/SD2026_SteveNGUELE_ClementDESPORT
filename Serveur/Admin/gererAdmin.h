@@ -15,6 +15,6 @@
 
 #include "../structure_partage.h"
 
-void gererAdmin(int socket,int *pipe_tcp_admin, struct_partage *variablePartage); 
+void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage *variablePartage); 
 
 #endif

@@ -16,7 +16,7 @@
 #include "proc_Multicast_UDP.h"
 
 
-void proc_Multicast_UDP(){
+void proc_Multicast_UDP(int *pipe_jeu_multicast){
 
     /*MULTICAST Joueur <-> Serveur*/
     
@@ -66,6 +66,31 @@ void proc_Multicast_UDP(){
     adresse.sin_port = htons(1234);
 
 
+    char message_recu_pipe[500];
+    int nb_octets;
+    int nread;
+    while(1){
+        nread = read(pipe_jeu_multicast[0],message_recu_pipe,500);
+                switch (nread){
+                    case -1: 
+                        //Si la pipe est vide
+                        if (errno == EAGAIN){
+                            usleep(500);
+                            continue;
+                        }
+                        else{
+                            perror("Erreur dans la lecture de la pipe vide");
+                            exit(1);
+                        }
+                    case 0:
+                        printf("Fermeture de la pipe");
+                        close(pipe_jeu_multicast[0]);
+                        exit(0);
+                    default:
+                        // Envoie du message au multicast
+                        sendto(socket_multicast_joueur, message_recu_pipe, strlen(message_recu_pipe), 0,(struct sockaddr*)&adresse, sizeof(adresse));
+                }
+    }
 
     //Envoie de messages à jusqu'a que le message == 'q'
     char message_multicast[100] = "";

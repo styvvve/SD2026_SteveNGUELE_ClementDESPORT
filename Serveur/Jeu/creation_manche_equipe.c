@@ -19,17 +19,18 @@
 #include "creation_manche_equipe.h"
 
 
+
 //Crée une seule manche pour les deux modes (ID si c'est en battle royal. ID_Equipe si c'est en équipe)
-char *creation_d_une_manche(int equipe, char *taupe, struct_partage *variablePartage){
-    char *manche = malloc(100);
-    snprintf(manche,100,"%d||%s||%d",equipe,taupe,variablePartage->jeu_config->temps_imparti);
+char *creation_d_une_manche(int id, char *taupe, struct_partage *variablePartage){
+    char *manche = malloc(500);
+    snprintf(manche,500,"%d||%s||%d",id,taupe,variablePartage->jeu_config->temps_imparti);
     /* Exemple : 1||              _____
             \"_   _"/
             |(*)-(*)|
           ./  " O "  \.
      ---"(((---------)))"---||4*/
 
-     // 1 == Equipe ; 4 == Seconde impartie
+     // 1 == id ; 4 == Seconde impartie
      return manche;
 }
 
@@ -42,7 +43,6 @@ void creations_manches_equipe(struct_jeu jeu){
 }*/
 
 void shuffle(int nbr, int joueur[nbr]){
-     srand( time( NULL ) );
      int temp;
      int j;
      for (int i=nbr-1;i>1;i--){

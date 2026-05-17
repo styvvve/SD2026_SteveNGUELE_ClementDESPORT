@@ -22,6 +22,6 @@ int nombreDeJoueurConnecter(struct_partage variablePartage);
 
 bool verifeJoueurSup2(struct_partage variablePartage);
 
-void lancerPartieEquipe(struct_partage *variablePartage);
+void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast);
 
 #endif

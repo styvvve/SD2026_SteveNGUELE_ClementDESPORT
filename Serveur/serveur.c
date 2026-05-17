@@ -43,12 +43,19 @@ int main(int argc, char* argv[]) {
 
     /* Creation Pipe */
     int pipe_tcp_admin[2];
+    int pipe_jeu_multicast[2];
 
 
     if (pipe(pipe_tcp_admin) == -1){
         perror("Erreur dans la création de pipe");
         exit(1);
     }
+
+    if (pipe(pipe_jeu_multicast) == -1){
+        perror("Erreur dans la création de pipe");
+        exit(1);
+    }
+
 
     /*  Permet de crée une pipe non bloquant (read : non bloquant)
         Pour que le processus (gererAdmin) lis en continue pour voir
@@ -58,6 +65,11 @@ int main(int argc, char* argv[]) {
 
 
     if (fcntl(pipe_tcp_admin[0], F_SETFL, O_NONBLOCK) < 0){
+        perror("Erreur dans la création de la pipe non bloquant.");
+        exit(2);
+    }
+
+    if (fcntl(pipe_jeu_multicast[0], F_SETFL, O_NONBLOCK) < 0){
         perror("Erreur dans la création de la pipe non bloquant.");
         exit(2);
     }
@@ -100,13 +112,16 @@ int main(int argc, char* argv[]) {
     variablePartage->joueurConnecte[4]=true;
     variablePartage->joueurConnecte[3]=true;
     variablePartage->joueurConnecte[59]=true;
+    
 
     variablePartage->jeu_config = malloc(sizeof(struct_jeu));
-    variablePartage->jeu_config->manche = 8;
+    variablePartage->jeu_config->manche = 2;
     variablePartage->jeu_config->nbr_taupe = 2;
+    variablePartage->jeu_config->temps_imparti=3;
 
 
-    lancerPartieEquipe(variablePartage);
+
+    //lancerPartieEquipe(variablePartage);
 
     
 
@@ -116,6 +131,7 @@ int main(int argc, char* argv[]) {
         proc_Admin_UDP(pipe_tcp_admin,variablePartage,argv);
         exit(0);
     }
+*/
 
 
     pid_t pid_proc_TCP = fork();
@@ -126,11 +142,13 @@ int main(int argc, char* argv[]) {
 
     pid_t pid_proc_Multicast_UDP = fork();
     if (pid_proc_Multicast_UDP==0){
-        proc_Multicast_UDP();
+        proc_Multicast_UDP(pipe_jeu_multicast);
         exit(0);
     }
-*/
 
+    sleep(5);
+
+    lancerPartieEquipe(variablePartage,pipe_jeu_multicast);
     while(1){}
 
 }

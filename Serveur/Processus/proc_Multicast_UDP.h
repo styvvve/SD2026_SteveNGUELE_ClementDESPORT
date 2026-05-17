@@ -15,7 +15,7 @@
 #include <sys/wait.h>
 
 
-void proc_Multicast_UDP();
+void proc_Multicast_UDP(int *pipe_jeu_multicast);
 
 void fermeture_proc_multi();
 #endif
