@@ -7,6 +7,8 @@
 #include "connexionTCP.h"
 #include "connexionMulticastUDP.h"
 #include "mutex_test_connexion.h"
+#include "id_joueur.h"
+#include <sys/shm.h>
 
 void *test_connexion(void *data) {
     mutex_test *mutex_t = (mutex_test*) data;
@@ -42,6 +44,25 @@ void *test_connexion(void *data) {
     pthread_exit(NULL);
 }
 int main(int argc, char* argv[]) {
+    int shm_id = shmget(IPC_PRIVATE, sizeof(bool) * 100, IPC_CREAT | 0666);
+
+    if (shm_id == -1) {
+        perror("Erreur dans la mémoire partagée");
+        exit(EXIT_FAILURE);
+    }
+
+    /** 
+    shmat : Pour mettre le tableau dans la mémoire partagé
+    shm_id : ID
+    NULL et 0 : Pour choisir automatiquement l'adresse de stockage et pas de restriction
+    **/
+    
+
+
+    struct_joueur *id_partage = (struct_joueur *)shmat(shm_id, NULL, 0);
+
+
+
     pid_t proc_multicast = fork(); 
     if (proc_multicast == 0) {
         struct ip_mreq multicast_group;
@@ -89,8 +110,16 @@ int main(int argc, char* argv[]) {
     pthread_create(&thread, NULL, test_connexion, &mutex_t);
     char message[100]= ""; 
     bool connecte=true;
+    int nb_octets;
+    char message_recu_serveur[100];
     printf("Bienvenu dans le jeu tape-taupe, veuillez attendre que l'administrateur lance la partie \n\n");
+
     while (strcmp(message, "q") != 0 && connecte) {
+        nb_octets = read(sock, message_recu_serveur, 100);
+        if (nb_octets>0){
+            id_partage->id_joueur = atoi(message_recu_serveur);
+        }
+        printf(" TEST : %d \n",id_partage->id_joueur);
         scanf("%s", message);
         //write(sock, message, srlen(message)+1); 
         

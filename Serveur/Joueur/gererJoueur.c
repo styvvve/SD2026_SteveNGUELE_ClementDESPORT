@@ -11,7 +11,7 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
     char messages[100]; 
     snprintf(messages,sizeof(messages)/sizeof(char),"%d",id_joueur);
 
-    write(socket, messages, sizeof(messages)/sizeof(char)); 
+    write(socket, messages, strlen(messages) + 1); 
 
 
 
@@ -27,7 +27,6 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
     char message[100];
     char message_recu_client[100];
     while(1){
-
         nb_octets = read(socket, message_recu_client, TAILLEBUF);
         if (nb_octets > 0){
             char *p = strtok(message_recu_client,"|");
