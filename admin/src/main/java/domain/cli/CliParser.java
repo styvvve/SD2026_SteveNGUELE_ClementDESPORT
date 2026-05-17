@@ -69,12 +69,18 @@ public class CliParser {
                 .desc("Print help")
                 .build());
 
+        group.addOption(Option.builder("e")
+                .longOpt("exit")
+                .hasArg(false)
+                .desc("Quit the program")
+                .build());
+
         return group;
     }
 
     /**
      * After building the group, we build the options
-     * @param group
+     * @param group the group of options
      * @return Options
      */
     private Options buildOptions(OptionGroup group) {
@@ -85,7 +91,7 @@ public class CliParser {
 
     /**
      * The method that will parse the command line arguments
-     * @param args
+     * @param args arguments of the command line
      * @return CommandLine
      */
     public CommandLine parse(String[] args) {

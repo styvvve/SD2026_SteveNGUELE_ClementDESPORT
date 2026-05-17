@@ -26,7 +26,7 @@ public class ConnexionUDP {
      */
     public ConnexionUDP(String server, int serverPort) throws SocketException, UnknownHostException {
          this.socket = new DatagramSocket();
-         this.socket.setSoTimeout(1000);
+         this.socket.setSoTimeout(3000);
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
          System.out.println("connexion UDP OK " + adr + serverPort + "\n");

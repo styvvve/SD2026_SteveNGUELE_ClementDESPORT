@@ -15,7 +15,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 /**
- * Class for methods to handle inputs from the CLI
+ * Class for methods to handle inputs from the CLI -> More precisely, it's the couch between the CLI and the GameService
+ * where we made all the networks calls and complex business logic for the service class.
  * <ul>
  *     <li>Initialize a connection between server and admin</li>
  *     <li>Configure a game</li>
@@ -86,7 +87,7 @@ public class HandleInputs {
      * @param connexionUDP the connection to the server
      * @return Response<Game>
      */
-    public static Response<Game> startGame(Game game, ConnexionUDP connexionUDP) throws InterruptedException, NotEnoughPlayersException {
+    public static Response<Game> startGame(Game game, ConnexionUDP connexionUDP) throws NotEnoughPlayersException {
         //verification of the game
         if (game.getPlayers().size() < 2) {
             return Response.fail("Not enough players");
@@ -97,6 +98,11 @@ public class HandleInputs {
             if (!isOK) {
                 return Response.fail("Unable to connect to the server");
             }
+            String resp = connexionUDP.receiveFromServer(); //we should get a "started" response if is ok or no
+            if (!resp.equals("started")) {
+                return Response.fail("Game could not be started by the server.");
+            }
+            return Response.ok(game);
         } catch (IOException e) {
             System.out.println("Error during sendToServer " + e);
         }

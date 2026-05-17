@@ -2,6 +2,7 @@ package domain.Controller;
 
 import domain.GameService;
 import domain.cli.CliParser;
+import domain.interfaces.ConnectionObserver;
 import org.apache.commons.cli.CommandLine;
 
 public class GameController {
@@ -23,10 +24,10 @@ public class GameController {
 
         switch (cli.getSelected()) {
             case "i" -> gameService.handleInitialize(cmd);
-            case "c" -> System.out.println("configure");
-            case "s" -> System.out.println("start");
-            case "l" -> System.out.println("liste des joueurs");
-            case "hi" -> System.out.println("historique des parties");
+            case "c" -> gameService.handleConfigure(cmd);
+            case "s" -> gameService.handleStart(cmd);
+            case "l" -> gameService.handleListPlayers();
+            case "hi" -> gameService.handleHistory();
         }
     }
 }

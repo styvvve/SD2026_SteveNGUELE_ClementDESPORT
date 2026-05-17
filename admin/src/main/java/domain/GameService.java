@@ -60,6 +60,25 @@ public class GameService implements ConnectionObserver, Runnable {
     public List<Game> getGames() { return this.games; }
 
     /**
+     * Checking if the action is valid with the state of service
+     */
+    public boolean hasGame() { return !this.games.isEmpty(); }
+    public boolean hasConnection() { return this.isConnected && this.connection != null; }
+    public boolean canExecuteAction() {
+        if (!this.hasGame()) {
+            System.out.println("No game to perform the action");
+            return false;
+        }
+
+        if (!this.hasConnection()) {
+            System.out.println("No connection to the server");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Methods for the handle of the user inputs
      */
     public void handleInitialize(CommandLine cmd) {
@@ -69,6 +88,68 @@ public class GameService implements ConnectionObserver, Runnable {
 
         if (resp.isOk()) {
             this.connection = resp.data();
+        } else {
+            System.out.println("Error during connection");
+        }
+    }
+
+    public void handleConfigure(CommandLine cmd) {
+        if (!this.canExecuteAction()) return;
+        //the last game is the current game, so if it's not finished, we can't configure another one
+        Game currentGame = this.games.get(this.games.size() - 1);
+        if (!currentGame.isFinished()) {
+            System.out.println("Current game " + currentGame.getId() + " is not finished");
+            return;
+        }
+        String[] values = cmd.getOptionValues("c");
+
+        Response<Game> resp = HandleInputs.configureGame(values, this.connection);
+
+        if (resp.isOk()) {
+            Game newGame = resp.data();
+            this.addGame(newGame);
+        } else {
+            System.out.println("Error during configuration");
+        }
+    }
+
+    public void handleStart(CommandLine cmd) {
+        if (!this.canExecuteAction()) return;
+        //the last game...
+        Game currentGame = this.games.get(this.games.size() - 1);
+        if (currentGame.isFinished()) {
+            System.out.println("Current game " + currentGame.getId() + " is already finished");
+            return;
+        }
+
+        Response<Game> resp = HandleInputs.startGame(currentGame, this.connection);
+
+        if (resp.isOk()) {
+            System.out.println("Game started");
+        }
+    }
+
+    public void handleListPlayers() {
+        Game currentGame = this.games.get(this.games.size() - 1);
+        if (currentGame.isFinished()) {
+            System.out.println("Current game " + currentGame.getId() + " is finished");
+            return;
+        }
+
+        Response<List<Player>> resp = HandleInputs.listPlayers(currentGame);
+        if (resp.isOk()) {
+            List<Player> players = resp.data();
+            players.forEach(p -> System.out.println(p.getId()));
+        }
+    }
+
+    public synchronized void handleHistory() {
+        Response<List<Game>> resp = HandleInputs.history();
+
+        //TODO
+        if (resp.isOk()) {
+            List<Game> games = resp.data();
+            games.forEach(g -> System.out.println(g.getId()));
         }
     }
 

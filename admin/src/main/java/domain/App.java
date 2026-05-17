@@ -1,5 +1,6 @@
 package domain;
 
+import domain.Controller.GameController;
 import domain.cli.CliParser;
 import domain.cli.HandleInputs;
 import domain.cli.Response;
@@ -21,10 +22,13 @@ public class App {
 
     public static void main(String[] args) {
 
-        ConnectionObserver svr = new GameService();
+        GameService svr = new GameService();
+        GameController controller = new GameController(svr);
 
         //Boolean that knows when the party is over
         boolean partyOver = false;
+
+        Scanner scanner = new Scanner(System.in);
 
         while (!partyOver) {
 
