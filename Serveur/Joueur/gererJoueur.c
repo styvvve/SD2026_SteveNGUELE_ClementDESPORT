@@ -9,6 +9,10 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
     close(pipe_tcp_admin[0]);
 
     char messages[100]; 
+    snprintf(messages,sizeof(messages)/sizeof(char),"%d",id_joueur);
+
+    write(socket, messages, sizeof(messages)/sizeof(char)); 
+
 
 
     
@@ -17,15 +21,13 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
 
     write(pipe_tcp_admin[1],message_pipe_connexion,strlen(message_pipe_connexion));
 
-    write(socket, messages, sizeof(messages)/sizeof(char)); 
-    // la connexion est établie, on attend les données envoyées par le client
-
     
     int nb_octets;
 
     char message[100];
     char message_recu_client[100];
     while(1){
+
         nb_octets = read(socket, message_recu_client, TAILLEBUF);
         if (nb_octets > 0){
             char *p = strtok(message_recu_client,"|");

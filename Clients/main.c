@@ -9,7 +9,6 @@
 #include "mutex_test_connexion.h"
 
 void *test_connexion(void *data) {
-    printf("test \n");
     mutex_test *mutex_t = (mutex_test*) data;
     int sock = mutex_t->socket;
     struct timeval temps_select;
@@ -49,11 +48,20 @@ int main(int argc, char* argv[]) {
         struct sockaddr_in addr;
         int sock = sock_multicastUDP(); 
         if (join_muliticastGroup(sock, &addr, IP_MULTICAST, 1234, &multicast_group) == 0) { 
-            char message_multicast[100]; 
+            char message_multicast[500]; 
             while (1) {
                 int n = recvfrom(sock, message_multicast, sizeof(message_multicast), 0, NULL, 0);
                 if (n > 0) {
+                    /*AFFICHE LA TAUPE SI C'EST SON ID*/
+                    //char *p = strtok(message_multicast,"||");
                     message_multicast[n] = '\0';
+                    /*if (p && strcmp(p,)==0){
+                        printf("TEST DECO\n");
+                        char message_pipe_deconnexion[100];
+                        snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
+                        write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
+                        break;
+                    }*/
                     printf("%s\n", message_multicast);
                     if (strcmp(message_multicast, "q") == 0) {
                         if (quit_multicastGroup(sock, &multicast_group) == 0) {
