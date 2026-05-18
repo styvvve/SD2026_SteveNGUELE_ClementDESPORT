@@ -60,11 +60,20 @@ public class HandleInputs {
      */
     public static Response<Game> configureGame(String[] args, ConnexionUDP connexionUDP) {
         //first: we check if the args are good
-        //getOptionValues passed in parameter, we have a one-world tab
-        GameMode mode = GameMode.valueOf(args[0]);
-        Level level = Level.valueOf(args[1]);
-        int health = Integer.parseInt(args[2]);
-        int molesNumber = Integer.parseInt(args[3]);
+        if (args.length != 4) {
+            return Response.fail("Illegal arguments number");
+        }
+
+        GameMode mode = null; Level level = null; int health = 0; int molesNumber = 0;
+
+        try {
+            mode = GameMode.valueOf(args[0]);
+            level = Level.valueOf(args[1]);
+            health = Integer.parseInt(args[2]);
+            molesNumber = Integer.parseInt(args[3]);
+        } catch (IllegalArgumentException e) {
+            return Response.fail("Illegal arguments " + e);
+        }
 
         Game newG = GameFactory.createGame(mode, level, health, molesNumber);
 

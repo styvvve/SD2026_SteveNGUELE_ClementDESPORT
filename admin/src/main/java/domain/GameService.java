@@ -5,7 +5,6 @@ import domain.cli.HandleInputs;
 import domain.cli.Response;
 import domain.interfaces.ConnectionObserver;
 import infra.ConnexionUDP;
-import org.apache.commons.cli.CommandLine;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,10 +80,9 @@ public class GameService implements ConnectionObserver, Runnable {
     /**
      * Methods for the handle of the user inputs
      */
-    public void handleInitialize(CommandLine cmd) {
-        String[] values = cmd.getOptionValues("i");
+    public void handleInitialize(String[] args) {
 
-        Response<ConnexionUDP> resp = HandleInputs.initializeConnection(values[0], Integer.parseInt(values[1]), ConnexionUDP::new);
+        Response<ConnexionUDP> resp = HandleInputs.initializeConnection(args[0], Integer.parseInt(args[1]), ConnexionUDP::new);
 
         if (resp.isOk()) {
             this.connection = resp.data();
@@ -93,7 +91,7 @@ public class GameService implements ConnectionObserver, Runnable {
         }
     }
 
-    public void handleConfigure(CommandLine cmd) {
+    public void handleConfigure(String[] args) {
         if (!this.canExecuteAction()) return;
         //the last game is the current game, so if it's not finished, we can't configure another one
         Game currentGame = this.games.get(this.games.size() - 1);
@@ -101,9 +99,8 @@ public class GameService implements ConnectionObserver, Runnable {
             System.out.println("Current game " + currentGame.getId() + " is not finished");
             return;
         }
-        String[] values = cmd.getOptionValues("c");
 
-        Response<Game> resp = HandleInputs.configureGame(values, this.connection);
+        Response<Game> resp = HandleInputs.configureGame(args, this.connection);
 
         if (resp.isOk()) {
             Game newGame = resp.data();
@@ -113,7 +110,7 @@ public class GameService implements ConnectionObserver, Runnable {
         }
     }
 
-    public void handleStart(CommandLine cmd) {
+    public void handleStart() {
         if (!this.canExecuteAction()) return;
         //the last game...
         Game currentGame = this.games.get(this.games.size() - 1);

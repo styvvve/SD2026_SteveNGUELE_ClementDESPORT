@@ -2,32 +2,50 @@ package domain.Controller;
 
 import domain.GameService;
 import domain.cli.CliParser;
-import domain.interfaces.ConnectionObserver;
-import org.apache.commons.cli.CommandLine;
+import domain.cli.command.CommandRegistry;
+
+import java.util.Map;
 
 public class GameController {
 
+    private final CliParser cliParser;
     private final GameService gameService;
+    private final CommandRegistry registry;
 
-    public GameController(GameService gameService) {
+    public GameController(GameService gameService, CliParser cliParser, CommandRegistry registry) {
         this.gameService = gameService;
+        this.cliParser = cliParser;
+        this.registry = registry;
     }
 
-    public void workWithCommand(String[] args) {
-        CliParser cli = new CliParser();
-        CommandLine cmd = cli.parse(args);
+    public boolean handleCommand(String line) {
 
-        if (cmd.hasOption("h")) {
-            cli.printHelp();
-            System.exit(0);
+        if (line == null) return false;
+
+        Map<String, String[]> cmd = cliParser.parse(line);
+
+        String commandName = cmd.keySet().toString();
+
+        if (commandName.equals("help")) {
+            registry.printHelp();
+            return false;
         }
 
-        switch (cli.getSelected()) {
-            case "i" -> gameService.handleInitialize(cmd);
-            case "c" -> gameService.handleConfigure(cmd);
-            case "s" -> gameService.handleStart(cmd);
-            case "l" -> gameService.handleListPlayers();
-            case "hi" -> gameService.handleHistory();
+        String[] args = cmd.get(commandName);
+
+        if (commandName.equals("exit")) {
+            return false;
         }
+
+        switch (commandName) {
+            case "init" -> gameService.handleInitialize(args);
+            case "configure" -> gameService.handleConfigure(args);
+            case "start" -> gameService.handleStart();
+            case "list" -> gameService.handleListPlayers();
+            case "hist" -> gameService.handleHistory();
+            default -> registry.printHelp();
+        }
+
+        return true;
     }
 }
