@@ -14,8 +14,10 @@
 #include <fcntl.h>
 
 
+//Gère le resultat pour le niveau 1 (Appuie sur espace)
 bool level1(char *taupe,int temps){
     fflush(stdin);
+
     //https://stackoverflow.com/questions/63751531/non-canonical-terminal-mode-buffer-stdout-in-c-program
     struct termios termios_new, termios_backup;
     tcgetattr(STDIN_FILENO, &termios_backup);
@@ -58,7 +60,7 @@ bool level1(char *taupe,int temps){
 }
 
 
-
+//Permet de récuperer la taupe + temps impartie + niveau
 bool joue(const char *message, int len){
     char cp_message[500];
     strcpy(cp_message, message);
@@ -89,9 +91,9 @@ bool joue(const char *message, int len){
     if (level==1){
         return(level1(taupe,temps));
     }else if(level==2){
-        //2
+        //level2
     }else{
-        //3
+        //level3
     }
     return true;
 }
@@ -155,14 +157,9 @@ int main(int argc, char* argv[]) {
     shm_id : ID
     NULL et 0 : Pour choisir automatiquement l'adresse de stockage et pas de restriction
     **/
-    
 
 
     struct_joueur *id_partage = (struct_joueur *)shmat(shm_id, NULL, 0);
-
-
-
-
 
     pid_t proc_multicast = fork(); 
     if (proc_multicast == 0) {
@@ -178,10 +175,11 @@ int main(int argc, char* argv[]) {
                 char cp_message[500];
                 strcpy(cp_message, message_multicast);
                 if (n > 0) {
-                    /*AFFICHE LA TAUPE SI C'EST SON ID*/
+                    /*AFFICHE LA TAUPE SEULEMENT SI C'EST SON ID*/
                     char *p = strtok(cp_message,"#");
                     char id[10];
                     snprintf(id, sizeof(id), "%d", id_partage->id_joueur);
+                    //Regarde le premier mot (mot clé)
                     if (p && strcmp(p,id)==0){
                         if(joue(message_multicast,n)==true){
                             char message_envoie_serveur[100];
@@ -201,8 +199,6 @@ int main(int argc, char* argv[]) {
                 }
             }
             printf("Fin du multicast."); 
-        } else {
-            printf("non"); 
         }
     }
     int sock = socket_TCP(); 
@@ -228,8 +224,7 @@ int main(int argc, char* argv[]) {
     char message[100]= ""; 
     bool connecte=true;
 
-    printf("Bienvenu dans le jeu tape-taupe, veuillez attendre que l'administrateur lance la partie \n\n");
-
+    printf("**Bienvenue dans le jeu tape-taupe, veuillez attendre que l'administrateur lance la partie** \n\n");
 
     char message_pipe[100];
     int nread;

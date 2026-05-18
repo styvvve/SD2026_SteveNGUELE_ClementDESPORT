@@ -60,6 +60,7 @@ void supprime_joueur_equipe(struct_partage *variablePartage,int id){
 }
 
 void repond_juste(struct_partage *variablePartage,int id){
+    //Seulement en mode EQUIPE
     if (variablePartage->jeu_config.mode==2){
         bool trouve=false;
         int equipe;
@@ -78,11 +79,11 @@ void repond_juste(struct_partage *variablePartage,int id){
             variablePartage->jeu_equipes.score_2++;
         }
     }
-    //else battleroyal
 }
 
 void repond_faux(struct_partage *variablePartage,int id){
-    if (variablePartage->jeu_config.mode==1){
+    //Mode EQUIPE
+    if (variablePartage->jeu_config.mode==2){
         bool trouve=false;
         int equipe;
         int ind=0;
@@ -100,7 +101,10 @@ void repond_faux(struct_partage *variablePartage,int id){
             variablePartage->jeu_equipes.score_2--;
         }
     }
-    //else battleroyal
+    //Mode BATTLE ROYALE
+    else{
+        variablePartage->jeu_config.vie[id]--;
+    }
 }
 
 
@@ -145,30 +149,12 @@ bool verifeConfiguration_battle_royal(struct_partage *variablePartage){
 void configurePartie(char config_partie[1024],struct_partage *variablePartage){
     int num=0;
     
-    /*
-
-    typedef struct struct_jeu {
-        int level;
-        int mode;
-        int manche;
-        int player[100];
-        int vie[100];
-        int temps_impartie;
-        int nbr_taupe;  
-    }struct_jeu;
-    */
-
-
-
-    
     /** 
      * @see https://waytolearnx.com/2019/09/decouper-une-chaine-de-caractere-en-c.html
     */
     // Pour séparer les caractères (pour la configuration)
 
     char *p = strtok(config_partie,"|");
-
-
 
     // Exemple de chaine à recevoir : config|  1  | 2  | 3 |      5      |   18    |    6     (sans espace bien sûr)
     //                                config|level|mode|vie|temps_imparti|nbr_taupe|nbr_manche
@@ -258,6 +244,7 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
     srand( time( NULL ) );
 
 
+    //Si le niveau == 1
     if (variablePartage->jeu_config.level==1){
         taupe =
         "            _________\n"
@@ -268,31 +255,28 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
     }
 
 
-
-
+    //Crée 2 équipes aléatoire avec tout les joueurs actuellement connecte
     creation_equipe(variablePartage);
+
     int tab_ordre[variablePartage->jeu_config.manche];
     int ind_tab_manche=0;
     char message_play[100];
+
+    //Cree un tableau rempli de 1 (correspond à EQUIPE 1)et 2 (correspond à EQUIPE 2)
     for (int i=0;i<variablePartage->jeu_config.manche/2;i++){
         tab_ordre[i]=1;
     }
     for (int i=variablePartage->jeu_config.manche/2;i<variablePartage->jeu_config.manche;i++){
         tab_ordre[i]=2;
     }
-    
+    //Mélange pour avoir un ordre aléatoire 
     shuffle(variablePartage->jeu_config.manche,tab_ordre);
 
-    char manche[variablePartage->jeu_config.manche*variablePartage->jeu_config.nbr_taupe][500];    
-    for (int i=0;i<variablePartage->jeu_config.manche*variablePartage->jeu_config.nbr_taupe;i++){
-        snprintf(manche[i],500," ");
-    }
-
-
     for (int i=0;i<variablePartage->jeu_config.manche;i++){
-        //EQUIPE 1
         if (tab_ordre[i]==1){
+            //EQUIPE 1
             if (variablePartage->jeu_equipes.nbr_joueur_1 > variablePartage->jeu_config.nbr_taupe){
+                //Mélange le tableau contenant les id de l'equipe 1 et récupere les n (nbr de taupes par manche) premier
                 shuffle(variablePartage->jeu_equipes.nbr_joueur_1,variablePartage->jeu_equipes.equipe_1);
                 for (int j=0;j<variablePartage->jeu_config.nbr_taupe;j++){
                     char *man=creation_d_une_manche(variablePartage->jeu_equipes.equipe_1[j],taupe,variablePartage);
@@ -311,7 +295,9 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
 
 
         }else{
+            //EQUIPE 2
             if (variablePartage->jeu_equipes.nbr_joueur_2 > variablePartage->jeu_config.nbr_taupe){
+                //Mélange le tableau contenant les id de l'equipe 2 et récupere les n (nbr de taupes par manche) premier
                 shuffle(variablePartage->jeu_equipes.nbr_joueur_2,variablePartage->jeu_equipes.equipe_2);
                 for (int j=0;j<variablePartage->jeu_config.nbr_taupe;j++){
                     char *man=creation_d_une_manche(variablePartage->jeu_equipes.equipe_2[j],taupe,variablePartage);
@@ -332,6 +318,7 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
                 }
             }
         }
+        //Attente de la prochaine manche
         sleep(variablePartage->jeu_config.temps_imparti);
     }   
 

@@ -28,7 +28,7 @@ void proc_Admin_UDP(int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage 
     // descripteur de la socket locale pour l'UDP admin
     int socket_admin;
 
-    socket_admin = creerSocketUDP_Administrateur(atoi(argv[2])); //Port a changer 
+    socket_admin = creerSocketUDP_Administrateur(atoi(argv[2])); 
 
     // Vérifie si la socket à une erreur
     if (socket_admin == -1) {
@@ -48,5 +48,3 @@ void proc_Admin_UDP(int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage 
     close(socket_admin); 
 
 }
-
-void fermeture_proc_admin(){}

@@ -17,13 +17,13 @@
 
 
 
-
+//Creation d'une manche à envoyer aux multicast
 char *creation_d_une_manche(int equipe, char *taupe, struct_partage *variablePartage);
 
-void creations_manches_equipe(struct_jeu jeu);
-
+//Fonction qui permet de créé deux equipe équilibré
 void creation_equipe(struct_partage *variablePartage);
 
+//Mélange un tableau
 void shuffle(int nbr, int joueur[nbr]);
 
 #endif

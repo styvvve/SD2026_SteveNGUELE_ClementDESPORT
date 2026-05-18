@@ -6,7 +6,4 @@ typedef struct struct_joueur {
     int id_joueur;
 }struct_joueur;
 
-
-
-
 #endif

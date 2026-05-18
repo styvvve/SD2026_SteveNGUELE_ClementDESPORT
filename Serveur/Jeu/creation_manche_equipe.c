@@ -34,13 +34,6 @@ char *creation_d_une_manche(int id, char *taupe, struct_partage *variablePartage
 }
 
 
-/*
-void creations_manches_equipe(struct_jeu jeu){
-     for (int i=0; i<jeu.manche;i++){
-          
-     }
-}*/
-
 void shuffle(int nbr, int joueur[nbr]){
      int temp;
      int j;
@@ -52,7 +45,6 @@ void shuffle(int nbr, int joueur[nbr]){
      }
 }
 
-//Fonction qui renvoie un tableau deux de tableau de 50 int. exemple : tab[[1,2,3][4,5,6]]
 void creation_equipe(struct_partage *variablePartage){
      int joueur[100];
      int ind_tab=0;
@@ -68,15 +60,6 @@ void creation_equipe(struct_partage *variablePartage){
 
      //shuffle les ID
      shuffle(ind_tab,joueur);
-
-
-     /*Printf pour verifier*/
-
-     /*
-     for (int i=0;i<ind_tab;i++){
-          prinft("ID [%d] : %d",i,joueur[i]);
-     }
-     */
 
      //Cree une variable 'EQUIPE_COURANTE' (pour connaitre dans quelle equipe mettre)
      int equipe_courante=0;
@@ -102,6 +85,4 @@ void creation_equipe(struct_partage *variablePartage){
 
      variablePartage->jeu_equipes.nbr_joueur_1=ind_equipe_1;
      variablePartage->jeu_equipes.nbr_joueur_2=ind_equipe_2;
-
-
 }

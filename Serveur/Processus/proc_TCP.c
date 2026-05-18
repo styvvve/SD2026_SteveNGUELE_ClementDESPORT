@@ -81,6 +81,7 @@ void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]
         }
         if (fork()==0){
             close (socket_ecoute);
+            //Gere le joueur dans un autre fichier
             gererJoueur(socket_service,id_joueur,pipe_tcp_admin,variablePartage);
             close(socket_service);
             variablePartage->joueurConnecte[id_joueur]=false;

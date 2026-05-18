@@ -124,10 +124,10 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
-    prinft("SERVEUR lancé, Ecrire 'quit' pour éteindre le serveur. \n \n");
+    printf("SERVEUR lancé, Ecrire 'quit' pour éteindre le serveur. \n \n");
     char fin[100];
     while (strcmp(fin, "quit") != 0) {
         scanf("%s",fin);
     }
-    prinft("SERVEUR déconnecté. \n");
+    printf("SERVEUR déconnecté. \n");
 }

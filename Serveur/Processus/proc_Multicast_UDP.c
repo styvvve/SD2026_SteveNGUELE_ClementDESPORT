@@ -87,7 +87,7 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
                         close(pipe_jeu_multicast[0]);
                         exit(0);
                     default:
-                        // Envoie du message au multicast
+                        // Envoie du message au multicast (à tout les joueurs)
                         message_recu_pipe[nread] = '\0';
                         sendto(socket_multicast_joueur, message_recu_pipe, nread, 0, (struct sockaddr*)&adresse, sizeof(adresse));
                         memset(message_recu_pipe, 0, sizeof(message_recu_pipe));
@@ -99,7 +99,4 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
     while (strcmp(message_multicast, "q") != 0) {
         scanf("%s",message_multicast);
     }
-}
-
-void fermeture_proc_multi(){
 }

@@ -12,7 +12,7 @@
 #define TAILLEBUF 100
 
 
-
+//Thread qui gère la reception de message de l'administrateur
 void * reception(void *data){
 
     struct timeval temps_select;
@@ -34,8 +34,6 @@ void * reception(void *data){
         //5 seconde
         temps_select.tv_sec=5;
         temps_select.tv_usec=0;
-
-
         if (select(mutex_ad->socket + 1, &rfds,NULL,NULL,&temps_select)>0){
             pthread_mutex_lock(&mutex_ad->mutex);
             mutex_ad->admin_connecte = true;
@@ -68,6 +66,7 @@ void * reception(void *data){
 }
 
 
+//Thread qui gère l'envoie de message à l'administrateur
 void * envoie(void *data){
     mutex_admin *mutex_ad = (mutex_admin*) data;
     int nread;
@@ -131,7 +130,6 @@ void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_p
     int nb_octets_admin;
     socklen_t lg;
     char buffer[TAILLEBUF]; 
-
     
     // adresse de la socket coté admin
     static struct sockaddr_in addr_admin;
@@ -139,8 +137,6 @@ void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_p
     // descripteur de la socket locale pour l'UDP admin
 
     lg = sizeof(struct sockaddr_in); 
-
-
 
     nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
     if (nb_octets_admin == -1) {

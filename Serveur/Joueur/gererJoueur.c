@@ -14,10 +14,9 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
     snprintf(messages,sizeof(messages)/sizeof(char),"%d",id_joueur);
     write(socket, messages, strlen(messages) + 1); 
 
-
-
     
     char message_pipe_connexion[100];
+    //ENVOIE addPlayer à l'admin
     snprintf(message_pipe_connexion,sizeof(message_pipe_connexion)/sizeof(char),"addPlayer|%d",id_joueur);
 
     write(pipe_tcp_admin[1],message_pipe_connexion,strlen(message_pipe_connexion));
@@ -33,6 +32,12 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
     }
 
     while(1){
+        /*Reception de tout les messages que le client peut envoyer :
+            -quit| (Le joueur quitte)
+            -test|  (Le joueur envoie 'test' pour savoir si le serveur est toujours connecte ou pas)
+            -reussi| (Le joueur à réussi à taper sur la taupe à temps)
+            -pasreussi| (Le joueur n'a pas réussi à taper la taupe à temps ou c'est trompé)
+        */
         nb_octets = read(socket, message_recu_client, TAILLEBUF);
         if (nb_octets > 0){
             char *p = strtok(message_recu_client,"|");
@@ -61,9 +66,13 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
             }
         }
         if (nb_octets==0){
+
+            //Supprime le joueur de l'Équipe (si une partie en mod EQUIPE est en cours)
             if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
                 supprime_joueur_equipe(variablePartage,id_joueur);
             }
+
+            //ENVOIE removePlayer à l'admin
             char message_pipe_deconnexion[100];
             snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
             write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
