@@ -20,7 +20,9 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
 
     write(pipe_tcp_admin[1],message_pipe_connexion,strlen(message_pipe_connexion));
 
-    
+    //playerWin|id
+    //playerLost|id
+    //finishGame|score_1|score_2
     int nb_octets;
 
     char message[100];
@@ -36,10 +38,20 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
                 write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
                 break;
             }
-            if (p && strcmp(p,"test")==0){
+            else if (p && strcmp(p,"test")==0){
                 snprintf(message,sizeof(message)/sizeof(char),"OK");
                 write(socket, message, sizeof(message)/sizeof(char));
-            }else{
+            }else if(p&& strcmp(p,"reussi")==0){
+                char message_reussi[100];
+                snprintf(message_reussi,sizeof(message_reussi)/sizeof(char),"playerWin|%d",id_joueur);
+                write(pipe_tcp_admin[1],message_reussi,strlen(message_reussi));
+            }else if (p&& strcmp(p,"pasreussi")==0){
+                char message_pasreussi[100];
+                snprintf(message_pasreussi,sizeof(message_pasreussi)/sizeof(char),"playerLost|%d",id_joueur);
+                write(pipe_tcp_admin[1],message_pasreussi,strlen(message_pasreussi));
+            }
+            
+            else{
                 printf("%s\n",p);
             }
         }
