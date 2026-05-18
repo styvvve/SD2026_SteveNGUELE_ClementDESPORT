@@ -348,7 +348,6 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
         "      ---(((---------)))---";
     }
 
-
     int ind=0;
     char message_play[100];
     for (int i=0;i<100;i++){

@@ -182,14 +182,19 @@ int main(int argc, char* argv[]) {
                     //Regarde le premier mot (mot clé)
                     if (p && strcmp(p,id)==0){
                         if(joue(message_multicast,n)==true){
+                            printf("VALIDÉ !!! \n \n");
                             char message_envoie_serveur[100];
                             snprintf(message_envoie_serveur,sizeof(message_envoie_serveur)/sizeof(char),"reussi|");
                             write(pipe_multi_tcp[1],message_envoie_serveur,strlen(message_envoie_serveur));
                         }else{
+                            printf("RATÉ ...\n \n");
                             char message_envoie_serveur[100];
                             snprintf(message_envoie_serveur,sizeof(message_envoie_serveur)/sizeof(char),"pasreussi|");
                             write(pipe_multi_tcp[1],message_envoie_serveur,strlen(message_envoie_serveur));
                         }
+                    }
+                    else if(p && strcmp(p,"ATTENTION")==0){
+                        printf("%s \n \n",message_multicast); 
                     }
                     else if (strcmp(message_multicast, "q") == 0) {
                         if (quit_multicastGroup(sock, &multicast_group) == 0) {
