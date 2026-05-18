@@ -359,7 +359,21 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
         }
     }
     
+    int nbr_vivant;
     while (variablePartage->jeu==true){
+        nbr_vivant=0;
+        int i=0;
+        while(nbr_vivant<=1 && i<ind){
+            if (variablePartage->jeu_config.vie[variablePartage->jeu_config.player[i]]>0){
+                nbr_vivant++;
+            }
+            i++;
+        }
+        if (nbr_vivant==1){
+            variablePartage->jeu=false;
+            break;
+        }
+
         int random=rand () % ind-1;
         if (variablePartage->joueurConnecte[variablePartage->jeu_config.player[random]]==true){
             char *man=creation_d_une_manche(variablePartage->jeu_config.player[random],taupe,variablePartage);
@@ -367,8 +381,22 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
             free(man);
             usleep(50000);
         }
-        sleep(variablePartage->jeu_config.temps_imparti +2 );
+        sleep(variablePartage->jeu_config.temps_imparti + 2);
     }
+
+    int gagnant;
+    for (int i=0;i<ind;i++){
+        if (variablePartage->jeu_config.vie[variablePartage->jeu_config.player[i]]>0){
+            gagnant = variablePartage->jeu_config.player[i];
+            break;
+        }
+    }
+
+    //firstPlayer|id_joueur
+    char message_fin[100];
+    snprintf(message_fin,sizeof(message_fin)/sizeof(char),"firstPlayer|%d",gagnant);
+    write(pipe_tcp_admin[1],message_fin,strlen(message_fin));
+
 }
 
 void lancerPartie(struct_partage *variablePartage,int *pipe_jeu_multicast, int *pipe_tcp_admin){
@@ -378,6 +406,8 @@ void lancerPartie(struct_partage *variablePartage,int *pipe_jeu_multicast, int *
             lancerPartieEquipe(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
         }
     }else{
-        //Battle royal
+        if(verifeConfiguration_battle_royal(variablePartage)){
+            lancerPartieBattleRoyale(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
+        }
     }
 }
