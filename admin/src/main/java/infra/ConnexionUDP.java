@@ -1,7 +1,7 @@
 package infra;
 
 import domain.Game;
-import domain.cli.Response;
+import domain.interfaces.ServerHandler;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,9 +14,13 @@ import java.nio.charset.StandardCharsets;
 
 public class ConnexionUDP {
 
-    private InetAddress adr;
-    private DatagramSocket socket;
+    private final InetAddress adr;
+    private final DatagramSocket socket;
     private final int serverPort;
+    /**A listening socket that will be used to receive messages in another thread, so at the same time of the other program*/
+    private final DatagramSocket listeningSocket;
+    private boolean running = true;
+    Thread listenerThread;
 
 
     //2 constructors
@@ -29,7 +33,8 @@ public class ConnexionUDP {
          this.socket.setSoTimeout(3000);
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
-         System.out.println("connexion UDP OK " + adr + serverPort + "\n");
+         this.listeningSocket = new DatagramSocket(serverPort);
+         //System.out.println("connexion UDP OK " + adr + serverPort + "\n");
     }
 
     /**
@@ -123,19 +128,54 @@ public class ConnexionUDP {
         return false;
     }
 
+    /**
+     * Listening to the server at all times
+     */
+    public void listenToServer(ServerHandler handler) throws IOException {
+        byte[] data = new byte[100];
+        DatagramPacket packet = new DatagramPacket(data, data.length);
+        while (running) {
+            listeningSocket.receive(packet); //block until a message is received
 
+            String message = new String(packet.getData(), 0, packet.getLength());
 
-    /*public int sendRound(Round round) {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(round);
-
-            packet = new DatagramPacket((byte[]) oos, ((byte[]) oos).length);
-        } catch (IOException e) {
-            System.out.println("Error during sendRound " + e);
-            return -1;
+            handler.handle(message);
+            //then continue...
         }
+    }
 
-        return 0;
-    }*/
+    /**
+     * Start listening to the socket
+     */
+    public void startListening(ServerHandler handler) {
+         this.listenerThread = new Thread(() -> {
+            try {
+                listenToServer(handler);
+            } catch (IOException e) {
+                System.err.println("Error during listenToServer " + e);
+            }
+        });
+         //hehe
+         this.listenerThread.start();
+    }
+
+    /**
+     * Close sockets
+     */
+    public void close() {
+        this.socket.close();
+        this.listeningSocket.close();
+    }
+
+    /**Toggle the "running value"*/
+    public void toggleRunning() {
+        this.running = !this.running;
+    }
+
+    /**getters*/
+    public InetAddress getAdr() { return this.adr; }
+    public int getServerPort() { return this.serverPort; }
+    public DatagramSocket getSocket() { return this.socket; }
+    public DatagramSocket getListeningSocket() { return this.listeningSocket; }
+    public boolean isRunning() { return this.running; }
 }
