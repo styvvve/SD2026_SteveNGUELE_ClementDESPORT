@@ -37,7 +37,6 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
         if (nb_octets > 0){
             char *p = strtok(message_recu_client,"|");
             if (p && strcmp(p,"quit")==0){
-                printf("TEST DECO\n");
                 char message_pipe_deconnexion[100];
                 snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
                 write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
@@ -60,12 +59,8 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
                 write(pipe_tcp_admin[1],message_pasreussi,strlen(message_pasreussi));
                 repond_faux(variablePartage,id_joueur);
             }
-            else{
-                printf("%s\n",p);
-            }
         }
         if (nb_octets==0){
-            printf("Joueur deco\n");
             if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
                 supprime_joueur_equipe(variablePartage,id_joueur);
             }

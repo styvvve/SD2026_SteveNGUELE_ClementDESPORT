@@ -177,8 +177,6 @@ int main(int argc, char* argv[]) {
                 message_multicast[n] = '\0';
                 char cp_message[500];
                 strcpy(cp_message, message_multicast);
-                printf("%s  \n",cp_message);
-
                 if (n > 0) {
                     /*AFFICHE LA TAUPE SI C'EST SON ID*/
                     char *p = strtok(cp_message,"#");

@@ -69,6 +69,8 @@ void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]
     while(1){
         lg = sizeof(struct sockaddr_in);
         socket_service = accept(socket_ecoute,(struct sockaddr *)&addr_joueur, &lg);
+
+        //Création d'un ID (Recherche dans le tableau joueurConnecte la première case libre)
         while(variablePartage->joueurConnecte[id_joueur]==true && id_joueur<100){
             id_joueur++;
         }
@@ -86,9 +88,4 @@ void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]
         }
         close (socket_service);
     }
-}
-
-
-
-void fermeture_proc_tcp(){
 }

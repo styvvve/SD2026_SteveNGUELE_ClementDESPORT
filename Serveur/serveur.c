@@ -18,34 +18,26 @@
 //Pipe
 #include <fcntl.h>
 
+//Fichiers .h à inclure
 #include "Admin/gererAdmin.h"
 #include "Socket/socket.h"
 #include "Joueur/gererJoueur.h"
 #include "Jeu/jeu.h"
-
 #include "Processus/proc_Multicast_UDP.h"
 #include "Processus/proc_Admin_UDP.h"
 #include "Processus/proc_TCP.h"
-
 #include "structure_partage.h"
 
 
 #define TAILLEBUF 100
 
 
-void fermeture_processus(){
-    fermeture_proc_admin();
-    fermeture_proc_multi();
-    fermeture_proc_tcp();
-}
-
 int main(int argc, char* argv[]) {
 
-    /* Creation Pipe */
+    /* Creation Pipes */
     int pipe_tcp_admin[2];
     int pipe_jeu_multicast[2];
     int pipe_tcp_jeu[2];
-
 
     if (pipe(pipe_tcp_admin) == -1){
         perror("Erreur dans la création de pipe");
@@ -67,7 +59,6 @@ int main(int argc, char* argv[]) {
         Si il y a des nouveaux clients */
 
     //https://www.geeksforgeeks.org/c/non-blocking-io-with-pipes-in-c/
-
 
     if (fcntl(pipe_tcp_admin[0], F_SETFL, O_NONBLOCK) < 0){
         perror("Erreur dans la création de la pipe non bloquant.");
@@ -106,36 +97,14 @@ int main(int argc, char* argv[]) {
     NULL et 0 : Pour choisir automatiquement l'adresse de stockage et pas de restriction
     **/
     
-
-
     struct_partage *variablePartage = (struct_partage *)shmat(shm_id, NULL, 0);
 
     // Initialisation du tableau des joueurs connecte
-
     for (int i=0;i<100;i++){
         variablePartage->joueurConnecte[i]=false;
     }
 
-    /*variablePartage->joueurConnecte[0]=true;
-    variablePartage->joueurConnecte[8]=true;
-    variablePartage->joueurConnecte[15]=true;
-    variablePartage->joueurConnecte[4]=true;
-    variablePartage->joueurConnecte[3]=true;
-    variablePartage->joueurConnecte[59]=true;
-    */
-    
-    /*variablePartage->jeu_config.manche = 2;
-    variablePartage->jeu_config.nbr_taupe = 2;
-    variablePartage->jeu_config.level = 1;
-    variablePartage->jeu_config.mode = 1;
-    variablePartage->jeu_config.temps_imparti=5;*/
-
-
-
-    //lancerPartieEquipe(variablePartage);
-
-    
-
+    /*Lancement des 3 processus*/
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
         proc_Admin_UDP(pipe_tcp_admin,pipe_jeu_multicast,variablePartage,argv);
@@ -155,6 +124,10 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
-    while(1){}
-
+    prinft("SERVEUR lancé, Ecrire 'quit' pour éteindre le serveur. \n \n");
+    char fin[100];
+    while (strcmp(fin, "quit") != 0) {
+        scanf("%s",fin);
+    }
+    prinft("SERVEUR déconnecté. \n");
 }

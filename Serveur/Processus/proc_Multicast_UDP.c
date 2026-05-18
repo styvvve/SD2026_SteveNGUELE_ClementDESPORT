@@ -17,6 +17,7 @@
 
 
 void proc_Multicast_UDP(int *pipe_jeu_multicast){
+    close(pipe_jeu_multicast[1]);
 
     /*MULTICAST Joueur <-> Serveur*/
     
@@ -83,7 +84,6 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
                             exit(1);
                         }
                     case 0:
-                        printf("Fermeture de la pipe");
                         close(pipe_jeu_multicast[0]);
                         exit(0);
                     default:
@@ -98,7 +98,6 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
     char message_multicast[500] = "";
     while (strcmp(message_multicast, "q") != 0) {
         scanf("%s",message_multicast);
-        if (strcmp(message_multicast, "q") == 0) printf("ARRET DU MULTICAST (SERVEUR)\n"); 
     }
 }
 

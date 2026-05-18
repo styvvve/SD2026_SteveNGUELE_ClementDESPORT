@@ -43,16 +43,13 @@ void * reception(void *data){
             nb_octets_admin = recvfrom(mutex_ad->socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&mutex_ad->addr_admin, &mutex_ad->lg);
             if (nb_octets_admin > 0){
                 memcpy(message_recu_admin, buffer, nb_octets_admin);
-                printf("Message reçu de l'admin :%s\n", message_recu_admin);
                 char mess[100];
                 memcpy(mess,message_recu_admin,sizeof(message_recu_admin));
                 char *p = strtok(message_recu_admin,"|");
                 if (p && strcmp(p,"configure")==0){
-                    printf("Configuration :\n");
                     configurePartie(mess,mutex_ad->variablePartage);
                 }
                 else if (p && strcmp(p,"start")==0){
-                    printf("START :\n");
                     snprintf(message,sizeof(message)/sizeof(char),"started");
                     a=sendto(mutex_ad->socket, message, strlen(message)+1, 0,(struct sockaddr*)&mutex_ad->addr_admin, mutex_ad->lg);
                     lancerPartie(mutex_ad->variablePartage,mutex_ad->pipe_jeu_multicast,mutex_ad->pipe_tcp_admin);
@@ -95,7 +92,6 @@ void * envoie(void *data){
                         exit(1);
                     }
                 case 0:
-                    printf("Fermeture de la pipe");
                     close(mutex_ad->pipe_tcp_admin[0]);
                     exit(0);
                 default:
@@ -120,7 +116,6 @@ void * envoie(void *data){
                         exit(1);
                     }
                 case 0:
-                    printf("Fermeture de la pipe");
                     close(mutex_ad->pipe_tcp_admin[0]);
                     exit(0);
                 default:
@@ -159,7 +154,6 @@ void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_p
         perror("erreur gethostbyaddr");
         exit(1);
     }
-    printf("TEST :\n");
 
 
     //https://tala-informatique.fr/index.php?title=C_pthread
@@ -173,6 +167,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_p
     mutex_ad.addr_admin=addr_admin;
     mutex_ad.lg=lg;
     mutex_ad.pipe_tcp_admin=pipe_tcp_admin;
+    mutex_ad.pipe_jeu_multicast=pipe_jeu_multicast;
     mutex_ad.socket=socket;
     mutex_ad.variablePartage=variablePartage;
     
