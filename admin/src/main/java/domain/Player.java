@@ -22,6 +22,26 @@ public class Player implements Serializable {
     }
 
     /**
+     * This code id from me here -> <a href="https://github.com/styvvve/uppaBank/blob/main/src/main/java/bank/domain/Account.java"></a>
+     * @param o the reference object with which to compare.
+     * @return true if this object is the same as the obj argument; false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Player)) return false; //si ce n'est pas un Player
+        else  return this.id == ((Player) o).id && this.health == ((Player) o).health;
+    }
+
+    /**
+     * Very simple hashcode
+     * @return the hashcode
+     */
+    @Override
+    public int hashCode() {
+        return this.id;
+    }
+
+    /**
      * Constructor with default health
      * @param id
      */

@@ -2,11 +2,9 @@ package domain;
 
 import domain.enu.GameMode;
 import domain.enu.Level;
-import domain.interfaces.GameObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,13 +24,19 @@ public class UnitTests {
         assertEquals(GameMode.BATTLE_ROYAL, newGame.getMode());
         assertEquals(Level.EASY, newGame.getLevel());
 
-        assertEquals(0, newGame.getRounds().size());
+        assertEquals(6, newGame.getRounds().size());
         assertEquals(0, newGame.getPlayers().size());
 
         newGame.addPlayer(new Player(1, 5));
 
         assertEquals(1, newGame.getPlayers().size());
 
+    }
+
+    @Test
+    public void shouldCreateAValidStringGameObject() {
+        String gameString = newGame.serializeGame();
+        assertEquals("|1|1|3|10|6|6", gameString);
     }
 
     /*@Test
@@ -43,6 +47,7 @@ public class UnitTests {
 
         newGame.addPlayer(new Player(1, 5));
         newGame.addPlayer(new Player(12, 5));
+        newGame.gameService();
 
         assertTrue(Files.exists(Path.of("test.log")));
 

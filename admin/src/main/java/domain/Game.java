@@ -1,27 +1,31 @@
 package domain;
 
-import domain.interfaces.GameObserver;
-import domain.enu.GameMode;
-import domain.enu.Level;
-
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Random;
+
+import domain.enu.*;
+import domain.exception.NotEnoughPlayersException;
+import domain.interfaces.*;
 
 /**
- * This is the main class for the whole game
+ * This is the main class for the whole game. The class implements Serializable interface for the communication with the persistence server in RMI
  * @author Steve
  */
 public class Game implements Serializable {
 
-    private String id;
+    private final String id;
     private GameMode mode;
     private List<Player> players = new ArrayList<>();
     private Level level;
     private List<Round> rounds = new ArrayList<>();
-    private List<GameObserver> loggers = new ArrayList<>();
+    private boolean isFinished = false;
+    private int health = 3;
+    private int molesNumber = 6;
+    private int time = 10; //in seconds
 
     private Path filePath;
 
@@ -36,6 +40,11 @@ public class Game implements Serializable {
         this.mode = mode;
         this.level = level;
         this.filePath = filePath;
+        //the round number is 6 by default
+        for (int i = 0; i < 6; i++) {
+            Round round = new Round(i);
+            this.rounds.add(round);
+        }
     }
 
     /**
@@ -50,28 +59,59 @@ public class Game implements Serializable {
         this.players = players;
     }
 
-    public String getId() {
-        return id;
+    /**
+     * constructor with health and moles number
+     */
+    public Game(GameMode mode, Level level, Path filePath, int health, int molesNumber) {
+        this(mode, level, filePath);
+        this.health = health;
+        this.molesNumber = molesNumber;
     }
-    public void setId(String id) {}
 
+
+    /**
+     * Getters
+     */
+    public String getId() { return this.id; }
     public GameMode getMode() { return this.mode; }
-
     public Level getLevel() { return this.level; }
-
     public List<Player> getPlayers() { return this.players; }
     public List<Round> getRounds() { return this.rounds; }
+    public boolean isFinished() { return this.isFinished; }
+    public int getHealth() { return this.health; }
+    public int getTime() { return this.time; }
+    public int getMolesNumber() { return this.molesNumber; }
 
+    /**
+     * Setters
+     */
     public void addPlayer(Player player) {
         this.players.add(player);
     }
-
     public void addRounds(Round round) {
         this.rounds.add(round);
     }
 
-    public void addObserver(GameObserver obs) {
-        this.loggers.add(obs);
-    }
+    public void setFinished(boolean finished) { this.isFinished = finished; }
+    public void setHealth(int health) { this.health = health; }
+    public void addRound(Round round) { this.rounds.add(round); }
+    public void setTime(int time) { this.time = time; }
 
+
+
+    /**
+     * Convert a Game object after configuration into a String with the format:
+     * -> |level|mode|health|time|numberOfMoles|numberOfRounds all in integer
+     * @return String
+     */
+    public String serializeGame() {
+        int level = this.getLevel().getNumber();
+        int mode = this.getMode().getNumber();
+        int health = this.getHealth();
+        int time = this.getTime();
+        int numberOfMoles = this.getMolesNumber();
+        int numberOfRounds = this.getRounds().size();
+
+        return String.format("|%d|%d|%d|%d|%d|%d", level, mode, health, time, numberOfMoles, numberOfRounds);
+    }
 }

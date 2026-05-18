@@ -1,17 +1,25 @@
 package domain;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Round class represents a round of the game. Each round has a different number of players and different mole
+ * The number of moles for one round is 1 by default
+ * @see Player
+ * @see Mole
+ * @see Game
+ */
 public class Round implements Serializable {
-    private int roundNumber;
+    private final int roundNumber;
     private List<Player> players = new ArrayList<>();
     private List<Mole> moles = new ArrayList<>();
 
+    /**
+     * Very standard constructor
+     * @param roundNumber
+     */
     public Round(int roundNumber) {
         this.roundNumber = roundNumber;
     }
@@ -19,18 +27,7 @@ public class Round implements Serializable {
     public int getRoundNumber() {
         return roundNumber;
     }
+    public List<Mole> getMoles() { return this.moles; }
     public void setRoundNumber(int roundNumber) {}
-
-    public byte[] toBytes() {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(this);
-
-            return bos.toByteArray();
-        } catch (IOException e) {
-            System.out.println("Error during Round to bytes conversion " + e);
-        }
-
-        return null;
-    }
+    public void addMole(Mole mole) { this.moles.add(mole); }
 }
