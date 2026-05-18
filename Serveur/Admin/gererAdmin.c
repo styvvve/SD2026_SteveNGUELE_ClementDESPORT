@@ -42,8 +42,9 @@ void * reception(void *data){
                 memcpy(message_recu_admin, buffer, nb_octets_admin);
                 printf("Message reçu de l'admin :%s\n", message_recu_admin);
                 char *p = strtok(message_recu_admin,"|");
-                if (p && strcmp(p,"config")==0){
+                if (p && strcmp(p,"configure")==0){
                     configurePartie(p);
+                    printf("Configuration :\n");
                 }
                 if (p && strcmp(p,"start")==0){
                     //EQUIPE

@@ -355,7 +355,7 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
     for (int i=0;i<100;i++){
         if (variablePartage->joueurConnecte[i]==true){
             variablePartage->jeu_config.player[ind]=i;
-            variablePartage->jeu_config.vie[i]=variablePartage->jeu_config.vie;
+            //variablePartage->jeu_config.vie[i]=variablePartage->jeu_config;
         }
     }
     
