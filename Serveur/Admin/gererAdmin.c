@@ -14,6 +14,7 @@
 
 
 void * reception(void *data){
+
     struct timeval temps_select;
     fd_set rfds;
 
@@ -33,6 +34,8 @@ void * reception(void *data){
         //5 seconde
         temps_select.tv_sec=5;
         temps_select.tv_usec=0;
+
+
         if (select(mutex_ad->socket + 1, &rfds,NULL,NULL,&temps_select)>0){
             pthread_mutex_lock(&mutex_ad->mutex);
             mutex_ad->admin_connecte = true;
@@ -41,16 +44,20 @@ void * reception(void *data){
             if (nb_octets_admin > 0){
                 memcpy(message_recu_admin, buffer, nb_octets_admin);
                 printf("Message reçu de l'admin :%s\n", message_recu_admin);
+                char mess[100];
+                memcpy(mess,message_recu_admin,sizeof(message_recu_admin));
                 char *p = strtok(message_recu_admin,"|");
                 if (p && strcmp(p,"configure")==0){
-                    configurePartie(p);
                     printf("Configuration :\n");
+                    configurePartie(mess,mutex_ad->variablePartage);
                 }
-                if (p && strcmp(p,"start")==0){
-                    //EQUIPE
+                else if (p && strcmp(p,"start")==0){
+                    printf("START :\n");
+                    snprintf(message,sizeof(message)/sizeof(char),"started");
+                    a=sendto(mutex_ad->socket, message, strlen(message)+1, 0,(struct sockaddr*)&mutex_ad->addr_admin, mutex_ad->lg);
                     lancerPartie(mutex_ad->variablePartage,mutex_ad->pipe_jeu_multicast,mutex_ad->pipe_tcp_admin);
                 }
-                if (p && strcmp(p,"test")==0){
+                else if (p && strcmp(p,"test")==0){
                     snprintf(message,sizeof(message)/sizeof(char),"OK");
                     a=sendto(mutex_ad->socket, message, strlen(message)+1, 0,(struct sockaddr*)&mutex_ad->addr_admin, mutex_ad->lg);
                     if (a==-1){
@@ -58,23 +65,6 @@ void * reception(void *data){
                     }
                 }
             }
-        }
-        else {
-            //modifie variable admin_connecte
-            pthread_mutex_lock(&mutex_ad->mutex);
-            mutex_ad->admin_connecte = false;
-            pthread_mutex_unlock(&mutex_ad->mutex);
-
-            if (mutex_ad->variablePartage->jeu){
-                /*
-                    ToDo : Ne rien faire, la partie continue et informer à la fin de la partie à tout les clients que l'admin est partie et donc attendre..
-                */
-            }else{
-                /*
-                    ToDo: Informer les clients que l'admin est partie et donc attendre..
-                */
-            }
-            
         }
     }
     pthread_exit(NULL);
@@ -143,7 +133,6 @@ void * envoie(void *data){
 
 
 void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage *variablePartage) {
-
     int nb_octets_admin;
     socklen_t lg;
     char buffer[TAILLEBUF]; 
@@ -155,6 +144,7 @@ void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_p
     // descripteur de la socket locale pour l'UDP admin
 
     lg = sizeof(struct sockaddr_in); 
+
 
 
     nb_octets_admin = recvfrom(socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&addr_admin, &lg);
@@ -169,6 +159,8 @@ void gererAdmin(int socket,int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_p
         perror("erreur gethostbyaddr");
         exit(1);
     }
+    printf("TEST :\n");
+
 
     //https://tala-informatique.fr/index.php?title=C_pthread
     mutex_admin mutex_ad;

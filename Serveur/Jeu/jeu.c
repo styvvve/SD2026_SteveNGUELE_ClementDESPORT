@@ -169,25 +169,28 @@ void configurePartie(char config_partie[1024],struct_partage *variablePartage){
     char *p = strtok(config_partie,"|");
 
 
+
     // Exemple de chaine à recevoir : config|  1  | 2  | 3 |      5      |   18    |    6     (sans espace bien sûr)
     //                                config|level|mode|vie|temps_imparti|nbr_taupe|nbr_manche
     
     // Ajouter tout les joueurs connecté
-    for (int i=0;i<100;i++){
+    /*for (int i=0;i<100;i++){
         if (variablePartage->joueurConnecte[i]==true){
             variablePartage->jeu_config.player[i]=true;
         }
-    }
-
+    }*/
     while (p != NULL){
         switch (num){
             case 0:
                 break;
             case 1:
+
                 variablePartage->jeu_config.level=atoi(p);
                 break;
             
             case 2:
+
+                printf("MODE :%d\n",atoi(p));
                 variablePartage->jeu_config.mode=atoi(p);
                 break;
 
@@ -217,6 +220,7 @@ void configurePartie(char config_partie[1024],struct_partage *variablePartage){
         num++;
         p = strtok(NULL, "|");
     }
+    printf("config fin\n");
 }
 
 
@@ -244,14 +248,23 @@ bool verifeJoueurSup2(struct_partage *variablePartage){
 }
 
 void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast, int *pipe_tcp_admin){
-    close(pipe_jeu_multicast[0]);
+
+    printf("TEST EQUIPE\n");
+
     variablePartage->jeu=true;
+
+    printf("1 %d\n",variablePartage->jeu_equipes.score_1);
+
     variablePartage->jeu_equipes.score_1=0;
+    printf("2 %d\n",variablePartage->jeu_equipes.score_1);
+
     variablePartage->jeu_equipes.score_2=0;
 
     char *taupe;
 
     srand( time( NULL ) );
+
+
     if (variablePartage->jeu_config.level==1){
         taupe =
         "            _________\n"
@@ -262,11 +275,13 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
     }
 
 
+    printf("TEST EQUIPE 2\n");
 
 
     creation_equipe(variablePartage);
     int tab_ordre[variablePartage->jeu_config.manche];
     int ind_tab_manche=0;
+    char message_play[100];
     for (int i=0;i<variablePartage->jeu_config.manche/2;i++){
         tab_ordre[i]=1;
     }
@@ -280,14 +295,19 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
     for (int i=0;i<variablePartage->jeu_config.manche*variablePartage->jeu_config.nbr_taupe;i++){
         snprintf(manche[i],500," ");
     }
+    printf("TEST EQUIPE 3\n");
 
 
     for (int i=0;i<variablePartage->jeu_config.manche;i++){
         //EQUIPE 1
+        printf("TEST manche 2 %d\n",i);
+
         if (tab_ordre[i]==1){
             if (variablePartage->jeu_equipes.nbr_joueur_1 > variablePartage->jeu_config.nbr_taupe){
                 shuffle(variablePartage->jeu_equipes.nbr_joueur_1,variablePartage->jeu_equipes.equipe_1);
                 for (int j=0;j<variablePartage->jeu_config.nbr_taupe;j++){
+                printf("TEST 4 %d\n",j);
+
 
                     char *man=creation_d_une_manche(variablePartage->jeu_equipes.equipe_1[j],taupe,variablePartage);
                     write(pipe_jeu_multicast[1],man,500);
@@ -296,6 +316,8 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
                 }
             }else{
                 for (int j=0;j<variablePartage->jeu_equipes.nbr_joueur_1;j++){
+                printf("TEST 7 %d\n",j);
+
                     char *man=creation_d_une_manche(variablePartage->jeu_equipes.equipe_1[j],taupe,variablePartage);
                     write(pipe_jeu_multicast[1],man,500);
                     free(man);
@@ -308,22 +330,32 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
             if (variablePartage->jeu_equipes.nbr_joueur_2 > variablePartage->jeu_config.nbr_taupe){
                 shuffle(variablePartage->jeu_equipes.nbr_joueur_2,variablePartage->jeu_equipes.equipe_2);
                 for (int j=0;j<variablePartage->jeu_config.nbr_taupe;j++){
+                printf("TEST 5%d\n",j);
+
                     char *man=creation_d_une_manche(variablePartage->jeu_equipes.equipe_2[j],taupe,variablePartage);
                     write(pipe_jeu_multicast[1],man,500);
                     free(man);
+                    snprintf(message_play,sizeof(message_play)/sizeof(char),"playerPlay|%d",variablePartage->jeu_equipes.equipe_1[j]);
+                    //write(pipe_tcp_admin[1],message_play,strlen(message_play));
                     usleep(50000);
                 }
             }else{
                 for (int j=0;j<variablePartage->jeu_equipes.nbr_joueur_2;j++){
+                printf("TEST 6 %d\n",j);
+
                     char *man=creation_d_une_manche(variablePartage->jeu_equipes.equipe_2[j],taupe,variablePartage);
                     write(pipe_jeu_multicast[1],man,500);
                     free(man);
+                    snprintf(message_play,sizeof(message_play)/sizeof(char),"playerPlay|%d",variablePartage->jeu_equipes.equipe_2[j]);
+                    //write(pipe_tcp_admin[1],message_play,strlen(message_play));
                     usleep(50000);
                 }
             }
         }
         sleep(variablePartage->jeu_config.temps_imparti + 2);
     }   
+
+    printf("FINI %d\n");
 
     variablePartage->jeu=false;
     
@@ -337,6 +369,9 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
 
 
 void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_multicast, int *pipe_tcp_admin){
+
+    printf("TEST DEBUT BATTLE\n");
+
     close(pipe_jeu_multicast[0]);
     variablePartage->jeu=true;
     srand( time( NULL ) );
@@ -352,6 +387,7 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
 
 
     int ind=0;
+    char message_play[100];
     for (int i=0;i<100;i++){
         if (variablePartage->joueurConnecte[i]==true){
             variablePartage->jeu_config.player[ind]=i;
@@ -379,6 +415,8 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
             char *man=creation_d_une_manche(variablePartage->jeu_config.player[random],taupe,variablePartage);
             write(pipe_jeu_multicast[1],man,500);
             free(man);
+            snprintf(message_play,sizeof(message_play)/sizeof(char),"playerPlay|%d",variablePartage->jeu_config.player[random]);
+            write(pipe_tcp_admin[1],message_play,strlen(message_play));
             usleep(50000);
         }
         sleep(variablePartage->jeu_config.temps_imparti + 2);
@@ -402,12 +440,9 @@ void lancerPartieBattleRoyale(struct_partage *variablePartage, int *pipe_jeu_mul
 void lancerPartie(struct_partage *variablePartage,int *pipe_jeu_multicast, int *pipe_tcp_admin){
     if (variablePartage->jeu_config.mode==2){
         //Jeu equipe
-        if(verifeConfiguration_equipe(variablePartage)){
-            lancerPartieEquipe(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
-        }
+        printf("TEST EQUIPE\n");
+        lancerPartieEquipe(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
     }else{
-        if(verifeConfiguration_battle_royal(variablePartage)){
-            lancerPartieBattleRoyale(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
-        }
+        lancerPartieBattleRoyale(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
     }
 }

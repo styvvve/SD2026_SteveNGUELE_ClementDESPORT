@@ -58,6 +58,7 @@ bool level1(char *taupe,int temps){
 }
 
 
+
 bool joue(const char *message, int len){
     char cp_message[500];
     strcpy(cp_message, message);
@@ -94,6 +95,7 @@ bool joue(const char *message, int len){
     }
     return true;
 }
+
 
 void *test_connexion(void *data) {
     mutex_test *mutex_t = (mutex_test*) data;
@@ -175,6 +177,7 @@ int main(int argc, char* argv[]) {
                 message_multicast[n] = '\0';
                 char cp_message[500];
                 strcpy(cp_message, message_multicast);
+                printf("%s  \n",cp_message);
 
                 if (n > 0) {
                     /*AFFICHE LA TAUPE SI C'EST SON ID*/
@@ -252,7 +255,7 @@ int main(int argc, char* argv[]) {
                 exit(0);
             default:
                 // Envoie du message pour l'admin
-                nb_octets_serveur = write(sock, message_pipe, strlen(message_pipe)+1);;
+                nb_octets_serveur = write(sock, message_pipe, strlen(message_pipe)+1);
                 if (nb_octets_serveur == -1) {
                     perror("erreur envoi réponse au serveur");
                     exit(1);

@@ -24,7 +24,7 @@ void repond_faux(struct_partage *variablePartage,int id);
 bool verifeConfiguration(struct_jeu jeu);
 
 
-void configurePartie(char config_partie[1024]);
+void configurePartie(char config_partie[1024],struct_partage *variablePartage);
 
 int nombreDeJoueurConnecter(struct_partage variablePartage);
 
