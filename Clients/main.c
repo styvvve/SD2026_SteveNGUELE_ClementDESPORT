@@ -15,6 +15,7 @@
 
 
 bool level1(char *taupe,int temps){
+    fflush(stdin);
     //https://stackoverflow.com/questions/63751531/non-canonical-terminal-mode-buffer-stdout-in-c-program
     struct termios termios_new, termios_backup;
     tcgetattr(STDIN_FILENO, &termios_backup);

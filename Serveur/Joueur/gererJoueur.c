@@ -20,8 +20,6 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
 
     write(pipe_tcp_admin[1],message_pipe_connexion,strlen(message_pipe_connexion));
 
-    //playerWin|id
-    //playerLost|id
     //finishGame|score_1|score_2
     int nb_octets;
 
@@ -50,7 +48,6 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
                 snprintf(message_pasreussi,sizeof(message_pasreussi)/sizeof(char),"playerLost|%d",id_joueur);
                 write(pipe_tcp_admin[1],message_pasreussi,strlen(message_pasreussi));
             }
-            
             else{
                 printf("%s\n",p);
             }

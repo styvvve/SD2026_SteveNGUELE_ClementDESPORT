@@ -252,6 +252,7 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast)
             ind_tab_manche++;
             usleep(5000);
         }
-        sleep(3);
+        sleep(variablePartage->jeu_config->temps_imparti + 2);
     }
+    
 }
