@@ -23,12 +23,12 @@
 //Crée une seule manche pour les deux modes (ID si c'est en battle royal. ID_Equipe si c'est en équipe)
 char *creation_d_une_manche(int id, char *taupe, struct_partage *variablePartage){
     char *manche = malloc(500);
-    snprintf(manche,500,"%d||%s||%d",id,taupe,variablePartage->jeu_config->temps_imparti);
-    /* Exemple : 1||              _____
+    snprintf(manche,500,"%d#%s#%d",id,taupe,variablePartage->jeu_config->temps_imparti);
+    /* Exemple : 1#              _____
             \"_   _"/
             |(*)-(*)|
           ./  " O "  \.
-     ---"(((---------)))"---||4*/
+     ---"(((---------)))"---#4*/
 
      // 1 == id ; 4 == Seconde impartie
      return manche;

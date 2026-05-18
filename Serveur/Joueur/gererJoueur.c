@@ -11,6 +11,7 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
     char messages[100]; 
     snprintf(messages,sizeof(messages)/sizeof(char),"%d",id_joueur);
 
+    printf("TEST :%s\n",messages);
     write(socket, messages, strlen(messages) + 1); 
 
 

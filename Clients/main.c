@@ -72,24 +72,20 @@ int main(int argc, char* argv[]) {
             char message_multicast[500]; 
             while (1) {
                 int n = recvfrom(sock, message_multicast, sizeof(message_multicast), 0, NULL, 0);
+                message_multicast[n] = '\0';
                 if (n > 0) {
                     /*AFFICHE LA TAUPE SI C'EST SON ID*/
-                    //char *p = strtok(message_multicast,"||");
-                    message_multicast[n] = '\0';
-                    /*if (p && strcmp(p,)==0){
-                        printf("TEST DECO\n");
-                        char message_pipe_deconnexion[100];
-                        snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
-                        write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
-                        break;
-                    }*/
-                    printf("%s\n", message_multicast);
-                    if (strcmp(message_multicast, "q") == 0) {
+                    char *p = strtok(message_multicast,"#");
+                    char id[10];
+                    snprintf(id, sizeof(id), "%d", id_partage->id_joueur);
+                    if (p && strcmp(p,id)==0){
+                        printf("TEST %s\n", message_multicast);
+                    }
+                    else if (strcmp(message_multicast, "q") == 0) {
                         if (quit_multicastGroup(sock, &multicast_group) == 0) {
                             break; 
                         }
                     }
-
                 }
             }
             printf("Fin du multicast."); 
@@ -101,6 +97,14 @@ int main(int argc, char* argv[]) {
     if (connexion_TCP(sock, argv[1], atoi(argv[2])) != 0){
         perror("Erreur dans la connexion avec le serveur");
     }
+
+    int nb_octets;
+    char message_recu_serveur[100];
+    nb_octets = read(sock, message_recu_serveur, 100);
+    if (nb_octets>0){
+        id_partage->id_joueur = atoi(message_recu_serveur);
+    }
+
     mutex_test mutex_t;
     pthread_mutex_init(&mutex_t.mutex, NULL);
     mutex_t.serveur_connecte = true;
@@ -110,23 +114,19 @@ int main(int argc, char* argv[]) {
     pthread_create(&thread, NULL, test_connexion, &mutex_t);
     char message[100]= ""; 
     bool connecte=true;
-    int nb_octets;
-    char message_recu_serveur[100];
+
     printf("Bienvenu dans le jeu tape-taupe, veuillez attendre que l'administrateur lance la partie \n\n");
 
+
+
     while (strcmp(message, "q") != 0 && connecte) {
-        nb_octets = read(sock, message_recu_serveur, 100);
-        if (nb_octets>0){
-            id_partage->id_joueur = atoi(message_recu_serveur);
-        }
-        printf(" TEST : %d \n",id_partage->id_joueur);
+
         scanf("%s", message);
         //write(sock, message, srlen(message)+1); 
         
         pthread_mutex_lock(&mutex_t.mutex);
         connecte = mutex_t.serveur_connecte;
         pthread_mutex_unlock(&mutex_t.mutex);
-        snprintf(message,sizeof(message)/sizeof(char),message);
         write(sock, message, strlen(message)+1);
         if (strcmp(message, "q") == 0){
             snprintf(message,sizeof(message)/sizeof(char),"quit|"); //pour fair comprendre que le client à quitter volontairement

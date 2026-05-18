@@ -106,12 +106,13 @@ int main(int argc, char* argv[]) {
         variablePartage->joueurConnecte[i]=false;
     }
 
-    variablePartage->joueurConnecte[0]=true;
+    /*variablePartage->joueurConnecte[0]=true;
     variablePartage->joueurConnecte[8]=true;
     variablePartage->joueurConnecte[15]=true;
     variablePartage->joueurConnecte[4]=true;
     variablePartage->joueurConnecte[3]=true;
     variablePartage->joueurConnecte[59]=true;
+    */
     
 
     variablePartage->jeu_config = malloc(sizeof(struct_jeu));

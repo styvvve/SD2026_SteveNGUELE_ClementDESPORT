@@ -88,7 +88,9 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
                         exit(0);
                     default:
                         // Envoie du message au multicast
+                        message_recu_pipe[nread] = '\0';
                         sendto(socket_multicast_joueur, message_recu_pipe, strlen(message_recu_pipe), 0,(struct sockaddr*)&adresse, sizeof(adresse));
+                        memset(message_recu_pipe, 0, sizeof(message_recu_pipe));
                 }
     }
 

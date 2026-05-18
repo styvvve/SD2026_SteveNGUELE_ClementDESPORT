@@ -193,25 +193,48 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast)
     shuffle(variablePartage->jeu_config->manche,tab_ordre);
 
     char manche[variablePartage->jeu_config->manche*variablePartage->jeu_config->nbr_taupe][500];    
+    for (int i=0;i<variablePartage->jeu_config->manche*variablePartage->jeu_config->nbr_taupe;i++){
+        snprintf(manche[i],500," ");
+    }
 
 
     for (int i=0;i<variablePartage->jeu_config->manche;i++){
         //EQUIPE 1
         if (tab_ordre[i]==1){
             shuffle(variablePartage->jeu_config->nbr_joueur_1,equipes.equipe_1);
-            for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
-                char *man=creation_d_une_manche(equipes.equipe_1[j],taupe,variablePartage);
-                snprintf(manche[ind_tab_manche],500,"%s",man);
-                ind_tab_manche++;
-                free(man);
+            if (variablePartage->jeu_config->nbr_joueur_1 > variablePartage->jeu_config->nbr_taupe){
+                for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
+                    char *man=creation_d_une_manche(equipes.equipe_1[j],taupe,variablePartage);
+                    snprintf(manche[ind_tab_manche],500,"%s",man);
+                    ind_tab_manche++;
+                    free(man);
+                }
+            }else{
+                for (int j=0;j<variablePartage->jeu_config->nbr_joueur_1;j++){
+                    char *man=creation_d_une_manche(equipes.equipe_1[j],taupe,variablePartage);
+                    snprintf(manche[ind_tab_manche],500,"%s",man);
+                    ind_tab_manche++;
+                    free(man);
+                }
             }
+
+
         }else{
-            shuffle(variablePartage->jeu_config->nbr_joueur_2,equipes.equipe_2);
-            for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
-                char *man=creation_d_une_manche(equipes.equipe_2[j],taupe,variablePartage);
-                snprintf(manche[ind_tab_manche],500,"%s",man);
-                ind_tab_manche++;
-                free(man);
+            if (variablePartage->jeu_config->nbr_joueur_2 > variablePartage->jeu_config->nbr_taupe){
+                shuffle(variablePartage->jeu_config->nbr_joueur_2,equipes.equipe_2);
+                for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
+                    char *man=creation_d_une_manche(equipes.equipe_2[j],taupe,variablePartage);
+                    snprintf(manche[ind_tab_manche],500,"%s",man);
+                    ind_tab_manche++;
+                    free(man);
+                }
+            }else{
+                for (int j=0;j<variablePartage->jeu_config->nbr_joueur_2;j++){
+                    char *man=creation_d_une_manche(equipes.equipe_2[j],taupe,variablePartage);
+                    snprintf(manche[ind_tab_manche],500,"%s",man);
+                    ind_tab_manche++;
+                    free(man);
+                }
             }
         }
     }   
@@ -224,7 +247,7 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast)
 
     ind_tab_manche=0;
     for (int i=0;i<variablePartage->jeu_config->manche;i++){
-        for (int i=0;i<variablePartage->jeu_config->nbr_taupe;i++){
+        for (int j=0;j<variablePartage->jeu_config->nbr_taupe;j++){
             write(pipe_jeu_multicast[1],manche[ind_tab_manche],500);
             ind_tab_manche++;
             usleep(5000);
