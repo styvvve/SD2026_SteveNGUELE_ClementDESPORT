@@ -16,4 +16,6 @@
 
 void gererJoueur(int socket,int id_joueur,int *pipe_tcp_admin, struct_partage *variablePartage); 
 
+void ajoute_joueur_equipe(struct_partage *variablePartage,int id);
+
 #endif

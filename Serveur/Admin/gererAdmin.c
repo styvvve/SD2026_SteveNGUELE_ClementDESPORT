@@ -45,9 +45,9 @@ void * reception(void *data){
                 if (p && strcmp(p,"config")==0){
                     configurePartie(p);
                 }
-                if (p && strcmp(p,"lancer")==0){
+                if (p && strcmp(p,"start")==0){
                     //EQUIPE
-                    lancerPartieEquipe(mutex_ad->variablePartage,mutex_ad->pipe_jeu_multicast,mutex_ad->pipe_tcp_admin);
+                    lancerPartie(mutex_ad->variablePartage,mutex_ad->pipe_jeu_multicast,mutex_ad->pipe_tcp_admin);
                 }
                 if (p && strcmp(p,"test")==0){
                     snprintf(message,sizeof(message)/sizeof(char),"OK");

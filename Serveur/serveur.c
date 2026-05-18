@@ -124,11 +124,11 @@ int main(int argc, char* argv[]) {
     variablePartage->joueurConnecte[59]=true;
     */
     
-    variablePartage->jeu_config.manche = 2;
+    /*variablePartage->jeu_config.manche = 2;
     variablePartage->jeu_config.nbr_taupe = 2;
     variablePartage->jeu_config.level = 1;
     variablePartage->jeu_config.mode = 1;
-    variablePartage->jeu_config.temps_imparti=5;
+    variablePartage->jeu_config.temps_imparti=5;*/
 
 
 
@@ -155,9 +155,6 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
-    sleep(5);
-
-    lancerPartieEquipe(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
     while(1){}
 
 }

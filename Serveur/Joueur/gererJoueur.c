@@ -26,6 +26,12 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
 
     char message[100];
     char message_recu_client[100];
+
+    //Ajoute durant la partie si le mode est equipe
+    if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
+        ajoute_joueur_equipe(variablePartage,id_joueur);
+    }
+
     while(1){
         nb_octets = read(socket, message_recu_client, TAILLEBUF);
         if (nb_octets > 0){
@@ -35,6 +41,9 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
                 char message_pipe_deconnexion[100];
                 snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
                 write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
+                    if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
+                        supprime_joueur_equipe(variablePartage,id_joueur);
+                    }
                 break;
             }
             else if (p && strcmp(p,"test")==0){
@@ -57,6 +66,9 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
         }
         if (nb_octets==0){
             printf("Joueur deco\n");
+            if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
+                supprime_joueur_equipe(variablePartage,id_joueur);
+            }
             char message_pipe_deconnexion[100];
             snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
             write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));

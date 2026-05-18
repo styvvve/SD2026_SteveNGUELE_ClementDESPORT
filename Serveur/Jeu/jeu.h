@@ -13,7 +13,13 @@
 #include <limits.h>
 #include "../structure_partage.h"
 
+void ajoute_joueur_equipe(struct_partage *variablePartage,int id);
+void supprime_joueur_equipe(struct_partage *variablePartage,int id);
+
 void repond_juste(struct_partage *variablePartage,int id);
+
+void repond_faux(struct_partage *variablePartage,int id);
+
 
 bool verifeConfiguration(struct_jeu jeu);
 
@@ -25,5 +31,7 @@ int nombreDeJoueurConnecter(struct_partage variablePartage);
 bool verifeJoueurSup2(struct_partage variablePartage);
 
 void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,int *pipe_tcp_admin);
+
+void lancerPartie(struct_partage *variablePartage,int *pipe_jeu_multicast, int *pipe_tcp_admin);
 
 #endif
