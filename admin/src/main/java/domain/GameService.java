@@ -72,6 +72,10 @@ public class GameService implements ConnectionObserver, Runnable {
         return this.isConnected;
     }
 
+    public ConnexionUDP getConnection() {
+        return this.connection;
+    }
+
     public void setConnected(boolean connected) {
         isConnected = connected;
     }

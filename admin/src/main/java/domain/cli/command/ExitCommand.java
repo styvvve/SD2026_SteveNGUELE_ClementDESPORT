@@ -1,5 +1,8 @@
 package domain.cli.command;
 
+import domain.GameService;
+import domain.cli.HandleInputs;
+
 public class ExitCommand implements Command {
 
     @Override
@@ -12,4 +15,8 @@ public class ExitCommand implements Command {
         return "Exit the application";
     }
 
+    @Override
+    public void execute(String[] args, GameService svr) {
+        System.exit(0);
+    }
 }

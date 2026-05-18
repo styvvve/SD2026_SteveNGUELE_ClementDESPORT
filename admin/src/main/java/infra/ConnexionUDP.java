@@ -34,7 +34,7 @@ public class ConnexionUDP {
          adr = InetAddress.getByName(server);
          this.serverPort = serverPort;
          this.listeningSocket = new DatagramSocket(serverPort);
-         //System.out.println("connexion UDP OK " + adr + serverPort + "\n");
+         System.out.println("connexion UDP OK " + adr + serverPort + "\n");
     }
 
     /**

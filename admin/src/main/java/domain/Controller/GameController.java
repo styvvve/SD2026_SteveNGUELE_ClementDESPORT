@@ -2,6 +2,7 @@ package domain.Controller;
 
 import domain.GameService;
 import domain.cli.CliParser;
+import domain.cli.command.Command;
 import domain.cli.command.CommandRegistry;
 
 import java.util.Map;
@@ -20,32 +21,23 @@ public class GameController {
 
     public boolean handleCommand(String line) {
 
-        if (line == null) return false;
+        if (line == null || line.isBlank()) return false;
 
-        Map<String, String[]> cmd = cliParser.parse(line);
+        Map<String, String[]> parsed = cliParser.parse(line);
 
-        String commandName = cmd.keySet().toString();
-
-        if (commandName.equals("help")) {
-            registry.printHelp();
-            return false;
-        }
-
-        String[] args = cmd.get(commandName);
+        String commandName = parsed.keySet().iterator().next();
+        String[] args = parsed.get(commandName);
 
         if (commandName.equals("exit")) {
             return false;
         }
+        if (commandName.equals("help")) { registry.printHelp(); return true; }
 
-        switch (commandName) {
-            case "init" -> gameService.handleInitialize(args);
-            case "configure" -> gameService.handleConfigure(args);
-            case "start" -> gameService.handleStart();
-            case "list" -> gameService.handleListPlayers();
-            case "hist" -> gameService.handleHistory();
-            default -> registry.printHelp();
-        }
+        Command cmd = registry.getCommand(commandName);
 
+        if (cmd == null) { registry.printHelp(); return true; }
+
+        cmd.execute(args, gameService);
         return true;
     }
 }

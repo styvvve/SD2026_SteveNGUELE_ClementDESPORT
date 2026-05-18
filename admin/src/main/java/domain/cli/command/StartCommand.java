@@ -1,5 +1,7 @@
 package domain.cli.command;
 
+import domain.GameService;
+
 public class StartCommand implements Command {
 
     @Override
@@ -12,4 +14,8 @@ public class StartCommand implements Command {
         return "Start a new game";
     }
 
+    @Override
+    public void execute(String[] args, GameService svr) {
+        svr.handleStart();
+    }
 }
