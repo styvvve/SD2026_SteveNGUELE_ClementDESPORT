@@ -17,6 +17,6 @@ public class ConfigureCommand implements Command {
 
     @Override
     public void execute(String[] args, GameService svr) {
-        HandleInputs.configureGame(args, svr.getConnection());
+        svr.handleConfigure(args);
     }
 }

@@ -109,18 +109,22 @@ public class GameService implements ConnectionObserver, Runnable {
 
         if (resp.isOk()) {
             this.connection = resp.data();
+            //wait 1s after the connection
+            this.connection.testConnection(); 
         } else {
             System.out.println("Error during connection");
         }
     }
 
     public void handleConfigure(String[] args) {
-        if (!this.canExecuteAction()) return;
         //the last game is the current game, so if it's not finished, we can't configure another one
-        Game currentGame = this.games.get(this.games.size() - 1);
-        if (!currentGame.isFinished()) {
-            System.out.println("Current game " + currentGame.getId() + " is not finished");
-            return;
+        System.out.println(args); 
+        if (this.games.size() > 0) {
+            Game currentGame = this.games.get(this.games.size() - 1);
+            if (!currentGame.isFinished()) {
+                System.out.println("Current game " + currentGame.getId() + " is not finished");
+                return;
+            }
         }
 
         Response<Game> resp = HandleInputs.configureGame(args, this.connection);
@@ -129,13 +133,16 @@ public class GameService implements ConnectionObserver, Runnable {
             Game newGame = resp.data();
             this.addGame(newGame);
         } else {
-            System.out.println("Error during configuration");
+            System.out.println(resp.errorMessage());
         }
     }
 
     public void handleStart() {
-        if (!this.canExecuteAction()) return;
+        //if (!this.canExecuteAction()) return;
         //the last game...
+        /*if (this.games.isEmpty()) {
+            System.out.println("No game to start");
+        }*/
         Game currentGame = this.games.get(this.games.size() - 1);
         if (currentGame.isFinished()) {
             System.out.println("Current game " + currentGame.getId() + " is already finished");
@@ -146,6 +153,8 @@ public class GameService implements ConnectionObserver, Runnable {
 
         if (resp.isOk()) {
             System.out.println("Game started");
+        } else {
+            System.out.println(resp.errorMessage()); 
         }
     }
 
