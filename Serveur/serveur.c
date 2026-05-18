@@ -118,6 +118,7 @@ int main(int argc, char* argv[]) {
     variablePartage->jeu_config = malloc(sizeof(struct_jeu));
     variablePartage->jeu_config->manche = 2;
     variablePartage->jeu_config->nbr_taupe = 2;
+    variablePartage->jeu_config->level = 1;
     variablePartage->jeu_config->temps_imparti=3;
 
 

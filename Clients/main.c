@@ -9,15 +9,56 @@
 #include "mutex_test_connexion.h"
 #include "id_joueur.h"
 #include <sys/shm.h>
+#include <termios.h>
+
+void level1(char *taupe,int temps){
+    //https://stackoverflow.com/questions/63751531/non-canonical-terminal-mode-buffer-stdout-in-c-program
+    struct termios termios_new, termios_backup;
+    tcgetattr(STDIN_FILENO, &termios_backup);
+    termios_new = termios_backup;
+
+    termios_new.c_lflag &= ~(ICANON | ECHO);
+
+    tcsetattr(STDIN_FILENO,TCSANOW,&termios_new);
+
+    struct timeval temps_imparti;
+    fd_set rfds;
+
+    FD_ZERO(&rfds);
+    FD_SET(STDIN_FILENO, &rfds);
+
+    temps_imparti.tv_sec=5;
+    temps_imparti.tv_usec=0;
+    printf("%s\n",taupe);
+
+    int res = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &temps_imparti);
+    if (res>0){
+        char c;
+        read(STDIN_FILENO, &c, 1);
+        if (c == ' '){
+            printf("VALIDE \n");
+        }
+        else{
+            printf("PAS VALIDE\n");
+        }
+    } else if (res==0){
+        printf("PAS VALIDE TEMPS ECOULE\n");
+    }else{
+        perror("ERREUR DANS SELECT JOUE\n");
+    }
+
+    tcsetattr(STDIN_FILENO,TCSANOW,&termios_backup);
+}
+
 
 void joue(const char *message, int len){
     char cp_message[500];
     strcpy(cp_message, message);
     char *p = strtok(cp_message,"#");
     int num=0;
-
     int temps;
     char taupe[200];
+    int level;
     while (p != NULL){
         switch (num){
             case 0:
@@ -28,13 +69,22 @@ void joue(const char *message, int len){
             case 2:
                 temps=atoi(p);
                 break;
+            case 3:
+                level=atoi(p);
+                break;
+            default:
+                break;
         }
         num++;
         p = strtok(NULL, "#");
     }
-    printf("%s\n\n",taupe);
-
-    printf("TEST temps : %d\n",temps);
+    if (level==1){
+        level1(taupe,temps);
+    }else if(level==2){
+        //2
+    }else{
+        //3
+    }
 }
 
 void *test_connexion(void *data) {
@@ -149,7 +199,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    while (strcmp(message, "q") != 0 && connecte) {
+    /*while (strcmp(message, "q") != 0 && connecte) {
 
         scanf("%s", message);
         //write(sock, message, srlen(message)+1); 
@@ -162,7 +212,7 @@ int main(int argc, char* argv[]) {
             snprintf(message,sizeof(message)/sizeof(char),"quit|"); //pour fair comprendre que le client à quitter volontairement
             write(sock, message, strlen(message)+1);
         }
-    }
+    }*/
     pthread_join(thread, NULL);
     close(sock); 
     pthread_mutex_destroy(&mutex_t.mutex);
