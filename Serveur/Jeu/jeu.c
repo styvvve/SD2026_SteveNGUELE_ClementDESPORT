@@ -42,6 +42,28 @@ void repond_juste(struct_partage *variablePartage,int id){
     //else battleroyal
 }
 
+void repond_faux(struct_partage *variablePartage,int id){
+    if (variablePartage->jeu_config.mode==1){
+        bool trouve=false;
+        int equipe;
+        int ind=0;
+
+        while (trouve!=true && variablePartage->jeu_equipes.equipe_1[ind]!=id){
+            ind ++;
+            if(variablePartage->jeu_equipes.equipe_1[ind]==id){
+                trouve=true;
+            }
+        }
+        if (trouve==true){
+            variablePartage->jeu_equipes.score_1--;
+
+        }else{
+            variablePartage->jeu_equipes.score_2--;
+        }
+    }
+    //else battleroyal
+}
+
 
 //Verifie si la configuration est correcte pour le mode équipe
 bool verifeConfiguration_equipe(struct_partage *variablePartage){
@@ -184,6 +206,9 @@ bool verifeJoueurSup2(struct_partage *variablePartage){
 
 void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast, int *pipe_tcp_admin){
     close(pipe_jeu_multicast[0]);
+    variablePartage->jeu_equipes.score_1=0;
+    variablePartage->jeu_equipes.score_2=0;
+
 
     srand( time( NULL ) );
     char *taupe =

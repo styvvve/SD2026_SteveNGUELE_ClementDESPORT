@@ -49,6 +49,7 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *
                 char message_pasreussi[100];
                 snprintf(message_pasreussi,sizeof(message_pasreussi)/sizeof(char),"playerLost|%d",id_joueur);
                 write(pipe_tcp_admin[1],message_pasreussi,strlen(message_pasreussi));
+                repond_faux(variablePartage,id_joueur);
             }
             else{
                 printf("%s\n",p);

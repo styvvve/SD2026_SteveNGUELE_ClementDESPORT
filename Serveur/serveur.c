@@ -124,7 +124,6 @@ int main(int argc, char* argv[]) {
     variablePartage->joueurConnecte[59]=true;
     */
     
-    variablePartage->joueurConnecte[0]=true;
     variablePartage->jeu_config.manche = 2;
     variablePartage->jeu_config.nbr_taupe = 2;
     variablePartage->jeu_config.level = 1;
