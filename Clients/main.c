@@ -226,9 +226,6 @@ int main(int argc, char* argv[]) {
     
     pthread_t thread;
     pthread_create(&thread, NULL, test_connexion, &mutex_t);
-    char message[100]= ""; 
-    bool connecte=true;
-
     printf("**Bienvenue dans le jeu tape-taupe, veuillez attendre que l'administrateur lance la partie** \n\n");
 
     char message_pipe[100];

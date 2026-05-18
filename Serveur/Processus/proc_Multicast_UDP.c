@@ -68,7 +68,6 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
 
 
     char message_recu_pipe[500];
-    int nb_octets;
     int nread;
     while(1){
         nread = read(pipe_jeu_multicast[0],message_recu_pipe,500);

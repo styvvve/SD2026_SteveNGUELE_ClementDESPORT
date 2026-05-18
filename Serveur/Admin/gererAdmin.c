@@ -41,7 +41,7 @@ void * reception(void *data){
             nb_octets_admin = recvfrom(mutex_ad->socket, buffer, TAILLEBUF, 0,(struct sockaddr *)&mutex_ad->addr_admin, &mutex_ad->lg);
             if (nb_octets_admin > 0){
                 memcpy(message_recu_admin, buffer, nb_octets_admin);
-                char mess[100];
+                char mess[1024];
                 memcpy(mess,message_recu_admin,sizeof(message_recu_admin));
                 char *p = strtok(message_recu_admin,"|");
                 if (p && strcmp(p,"configure")==0){

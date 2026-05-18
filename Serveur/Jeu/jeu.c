@@ -63,7 +63,6 @@ void repond_juste(struct_partage *variablePartage,int id){
     //Seulement en mode EQUIPE
     if (variablePartage->jeu_config.mode==2){
         bool trouve=false;
-        int equipe;
         int ind=0;
 
         while (trouve!=true && variablePartage->jeu_equipes.equipe_1[ind]!=id){
@@ -85,7 +84,6 @@ void repond_faux(struct_partage *variablePartage,int id){
     //Mode EQUIPE
     if (variablePartage->jeu_config.mode==2){
         bool trouve=false;
-        int equipe;
         int ind=0;
 
         while (trouve!=true && variablePartage->jeu_equipes.equipe_1[ind]!=id){
@@ -259,7 +257,6 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast,
     creation_equipe(variablePartage);
 
     int tab_ordre[variablePartage->jeu_config.manche];
-    int ind_tab_manche=0;
     char message_play[100];
 
     //Cree un tableau rempli de 1 (correspond à EQUIPE 1)et 2 (correspond à EQUIPE 2)

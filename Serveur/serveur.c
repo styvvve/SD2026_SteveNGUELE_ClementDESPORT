@@ -33,6 +33,9 @@
 
 
 int main(int argc, char* argv[]) {
+    //https://stackoverflow.com/questions/40776233/how-do-i-get-rid-of-the-unused-parameter-warning-in-c-with-gcc-4-8-4-wunused-p
+    //Pour enlever le warning durant le make
+    (void)argc;
 
     /* Creation Pipes */
     int pipe_tcp_admin[2];
