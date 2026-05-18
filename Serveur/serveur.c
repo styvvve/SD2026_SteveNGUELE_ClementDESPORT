@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
     /* Creation Pipe */
     int pipe_tcp_admin[2];
     int pipe_jeu_multicast[2];
+    int pipe_tcp_jeu[2];
 
 
     if (pipe(pipe_tcp_admin) == -1){
@@ -56,6 +57,10 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
+    if (pipe(pipe_tcp_jeu) == -1){
+        perror("Erreur dans la création de pipe");
+        exit(1);
+    }
 
     /*  Permet de crée une pipe non bloquant (read : non bloquant)
         Pour que le processus (gererAdmin) lis en continue pour voir
@@ -75,6 +80,11 @@ int main(int argc, char* argv[]) {
     }
 
 
+    if (fcntl(pipe_tcp_jeu[0], F_SETFL, O_NONBLOCK) < 0){
+        perror("Erreur dans la création de la pipe non bloquant.");
+        exit(2);
+    }
+
     // Mémoire partagé
     //https://www.ibm.com/docs/fr/aix/7.3.0?topic=memory-creating-shared-segment-shmat-subroutine
     //https://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/shm/shmget.html?utm_source=copilot.com
@@ -83,7 +93,7 @@ int main(int argc, char* argv[]) {
     IPC_CREAT : Pour créer le segment de partage
     0666 : Lecture et Ecriture pour chaque processus
     **/
-    int shm_id = shmget(IPC_PRIVATE, sizeof(bool) * 100, IPC_CREAT | 0666);
+    int shm_id = shmget(IPC_PRIVATE, sizeof(struct_partage), IPC_CREAT | 0666);
 
     if (shm_id == -1) {
         perror("Erreur dans la mémoire partagée");
@@ -114,12 +124,12 @@ int main(int argc, char* argv[]) {
     variablePartage->joueurConnecte[59]=true;
     */
     
-
-    variablePartage->jeu_config = malloc(sizeof(struct_jeu));
-    variablePartage->jeu_config->manche = 2;
-    variablePartage->jeu_config->nbr_taupe = 2;
-    variablePartage->jeu_config->level = 1;
-    variablePartage->jeu_config->temps_imparti=3;
+    variablePartage->joueurConnecte[0]=true;
+    variablePartage->jeu_config.manche = 2;
+    variablePartage->jeu_config.nbr_taupe = 2;
+    variablePartage->jeu_config.level = 1;
+    variablePartage->jeu_config.mode = 1;
+    variablePartage->jeu_config.temps_imparti=5;
 
 
 
@@ -127,13 +137,11 @@ int main(int argc, char* argv[]) {
 
     
 
-/*
     pid_t pid_proc_Admin_UDP = fork();
     if (pid_proc_Admin_UDP==0){
-        proc_Admin_UDP(pipe_tcp_admin,variablePartage,argv);
+        proc_Admin_UDP(pipe_tcp_admin,pipe_jeu_multicast,variablePartage,argv);
         exit(0);
     }
-*/
 
 
     pid_t pid_proc_TCP = fork();
@@ -150,7 +158,7 @@ int main(int argc, char* argv[]) {
 
     sleep(5);
 
-    lancerPartieEquipe(variablePartage,pipe_jeu_multicast);
+    lancerPartieEquipe(variablePartage,pipe_jeu_multicast,pipe_tcp_admin);
     while(1){}
 
 }

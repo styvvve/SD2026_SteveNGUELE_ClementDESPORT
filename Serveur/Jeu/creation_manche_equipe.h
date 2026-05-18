@@ -13,7 +13,6 @@
 #include <limits.h>
 
 #include "../structure_partage.h"
-#include "structure_equipe.h"
 
 
 
@@ -23,7 +22,7 @@ char *creation_d_une_manche(int equipe, char *taupe, struct_partage *variablePar
 
 void creations_manches_equipe(struct_jeu jeu);
 
-struct_equipe creation_equipe(struct_partage *variablePartage);
+void creation_equipe(struct_partage *variablePartage);
 
 void shuffle(int nbr, int joueur[nbr]);
 

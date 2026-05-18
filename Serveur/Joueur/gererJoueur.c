@@ -1,9 +1,11 @@
 #include "gererJoueur.h"
+#include "../structure_partage.h"
+#include "../Jeu/jeu.h"
 
 #define TAILLEBUF 100
 
 
-void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
+void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *variablePartage) {
 
     //gestion pipe
     close(pipe_tcp_admin[0]);
@@ -20,7 +22,6 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
 
     write(pipe_tcp_admin[1],message_pipe_connexion,strlen(message_pipe_connexion));
 
-    //finishGame|score_1|score_2
     int nb_octets;
 
     char message[100];
@@ -43,7 +44,8 @@ void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
                 char message_reussi[100];
                 snprintf(message_reussi,sizeof(message_reussi)/sizeof(char),"playerWin|%d",id_joueur);
                 write(pipe_tcp_admin[1],message_reussi,strlen(message_reussi));
-            }else if (p&& strcmp(p,"pasreussi")==0){
+                repond_juste(variablePartage,id_joueur);
+            }else if (p&& strcmp(p,"pasreussi")==0){    
                 char message_pasreussi[100];
                 snprintf(message_pasreussi,sizeof(message_pasreussi)/sizeof(char),"playerLost|%d",id_joueur);
                 write(pipe_tcp_admin[1],message_pasreussi,strlen(message_pasreussi));

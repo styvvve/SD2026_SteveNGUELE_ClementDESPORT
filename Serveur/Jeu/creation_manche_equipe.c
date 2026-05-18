@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "structure_equipe.h"
 #include "../structure_partage.h"
 
 #include "creation_manche_equipe.h"
@@ -23,7 +22,7 @@
 //Crée une seule manche pour les deux modes (ID si c'est en battle royal. ID_Equipe si c'est en équipe)
 char *creation_d_une_manche(int id, char *taupe, struct_partage *variablePartage){
     char *manche = malloc(500);
-    snprintf(manche,500,"%d#%s#%d#%d",id,taupe,variablePartage->jeu_config->temps_imparti,variablePartage->jeu_config->level);
+    snprintf(manche,500,"%d#%s#%d#%d",id,taupe,variablePartage->jeu_config.temps_imparti,variablePartage->jeu_config.level);
     /* Exemple : 1#              _____
             \"_   _"/
             |(*)-(*)|
@@ -54,7 +53,7 @@ void shuffle(int nbr, int joueur[nbr]){
 }
 
 //Fonction qui renvoie un tableau deux de tableau de 50 int. exemple : tab[[1,2,3][4,5,6]]
-struct_equipe creation_equipe(struct_partage *variablePartage){
+void creation_equipe(struct_partage *variablePartage){
      int joueur[100];
      int ind_tab=0;
      for (int i=0;i<100;i++){
@@ -79,8 +78,6 @@ struct_equipe creation_equipe(struct_partage *variablePartage){
      }
      */
 
-     //Cree 2 equipe
-     struct_equipe equipes;
      //Cree une variable 'EQUIPE_COURANTE' (pour connaitre dans quelle equipe mettre)
      int equipe_courante=0;
      int ind_equipe_1=0;
@@ -90,11 +87,11 @@ struct_equipe creation_equipe(struct_partage *variablePartage){
      //Met dans les deux equipe
      for (int i=0;i<ind_tab;i++){
           if (equipe_courante==0){
-               equipes.equipe_1[ind_equipe_1]=joueur[i];
+               variablePartage->jeu_equipes.equipe_1[ind_equipe_1]=joueur[i];
                ind_equipe_1++;
                equipe_courante=1;
           } else if (equipe_courante==1){
-               equipes.equipe_2[ind_equipe_2]=joueur[i];
+               variablePartage->jeu_equipes.equipe_2[ind_equipe_2]=joueur[i];
                ind_equipe_2++;
                equipe_courante=0;
           } else{
@@ -103,10 +100,8 @@ struct_equipe creation_equipe(struct_partage *variablePartage){
           }
      }
 
-     variablePartage->jeu_config->nbr_joueur_1=ind_equipe_1;
-     variablePartage->jeu_config->nbr_joueur_2=ind_equipe_2;
+     variablePartage->jeu_equipes.nbr_joueur_1=ind_equipe_1;
+     variablePartage->jeu_equipes.nbr_joueur_2=ind_equipe_2;
 
 
-     //Renvoyer les deux équipes
-     return equipes;
 }

@@ -79,7 +79,7 @@ void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]
         }
         if (fork()==0){
             close (socket_ecoute);
-            gererJoueur(socket_service,id_joueur,pipe_tcp_admin);
+            gererJoueur(socket_service,id_joueur,pipe_tcp_admin,variablePartage);
             close(socket_service);
             variablePartage->joueurConnecte[id_joueur]=false;
             exit(0);
