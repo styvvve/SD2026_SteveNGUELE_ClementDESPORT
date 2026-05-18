@@ -10,6 +10,33 @@
 #include "id_joueur.h"
 #include <sys/shm.h>
 
+void joue(const char *message, int len){
+    char cp_message[500];
+    strcpy(cp_message, message);
+    char *p = strtok(cp_message,"#");
+    int num=0;
+
+    int temps;
+    char taupe[200];
+    while (p != NULL){
+        switch (num){
+            case 0:
+                break;
+            case 1:
+                snprintf(taupe,sizeof(taupe)/sizeof(char),"%s",p);
+                break;
+            case 2:
+                temps=atoi(p);
+                break;
+        }
+        num++;
+        p = strtok(NULL, "#");
+    }
+    printf("%s\n\n",taupe);
+
+    printf("TEST temps : %d\n",temps);
+}
+
 void *test_connexion(void *data) {
     mutex_test *mutex_t = (mutex_test*) data;
     int sock = mutex_t->socket;
@@ -73,13 +100,16 @@ int main(int argc, char* argv[]) {
             while (1) {
                 int n = recvfrom(sock, message_multicast, sizeof(message_multicast), 0, NULL, 0);
                 message_multicast[n] = '\0';
+                char cp_message[500];
+                strcpy(cp_message, message_multicast);
+
                 if (n > 0) {
                     /*AFFICHE LA TAUPE SI C'EST SON ID*/
-                    char *p = strtok(message_multicast,"#");
+                    char *p = strtok(cp_message,"#");
                     char id[10];
                     snprintf(id, sizeof(id), "%d", id_partage->id_joueur);
                     if (p && strcmp(p,id)==0){
-                        printf("TEST %s\n", message_multicast);
+                        joue(message_multicast,n);
                     }
                     else if (strcmp(message_multicast, "q") == 0) {
                         if (quit_multicastGroup(sock, &multicast_group) == 0) {

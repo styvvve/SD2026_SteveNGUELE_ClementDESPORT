@@ -95,7 +95,7 @@ void proc_Multicast_UDP(int *pipe_jeu_multicast){
     }
 
     //Envoie de messages à jusqu'a que le message == 'q'
-    char message_multicast[100] = "";
+    char message_multicast[500] = "";
     while (strcmp(message_multicast, "q") != 0) {
         scanf("%s",message_multicast);
         sendto(socket_multicast_joueur, message_multicast, strlen(message_multicast), 0,(struct sockaddr*)&adresse, sizeof(adresse));

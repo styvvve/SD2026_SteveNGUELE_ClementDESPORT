@@ -170,7 +170,7 @@ void lancerPartieEquipe(struct_partage *variablePartage,int *pipe_jeu_multicast)
 
     srand( time( NULL ) );
     char *taupe =
-    "         ________\n"
+    "            _________\n"
     "            \\_     _/\n"
     "            |(*)-(*)|\n"
     "          ./    O    \\.\n"
