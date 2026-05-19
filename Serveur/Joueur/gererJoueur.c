@@ -1,61 +1,86 @@
 #include "gererJoueur.h"
+#include "../structure_partage.h"
+#include "../Jeu/jeu.h"
 
 #define TAILLEBUF 100
 
 
-void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin) {
+void gererJoueur(int socket,int id_joueur, int *pipe_tcp_admin, struct_partage *variablePartage) {
 
     //gestion pipe
     close(pipe_tcp_admin[0]);
 
-    //int nb_octets;
-    //int nb_octets;
-
-    //char *chaine_recue = "";
-
-
     char messages[100]; 
+    snprintf(messages,sizeof(messages)/sizeof(char),"%d",id_joueur);
+    write(socket, messages, strlen(messages) + 1); 
 
     
     char message_pipe_connexion[100];
+    //ENVOIE addPlayer à l'admin
     snprintf(message_pipe_connexion,sizeof(message_pipe_connexion)/sizeof(char),"addPlayer|%d",id_joueur);
 
     write(pipe_tcp_admin[1],message_pipe_connexion,strlen(message_pipe_connexion));
 
-    write(socket, messages, sizeof(messages)/sizeof(char)); 
-    // la connexion est établie, on attend les données envoyées par le client
-
-    
-    char *chaine_recue = "";
     int nb_octets;
-    /*
-    char *reponse ="";
-    while (1)
-    {
-        chaine_recue = (char *)malloc(TAILLEBUF * sizeof(char));
-        nb_octets = read(socket, chaine_recue, TAILLEBUF);
-        if (strcmp(chaine_recue,"test")==0){
-            reponse = "testOK";
-            send(socket, reponse, strlen(reponse),0);
-        }
-        else {
-            send(socket,id_joueur,2,0);
-        }
-    }*/
 
-    while(strcmp(chaine_recue,"q")!=0){
-        chaine_recue = (char *)malloc(TAILLEBUF * sizeof(char));
-        nb_octets = read(socket, chaine_recue, TAILLEBUF);
-        //memcpy(chaine_recue, messages, nb_octets);
-        printf("ID[%d] : %s\n",id_joueur,chaine_recue);
+    char message[100];
+    char message_recu_client[100];
+
+    //Ajoute durant la partie si le mode est equipe
+    if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
+        ajoute_joueur_equipe(variablePartage,id_joueur);
     }
 
+    while(1){
+        /*Reception de tout les messages que le client peut envoyer :
+            -quit| (Le joueur quitte)
+            -test|  (Le joueur envoie 'test' pour savoir si le serveur est toujours connecte ou pas)
+            -reussi| (Le joueur à réussi à taper sur la taupe à temps)
+            -pasreussi| (Le joueur n'a pas réussi à taper la taupe à temps ou c'est trompé)
+        */
+        nb_octets = read(socket, message_recu_client, TAILLEBUF);
+        if (nb_octets > 0){
+            char *p = strtok(message_recu_client,"|");
+            if (p && strcmp(p,"quit")==0){
+                char message_pipe_deconnexion[100];
+                snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
+                write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
+                    if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
+                        supprime_joueur_equipe(variablePartage,id_joueur);
+                    }
+                break;
+            }
+            else if (p && strcmp(p,"test")==0){
+                snprintf(message,sizeof(message)/sizeof(char),"OK");
+                write(socket, message, sizeof(message)/sizeof(char));
+            }else if(p&& strcmp(p,"reussi")==0){
+                char message_reussi[100];
+                snprintf(message_reussi,sizeof(message_reussi)/sizeof(char),"playerWin|%d",id_joueur);
+                write(pipe_tcp_admin[1],message_reussi,strlen(message_reussi));
+                repond_juste(variablePartage,id_joueur);
+            }else if (p&& strcmp(p,"pasreussi")==0){    
+                char message_pasreussi[100];
+                snprintf(message_pasreussi,sizeof(message_pasreussi)/sizeof(char),"playerLost|%d",id_joueur);
+                write(pipe_tcp_admin[1],message_pasreussi,strlen(message_pasreussi));
+                repond_faux(variablePartage,id_joueur);
+            }
+        }
+        if (nb_octets==0){
 
+            //Supprime le joueur de l'Équipe (si une partie en mod EQUIPE est en cours)
+            if (variablePartage->jeu_config.mode==2 && variablePartage->jeu){
+                supprime_joueur_equipe(variablePartage,id_joueur);
+            }
 
-
-    char message_pipe_deconnexion[100];
-
-    snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
-
-    write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
+            //ENVOIE removePlayer à l'admin
+            char message_pipe_deconnexion[100];
+            snprintf(message_pipe_deconnexion,sizeof(message_pipe_deconnexion)/sizeof(char),"removePlayer|%d",id_joueur);
+            write(pipe_tcp_admin[1],message_pipe_deconnexion,strlen(message_pipe_deconnexion));
+            break;
+        }
+        if(nb_octets<0){
+            perror("Erreur connexion client");
+            exit(0);
+        }
+    }
 }

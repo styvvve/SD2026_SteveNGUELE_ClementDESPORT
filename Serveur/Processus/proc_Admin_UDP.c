@@ -22,13 +22,13 @@
 #include "../structure_partage.h"
 
 
-void proc_Admin_UDP(int *pipe_tcp_admin, struct_partage *variablePartage,char *argv[]){
+void proc_Admin_UDP(int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage *variablePartage,char *argv[]){
     // UDP Unicast ADMINISTRATEUR
 
     // descripteur de la socket locale pour l'UDP admin
     int socket_admin;
 
-    socket_admin = creerSocketUDP_Administrateur(atoi(argv[2])); //Port a changer 
+    socket_admin = creerSocketUDP_Administrateur(atoi(argv[2])); 
 
     // Vérifie si la socket à une erreur
     if (socket_admin == -1) {
@@ -38,7 +38,7 @@ void proc_Admin_UDP(int *pipe_tcp_admin, struct_partage *variablePartage,char *a
 
 
     //Dans fichier : "gererAdmin.c"
-    gererAdmin(socket_admin,pipe_tcp_admin,variablePartage);
+    gererAdmin(socket_admin,pipe_tcp_admin,pipe_jeu_multicast,variablePartage);
 
     // fermeture la socket
     close(socket_admin);
@@ -48,5 +48,3 @@ void proc_Admin_UDP(int *pipe_tcp_admin, struct_partage *variablePartage,char *a
     close(socket_admin); 
 
 }
-
-void fermeture_proc_admin(){}

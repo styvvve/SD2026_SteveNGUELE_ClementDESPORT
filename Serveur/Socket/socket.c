@@ -38,10 +38,3 @@ int creerSocketUDP_Administrateur (int port) {
     return sockfd;
 }
 
-/* 
-    ***
-    Créé socket TCP pour gerer les connexions entre: Serveur <---> Clients (joueurs).
-     
-    ***
-*/
-

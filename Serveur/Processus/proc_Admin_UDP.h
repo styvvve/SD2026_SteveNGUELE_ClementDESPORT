@@ -17,7 +17,6 @@
 #include "../structure_partage.h"
 
 
-void proc_Admin_UDP(int *pipe_tcp_admin, struct_partage *variablePartage ,char *argv[]);
-void fermeture_proc_admin();
+void proc_Admin_UDP(int *pipe_tcp_admin,int *pipe_jeu_multicast, struct_partage *variablePartage ,char *argv[]);
 
 #endif

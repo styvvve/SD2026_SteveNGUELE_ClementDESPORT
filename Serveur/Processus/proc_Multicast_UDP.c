@@ -16,7 +16,8 @@
 #include "proc_Multicast_UDP.h"
 
 
-void proc_Multicast_UDP(){
+void proc_Multicast_UDP(int *pipe_jeu_multicast){
+    close(pipe_jeu_multicast[1]);
 
     /*MULTICAST Joueur <-> Serveur*/
     
@@ -66,15 +67,35 @@ void proc_Multicast_UDP(){
     adresse.sin_port = htons(1234);
 
 
+    char message_recu_pipe[500];
+    int nread;
+    while(1){
+        nread = read(pipe_jeu_multicast[0],message_recu_pipe,500);
+                switch (nread){
+                    case -1: 
+                        //Si la pipe est vide
+                        if (errno == EAGAIN){
+                            usleep(500);
+                            continue;
+                        }
+                        else{
+                            perror("Erreur dans la lecture de la pipe vide");
+                            exit(1);
+                        }
+                    case 0:
+                        close(pipe_jeu_multicast[0]);
+                        exit(0);
+                    default:
+                        // Envoie du message au multicast (à tout les joueurs)
+                        message_recu_pipe[nread] = '\0';
+                        sendto(socket_multicast_joueur, message_recu_pipe, nread, 0, (struct sockaddr*)&adresse, sizeof(adresse));
+                        memset(message_recu_pipe, 0, sizeof(message_recu_pipe));
+                }
+    }
 
     //Envoie de messages à jusqu'a que le message == 'q'
-    char message_multicast[100] = "";
+    char message_multicast[500] = "";
     while (strcmp(message_multicast, "q") != 0) {
         scanf("%s",message_multicast);
-        sendto(socket_multicast_joueur, message_multicast, strlen(message_multicast), 0,(struct sockaddr*)&adresse, sizeof(adresse));
-        if (strcmp(message_multicast, "q") == 0) printf("ARRET DU MULTICAST (SERVEUR)\n"); 
     }
-}
-
-void fermeture_proc_multi(){
 }

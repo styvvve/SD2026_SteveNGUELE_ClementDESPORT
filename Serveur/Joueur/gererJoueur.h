@@ -12,7 +12,7 @@
 #include <string.h> 
 #include <limits.h>
 
+#include "../structure_partage.h"
 
-void gererJoueur(int socket,int id_joueur,int *pipe_tcp_admin); 
-
+void gererJoueur(int socket,int id_joueur,int *pipe_tcp_admin, struct_partage *variablePartage); 
 #endif

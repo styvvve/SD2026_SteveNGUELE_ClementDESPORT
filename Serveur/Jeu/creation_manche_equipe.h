@@ -12,13 +12,18 @@
 #include <string.h> 
 #include <limits.h>
 
-
-#include "structure_jeu.h"
-
+#include "../structure_partage.h"
 
 
-char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu);
 
-void creations_manches_equipe(struct_jeu jeu);
+
+//Creation d'une manche à envoyer aux multicast
+char *creation_d_une_manche(int equipe, char *taupe, struct_partage *variablePartage);
+
+//Fonction qui permet de créé deux equipe équilibré
+void creation_equipe(struct_partage *variablePartage);
+
+//Mélange un tableau
+void shuffle(int nbr, int joueur[nbr]);
 
 #endif

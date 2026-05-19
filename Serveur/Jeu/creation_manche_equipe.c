@@ -11,50 +11,46 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-#include "structure_jeu.h"
-#include "structure_equipe.h"
+#include <time.h>
+
 #include "../structure_partage.h"
 
 #include "creation_manche_equipe.h"
 
 
+
 //Crée une seule manche pour les deux modes (ID si c'est en battle royal. ID_Equipe si c'est en équipe)
-char *creation_d_une_manche(int equipe, char *taupe, struct_jeu jeu){
-    char *manche = malloc(100);
-    snprintf(manche,100,"%d||%s||%d",equipe,taupe,jeu.temps_imparti);
-    /* Exemple : 1||              _____
+char *creation_d_une_manche(int id, char *taupe, struct_partage *variablePartage){
+    char *manche = malloc(500);
+    snprintf(manche,500,"%d#%s#%d#%d",id,taupe,variablePartage->jeu_config.temps_imparti,variablePartage->jeu_config.level);
+    /* Exemple : 1#              _____
             \"_   _"/
             |(*)-(*)|
           ./  " O "  \.
-     ---"(((---------)))"---||4*/
+     ---"(((---------)))"---#4*/
 
-     // 1 == Equipe ; 4 == Seconde impartie
+     // 1 == id ; 4 == Seconde impartie
      return manche;
 }
 
 
-/*
-void creations_manches_equipe(struct_jeu jeu){
-     for (int i=0; i<jeu.manche;i++){
-          
+void shuffle(int nbr, int joueur[nbr]){
+     int temp;
+     int j;
+     for (int i=nbr-1;i>1;i--){
+          j= rand() % i;
+          temp=joueur[i];
+          joueur[i]=joueur[j];
+          joueur[j]=temp;
      }
-}*/
-
-void shuffle(int nbr, int joueur[100]){
-    int temp;
-    int j;
-    for (int i=nbr-1;i>1;i--){
-        j= rand() % i;
-        temp=joueur[i];
-        joueur[i]=joueur[j];
-        joueur[j]=temp;
-    }
 }
 
-//Fonction qui renvoie un tableau deux de tableau de 50 int. exemple : tab[[1,2,3][4,5,6]]
-struct_equipe creation_equipe(struct_partage *variablePartage){
+void creation_equipe(struct_partage *variablePartage){
      int joueur[100];
      int ind_tab=0;
+     for (int i=0;i<100;i++){
+          joueur[i]=-1;
+     }
      for (int i=0;i<100;i++){
           if (variablePartage->joueurConnecte[i]==true){
                joueur[ind_tab]=i;
@@ -65,37 +61,28 @@ struct_equipe creation_equipe(struct_partage *variablePartage){
      //shuffle les ID
      shuffle(ind_tab,joueur);
 
-     /*Printf pour verifier*/
-
-     /*
-     for (int i=0;i<ind_tab;i++){
-          prinft("ID [%d] : %d",i,joueur[i]);
-     }
-     */
-
-     //Cree 2 equipe
-     struct_equipe equipes;
      //Cree une variable 'EQUIPE_COURANTE' (pour connaitre dans quelle equipe mettre)
      int equipe_courante=0;
      int ind_equipe_1=0;
      int ind_equipe_2=0;
 
+
      //Met dans les deux equipe
      for (int i=0;i<ind_tab;i++){
           if (equipe_courante==0){
-               equipes.equipe_1[ind_equipe_1]=joueur[i];
+               variablePartage->jeu_equipes.equipe_1[ind_equipe_1]=joueur[i];
                ind_equipe_1++;
                equipe_courante=1;
           } else if (equipe_courante==1){
-               equipes.equipe_2[ind_equipe_2]=joueur[i];
+               variablePartage->jeu_equipes.equipe_2[ind_equipe_2]=joueur[i];
                ind_equipe_2++;
-               ind_equipe_2=0;
+               equipe_courante=0;
           } else{
                perror("Erreur dans creation_equipe, equipe_courant ");
                exit(0);
           }
      }
 
-     //Renvoyer les deux équipes
-     return equipes;
+     variablePartage->jeu_equipes.nbr_joueur_1=ind_equipe_1;
+     variablePartage->jeu_equipes.nbr_joueur_2=ind_equipe_2;
 }

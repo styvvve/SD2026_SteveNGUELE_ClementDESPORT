@@ -19,6 +19,5 @@
 
 
 void proc_TCP(int *pipe_tcp_admin, struct_partage *variablePartage, char *argv[]);
-void fermeture_proc_tcp();
 
 #endif
