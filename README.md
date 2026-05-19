@@ -8,17 +8,132 @@ This project consists of building a distributed Whac-A-Mole game. A C server sen
 
 ## Features
 
+- Connexion de plusieurs joueurs simultanément via UDP multicast
+- Modes de jeu : **équipe** et **facile** (fonctionnels) — bataille royale en cours
+- Administration à distance : configuration, démarrage, liste des joueurs, historique
+- Gestion de la perte de connexion avec tentative de reconnexion automatique
+- Architecture multithreadée côté admin (Producer-Consumer sur `BlockingQueue`)
+
+
 ## Architecture
+### Vue d'ensemble
 
+```
+┌─────────────────────────────────────────────────────┐
+│                  Administrateur (Java)               │
+│                                                     │
+│  Thread 1 (CLI)      Thread 3 (Orchestrateur)       │
+│  CommandPrompt  ──►  GameService.run()              │
+│  GameController       └─ consomme BlockingQueue     │
+│                                                     │
+│  Thread 2 (Listener UDP)   Thread 4 (Watcher)       │
+│  ConnexionUDP              TestConnectionUDP        │
+│  ServerMessageHandler  ──► gameOrchestration ◄──┘  │
+└───────────────────────────┬─────────────────────────┘
+                            │ UDP
+┌───────────────────────────▼─────────────────────────┐
+│                    Serveur (C)                       │
+│                                                     │
+│  Processus 1          Processus 2   Processus 3     │
+│  Admin TCP      ◄──►  Clients TCP ◄─ Multicast UDP  │
+│                        │                            │
+│            pipe_tcp_admin  pipe_tcp_multicast        │
+└─────────────────────────────────────────────────────┘
+                            │ UDP Multicast
+┌───────────────────────────▼─────────────────────────┐
+│               Clients / Joueurs (C)                  │
+│  Appuie espace pour frapper une taupe               │
+└─────────────────────────────────────────────────────┘
+```
+
+### Côté Java (admin)
+
+Le module admin suit une architecture en couches :
+
+```
+domain/
+├── cli/
+│   ├── command/        Commandes CLI (InitCommand, StartCommand…)
+│   ├── CliParser       Parse la saisie → Map<String, String[]>
+│   └── HandleInputs    Logique réseau et validation des inputs
+├── Controller/
+│   └── GameController  Dispatch des commandes vers GameService
+├── interfaces/
+│   ├── ConnectionObserver  Observer pattern pour la connexion
+│   └── ServerHandler       Callback pour les messages UDP reçus
+├── factory/            Fabrique de jeux et de connexions
+├── enu/                GameMode, Level
+├── exception/          NotEnoughPlayersException…
+├── App                 Point d'entrée, démarrage des threads
+├── Game / Player / Round / Mole   Modèles du domaine
+├── GameService         Orchestrateur central (Runnable + ConnectionObserver)
+└── ServerMessageHandler  Traitement des messages serveur entrants
+ 
+infra/
+├── ConnexionUDP        Sockets UDP (envoi + écoute dans un thread dédié)
+├── ConnexionUDPFactory Interface de fabrication
+└── TestConnectionUDP   Surveillance de la connexion (ScheduledExecutorService)
+```
 ## Technologies
+| Administrateur | Java 17, UDP, BlockingQueue, ScheduledExecutorService |
+| Serveur | C, sockets UDP/TCP, processus, pipes, mutex (pthread) |
+| Joueurs | C, UDP multicast, terminal non canonique |
+| Communication | UDP (multicast + unicast) |
+## Installation & execution
 
-## Installation
+### Serveur C
 
-## Screenshots
+```bash
+cd Serveur/
+make clean 
+make
+./server <port_clients> <port_administrateur>
+```
+
+### Joueurs C
+
+```bash
+cd Clients/
+make clean
+make
+./player <nom_machine_serveur> <port_serveur>
+```
+
+> Le joueur appuie sur **espace** pour frapper une taupe (mode terminal non canonique).
+
+
+### Admininistrateur Java
+
+```bash
+# 1. Trouve et compile tous les fichiers .java d'un coup
+javac $(find . -name "*.java")
+
+# 2. Lance le programme (en spécifiant le package de la classe principale)
+java domain.App
+```
+
+Commandes Java (Administrateur):
+| `init <host> <port>` | Initialise la connexion UDP avec le serveur |
+| `configure <mode> <level> <health> <moles>` | Configure une nouvelle partie |
+| `start` | Démarre la partie courante |
+| `list` | Liste les joueurs connectés |
+| `hist` | Historique des parties |
+| `help` | Affiche l'aide |
+| `exit` | Quitte l'application |
+
+## État du projet
+
+pas terminé
+- mode équipe fonctionnel en facile lancer la commande
+`configure TEAM EASY 2 2`   
+- Gestion de connexion UDP
+- RMI à compléter - pas complet
+
+## Sources Java citées dans la javadoc
 
 ## Tests
 
-
+Dans le deuxième dossier `src/java` se trouve des tests unitaires.
 
 ## PARTIE EN C
 
