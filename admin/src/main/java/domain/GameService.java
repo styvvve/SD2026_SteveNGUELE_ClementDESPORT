@@ -9,14 +9,28 @@ import infra.ConnexionUDP;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * Centralized service for the game, it's the king instance -> a kind of deliberate 'god object'
  * The idea of this is to manage the interaction and handle the user inputs and server interaction in one big logic.
  * For example, the last instance of Game in the arrayList "games" is the current game. We will get all the instances of Game made
  * in the memory by calling the method with the RMI server.
  * We can resume the class with one verb: orchestrate.
+ * <h3>Thread scheduling</h3>
+ * 4 threads are used with the multithreaded Producer-Consumer model:
+ * <ul>
+ *     <li>1 thread(1) for the CLI</li>
+ *     <li>1 thread(2) for the server listening</li>
+ *     <li>1 thread(3) for the game orchestration</li>
+ *     <li>1 thread(4) for the one-off send and receive from the server</li>
+ *     <li>1 thread(5) for the test connection "Special thread" because he's backdoor</li>
+ * </ul>
+ * All the thread post messages in gameOrchestration
  * @author Steve
  * @version 1.0
+ * @see <a href="https://www.baeldung.com/java-blocking-queue></a>
  */
 public class GameService implements ConnectionObserver, Runnable {
 
@@ -26,6 +40,11 @@ public class GameService implements ConnectionObserver, Runnable {
     private volatile boolean isConnected = false;
     /**The connection to the server, one thread could write, and it's immediately visible by all the other threads*/
     private volatile ConnexionUDP connection;
+
+    /**
+     * Blocking queue for the threads
+     */
+    private volatile BlockingQueue<String> gameOrchestration = new LinkedBlockingQueue<>();
 
 
     public void addGame(Game game) {
@@ -51,6 +70,10 @@ public class GameService implements ConnectionObserver, Runnable {
 
     public boolean isConnected() {
         return this.isConnected;
+    }
+
+    public ConnexionUDP getConnection() {
+        return this.connection;
     }
 
     public void setConnected(boolean connected) {
@@ -148,6 +171,29 @@ public class GameService implements ConnectionObserver, Runnable {
             List<Game> games = resp.data();
             games.forEach(g -> System.out.println(g.getId()));
         }
+    }
+
+    /**
+     * Handle the received operation from the server and update the state. These methods are "synchronized" because of the access from the thread who
+     * listening to the server to the games list
+     */
+    public synchronized void addPlayer(int playerId) {
+        Game currentGame = this.games.get(this.games.size() - 1);
+        currentGame.addPlayer(new Player(playerId, currentGame.getHealth()));
+    }
+    public synchronized void removePlayer(int playerId) {
+        Game currentGame = this.games.get(this.games.size() - 1);
+        currentGame.getPlayers().stream().filter(p -> p.getId() == playerId).findFirst().ifPresent(playerToDelete -> currentGame.getPlayers().remove(playerToDelete));
+    }
+    public synchronized void playerWin(int playerId) {
+        Game currentGame = this.games.get(this.games.size() - 1);
+
+        //check le mode
+    }
+    public synchronized void playerLose(int playerId) {
+        //if the mode is battle royal, the player loses one's health
+        Game currentGame = this.games.get(this.games.size() - 1);
+        currentGame.getPlayers().stream().filter(p -> p.getId() == playerId).findFirst().ifPresent(player -> player.setHealth(player.getHealth() - 1));
     }
 
 }

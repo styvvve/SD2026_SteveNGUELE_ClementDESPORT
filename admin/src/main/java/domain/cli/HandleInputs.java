@@ -61,6 +61,7 @@ public class HandleInputs {
     public static Response<Game> configureGame(String[] args, ConnexionUDP connexionUDP) {
         //first: we check if the args are good
         if (args.length != 4) {
+            System.out.println("erreur taille");
             return Response.fail("Illegal arguments number");
         }
 
@@ -80,7 +81,8 @@ public class HandleInputs {
         //send the config to the server
         try {
             boolean isOK = connexionUDP.sendMessage('c', newG);
-            if (!isOK) {
+            System.out.println("game sent = " + newG.serializeGame());
+            if (!isOK) { 
                 return Response.fail("Unable to connect to the server");
             }
         } catch (IOException e) {
@@ -98,19 +100,19 @@ public class HandleInputs {
      */
     public static Response<Game> startGame(Game game, ConnexionUDP connexionUDP) throws NotEnoughPlayersException {
         //verification of the game
-        if (game.getPlayers().size() < 2) {
+        /*if (game.getPlayers().size() < 2) {
             return Response.fail("Not enough players");
-        }
+        }*/
 
         try {
             boolean isOK = connexionUDP.sendMessage('s', game);
             if (!isOK) {
                 return Response.fail("Unable to connect to the server");
             }
-            String resp = connexionUDP.receiveFromServer(); //we should get a "started" response if is ok or no
+            /*String resp = connexionUDP.receiveFromServer(); //we should get a "started" response if is ok or no
             if (!resp.equals("started")) {
                 return Response.fail("Game could not be started by the server.");
-            }
+            }*/
             return Response.ok(game);
         } catch (IOException e) {
             System.out.println("Error during sendToServer " + e);
