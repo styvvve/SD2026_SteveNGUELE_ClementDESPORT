@@ -11,6 +11,12 @@ public class App {
     public static void main(String[] args) {
 
         GameService svr = new GameService();
+
+        Thread orchestrator = new Thread(svr);
+        orchestrator.setDaemon(true);
+        orchestrator.start();
+
+        //cli
         CommandPrompt prompt = new CommandPrompt();
         CliParser parser = new CliParser();
         CommandRegistry registry = new CommandRegistry();

@@ -5,6 +5,7 @@ import domain.cli.HandleInputs;
 import domain.cli.Response;
 import domain.interfaces.ConnectionObserver;
 import infra.ConnexionUDP;
+import infra.TestConnectionUDP;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,13 +53,28 @@ public class GameService implements ConnectionObserver, Runnable {
     }
 
     @Override
-    public void run() {}
+    public void run() {
+        while (true) {
+            try {
+                String message = gameOrchestration.take();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
 
 
     @Override
     public void connectionLost() {
         this.setConnected(false);
         //we try to reconnect
+        try {
+            System.out.println("Connection lost");
+            gameOrchestration.put("CONNECTION_LOST");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Override
@@ -66,6 +82,11 @@ public class GameService implements ConnectionObserver, Runnable {
         //get all the missing data from the server
         System.out.println("Connection restored");
         this.setConnected(true);
+        try {
+            gameOrchestration.put("CONNECTION_RESTORED");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public boolean isConnected() {
@@ -109,6 +130,9 @@ public class GameService implements ConnectionObserver, Runnable {
 
         if (resp.isOk()) {
             this.connection = resp.data();
+            this.setConnected(true);
+            this.startListening();
+            this.startConnectionWatcher();
         } else {
             System.out.println("Error during connection");
         }
@@ -196,4 +220,19 @@ public class GameService implements ConnectionObserver, Runnable {
         currentGame.getPlayers().stream().filter(p -> p.getId() == playerId).findFirst().ifPresent(player -> player.setHealth(player.getHealth() - 1));
     }
 
+    /**
+     * Listening to the server
+     */
+    public void startListening() {
+        if (this.connection == null) return;
+
+        ServerMessageHandler handler = new ServerMessageHandler(this);
+        this.connection.startListening(handler);
+    }
+
+    private void startConnectionWatcher() {
+        TestConnectionUDP watcher = new TestConnectionUDP(this.connection);
+        watcher.addObserver(this);
+        watcher.start();
+    }
 }

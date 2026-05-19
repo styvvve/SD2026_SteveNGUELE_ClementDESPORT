@@ -25,6 +25,8 @@ public class ServerMessageHandler implements ServerHandler {
         switch (method) {
             case "addPlayer" -> gameService.addPlayer(Integer.parseInt(parameter));
             case "removePlayer" -> gameService.removePlayer(Integer.parseInt(parameter));
+            case "playerWin" -> gameService.playerWin(Integer.parseInt(parameter));
+            case "playerLose" -> gameService.playerLose(Integer.parseInt(parameter));
         }
     }
 
