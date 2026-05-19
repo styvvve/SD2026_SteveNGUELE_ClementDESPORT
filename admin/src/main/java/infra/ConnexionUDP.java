@@ -21,6 +21,7 @@ public class ConnexionUDP {
     private final DatagramSocket listeningSocket;
     private boolean running = true;
     Thread listenerThread;
+    private TestConnectionUDP test; 
 
 
     //2 constructors
@@ -32,7 +33,13 @@ public class ConnexionUDP {
          this.socket = new DatagramSocket();
          this.socket.setSoTimeout(3000);
          adr = InetAddress.getByName(server);
-         this.serverPort = serverPort;
+         this.serverPort = serverPort; 
+         //config message 
+         try {
+            this.sendToServer("first");
+         } catch (IOException e) {
+            System.out.println("Erreur first message");
+         }
          this.listeningSocket = new DatagramSocket(serverPort);
          System.out.println("connexion UDP OK " + adr + serverPort + "\n");
     }
@@ -97,7 +104,7 @@ public class ConnexionUDP {
     public String createMessage(char command, Game game) throws IOException {
         return switch (command) {
             case 'c' -> "configure" + game.serializeGame();
-            case 's' -> "start";
+            case 's' -> "start|";
             default -> throw new IllegalArgumentException("Invalid command");
         };
     }
@@ -159,12 +166,19 @@ public class ConnexionUDP {
          this.listenerThread.start();
     }
 
+    public void testTheConnection() {
+        this.test = new TestConnectionUDP(this); 
+
+        test.start(); 
+    }
+
     /**
      * Close sockets
      */
     public void close() {
         this.socket.close();
         this.listeningSocket.close();
+        test.stop(); 
     }
 
     /**Toggle the "running value"*/
